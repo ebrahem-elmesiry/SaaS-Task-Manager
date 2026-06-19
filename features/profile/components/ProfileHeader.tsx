@@ -1,0 +1,42 @@
+import Link from "next/link";
+import { Mail, User } from "lucide-react";
+
+type Props = {
+  name: string;
+  job: string;
+  email: string;
+  avatar: string;
+};
+
+export default function ProfileHeader({ name, job, email, avatar }: Props) {
+  return (
+    <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-16 mb-6">
+      <div className="flex items-end gap-4 mb-4 md:mb-0">
+        <div className="w-24 h-24 rounded-full bg-indigo-600 border-4 border-white dark:border-slate-800 flex items-center justify-center text-white text-3xl font-medium shadow-lg">
+          {avatar}
+        </div>
+        <div className="mb-2">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white mb-1">
+            {name}
+          </h1>
+          <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+            <span className="flex items-center gap-1">
+              <User className="w-4 h-4" />
+              {job}
+            </span>
+            <span className="flex items-center gap-1">
+              <Mail className="w-4 h-4" />
+              {email}
+            </span>
+          </div>
+        </div>
+      </div>
+      <Link
+        href={`/settings`}
+        className="text-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+      >
+        Edit Profile
+      </Link>
+    </div>
+  );
+}
