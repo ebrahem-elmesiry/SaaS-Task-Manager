@@ -35,23 +35,14 @@ export default async function RootLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user?.id) {
-    throw new Error("User not authenticated");
-  }
-
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user?.id)
     .single();
 
-  if (error) {
-    console.error("Profile fetch error:", error);
-    throw new Error("Failed to load user profile");
-  }
-
   const currentUser: currentUserType = {
-    id: user?.id,
+    id: data?.id,
     name: user?.user_metadata.full_name,
     avatar: data?.avatar_url,
     role: data?.role,
