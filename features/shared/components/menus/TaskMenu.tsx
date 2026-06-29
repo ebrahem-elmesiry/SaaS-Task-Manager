@@ -14,11 +14,10 @@ import { MoreVertical } from "lucide-react";
 export default function TaskActionsMenu({
   taskPreview,
 }: {
-  taskPreview: TaskPreviewType | null;
+  taskPreview: TaskPreviewType;
 }) {
   const { handleEditInit, openDeleteDialog } = useTaskContext();
 
-  if (!taskPreview) return;
   return (
     <DropdownMenu>
       {/* Trigger */}
@@ -39,19 +38,6 @@ export default function TaskActionsMenu({
         >
           Edit Task
         </DropdownMenuItem>
-        {/* <DropdownMenuItem
-          onClick={() => deleteTask(taskPreview.id)}
-          className="data-[highlighted]:bg-slate-200 dark:hover:bg-slate-700"
-        >
-          Duplicate
-        </DropdownMenuItem>
-
-        <DropdownMenuItem
-          onClick={handleCopyLink}
-          className="data-[highlighted]:bg-slate-200 dark:hover:bg-slate-700"
-        >
-          Copy Task ID
-        </DropdownMenuItem> */}
 
         <DropdownMenuItem
           onClick={(e) => {

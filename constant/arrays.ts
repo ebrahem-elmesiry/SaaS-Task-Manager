@@ -3,11 +3,16 @@ import { statusType } from "@/types/project";
 import { Users, CheckSquare, Settings, File } from "lucide-react";
 
 export const teamMembers = [
-  { id: "1", name: "Sarah Chen", avatar: "SC" },
-  { id: "2", name: "Mike Johnson", avatar: "MJ" },
-  { id: "3", name: "Emily Davis", avatar: "ED" },
-  { id: "4", name: "James Wilson", avatar: "JW" },
-  { id: "5", name: "Lisa Anderson", avatar: "LA" },
+  {
+    id: "bc02c0f6-4224-4ac2-98f7-d211cfac6cdd",
+    full_name: "ahmed mohamed",
+    avatar_url: "",
+  },
+  {
+    id: "60187dee-182d-454e-a5b9-d02f6562b436",
+    full_name: "mohamed ahmed",
+    avatar_url: "",
+  },
 ];
 
 export const recentSearches = [

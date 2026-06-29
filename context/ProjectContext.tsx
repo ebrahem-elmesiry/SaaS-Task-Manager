@@ -2,7 +2,6 @@
 import { useProjectActions } from "@/features/projects/hooks/useProjectActions";
 import { useProjectForm } from "@/features/projects/hooks/useProjectForm";
 import { Assignee } from "@/types/kanban";
-import { returnFn } from "@/types/main";
 import { FormState, projectCard } from "@/types/project";
 import {
   createContext,
@@ -23,15 +22,12 @@ interface ProjectContextType {
   openEditModal: () => void;
   closeModal: () => void;
 
-  projects: projectCard[];
-  setProjects: Dispatch<SetStateAction<projectCard[]>>;
-
-  handleSubmit: (formData: FormState) => returnFn;
+  handleSubmit: (formData: FormState) => void;
   handleChange: (
     key: keyof FormState,
     value: string | (Date | undefined),
   ) => void;
-  deleteProject: (id: string) => returnFn;
+  deleteProject: (id: string) => Promise<void>;
 
   toggleMember: (member: Assignee) => void;
   handleEditInit: (project: projectCard) => void;
@@ -43,13 +39,7 @@ interface ProjectContextType {
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
-export const ProjectProvider = ({
-  children,
-  initialProjects,
-}: {
-  children: ReactNode;
-  initialProjects: projectCard[];
-}) => {
+export const ProjectProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
 
@@ -58,14 +48,8 @@ export const ProjectProvider = ({
     setIsOpen(true);
   };
 
-  const {
-    addProject,
-    updateProject,
-    Loading,
-    deleteProject,
-    setProjects,
-    projects,
-  } = useProjectActions(initialProjects);
+  const { addProject, updateProject, Loading, deleteProject } =
+    useProjectActions();
 
   const emptyProject: FormState = {
     id: "",
@@ -93,27 +77,13 @@ export const ProjectProvider = ({
 
   const handleSubmit = async (formData: FormState) => {
     const valid = validate(formData);
-    if (!valid.success) {
-      return {
-        success: false,
-        message: valid.message,
-      };
+    if (!valid) return;
+    if (isEdit) {
+      updateProject(formData);
+    } else {
+      addProject(formData);
     }
-
-    const result = isEdit
-      ? await updateProject(formData)
-      : await addProject(formData);
-
-    if (!result.success)
-      return {
-        success: false,
-        message: result.message,
-      };
     closeModal();
-    return {
-      success: true,
-      message: result.message,
-    };
   };
 
   const handleEditInit = (project: projectCard) => {
@@ -130,8 +100,6 @@ export const ProjectProvider = ({
         setIsEdit,
         openEditModal,
         closeModal,
-        projects,
-        setProjects,
         handleSubmit,
         handleChange,
         toggleMember,

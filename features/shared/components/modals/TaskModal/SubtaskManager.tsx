@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Subtask } from "@/types/kanban";
-import { useSubtasksManager } from "@/features/kanban/hooks/useSubtasksManager";
+import { useSubtasksManager } from "@/features/TaskDetailPanel/hooks/subtask/useSubtasksManager";
 
 interface SubtaskManagerProps {
   subtasks: Subtask[];

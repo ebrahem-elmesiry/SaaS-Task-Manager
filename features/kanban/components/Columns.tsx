@@ -1,11 +1,9 @@
 "use client";
 
-import { useTaskContext } from "@/context/TaskContext";
 import { Status, Task } from "@/types/kanban";
 
 import { DragDropProvider, DragOverlay } from "@dnd-kit/react";
 
-import { useRef, useState } from "react";
 import TaskCard from "./TaskCard";
 import Column from "./Column";
 import {
@@ -17,46 +15,50 @@ import { KanbanBoardSkeleton } from "../../shared/components/loading/KanbanBoard
 import AlertDeleteDialog from "../../shared/components/Alerts/AlertDeleteDialog";
 import { TaskSheet } from "@/features/shared/components/Sheets/TaskSheet";
 import { useTaskSheet } from "../hooks/useTaskSheet";
+import TaskError from "./TaskError";
+import EmptyKanban from "./EmptyKanban";
+import { useTaskContext } from "@/context/TaskContext";
+import { useMainContext } from "@/context/MainContext";
 
-type activeCard = Task & {
-  columnId: Status;
-};
+export default function Columns({ projectId }: { projectId: string }) {
+  const { openModal, loading, isDeleteDialogOpen, setIsDeleteDialogOpen } =
+    useTaskContext();
 
-export default function Columns({ isPending }: { isPending: boolean }) {
+  const { currentUser } = useMainContext();
+
   const {
-    isTaskSheetOpen,
-    setIsTaskSheetOpen,
     handleTaskClick,
-    selectedTask,
+    status,
     closeSheet,
+    taskId,
     handleDelete,
-    isTaskDetailsPending,
-  } = useTaskSheet();
+    data,
+    taskPending,
+    error,
+    refetch,
+    activeCard,
+    parentRef,
+    initialTasks,
+    updateTasksCache,
+    setActiveCard,
+  } = useTaskSheet(projectId);
 
-  const {
-    tasks,
-    setTasks,
-    openModal,
-    loading,
-    isDeleteDialogOpen,
-    setIsDeleteDialogOpen,
-  } = useTaskContext();
+  if (error) return <TaskError onRetry={() => refetch()} />;
 
-  const parentRef = useRef(null);
+  if (taskPending) return <KanbanBoardSkeleton />;
 
-  const [activeCard, setActiveCard] = useState<activeCard | undefined>(
-    undefined,
-  );
+  if (!data) return <EmptyKanban />;
+  const isDataEmpty = Object.values(data).every((arr) => arr.length === 0);
+  if (isDataEmpty) return <EmptyKanban />;
 
-  const initialTasks = useRef<Record<Status, Task[]> | null>(null);
+  const task = data[status]?.find((col) => col.id === taskId);
 
-  if (isPending) return <KanbanBoardSkeleton />;
   return (
     <DragDropProvider
       onDragStart={(event) =>
         handleDragStartFn({
           event,
-          tasks,
+          tasks: data,
           setActiveCard,
           setInitialTasks: (t) => (initialTasks.current = t),
         })
@@ -64,47 +66,45 @@ export default function Columns({ isPending }: { isPending: boolean }) {
       onDragOver={(event) =>
         handleDragOverFn({
           event,
-          setTasks,
+          setTasks: updateTasksCache,
         })
       }
       onDragEnd={(event) =>
         handleDragEndFn({
+          tasks: data,
           event,
           activeCard,
           initialTasks,
-          setTasks,
+          setTasks: updateTasksCache,
           setActiveCard,
+          currentUser,
         })
       }
     >
       <div ref={parentRef} className="flex gap-4 overflow-x-auto pb-4">
-        {(Object.entries(tasks) as [Status, Task[]][]).map(
+        {(Object.entries(data) as [Status, Task[]][]).map(
           ([status, columnTasks]) => (
             <Column
-              tasks={columnTasks}
               key={status}
               status={status}
+              tasks={columnTasks}
               onTaskClick={handleTaskClick}
               openModal={() => openModal(status)}
             />
           ),
         )}
-        {isTaskSheetOpen && (
-          <TaskSheet
-            tasks={tasks}
-            open={isTaskSheetOpen}
-            onOpenChange={setIsTaskSheetOpen}
-            selectedTask={selectedTask}
-            closeSheet={closeSheet}
-            isTaskDetailsPending={isTaskDetailsPending}
-          />
+        {!!taskId && (
+          <TaskSheet task={task} taskId={taskId} closeSheet={closeSheet} />
         )}
 
         <AlertDeleteDialog
           Loading={loading}
           isDeleteDialogOpen={isDeleteDialogOpen}
           setIsDeleteDialogOpen={setIsDeleteDialogOpen}
-          onClick={(e) => handleDelete(e, setIsDeleteDialogOpen)}
+          onClick={(e) => handleDelete(e, setIsDeleteDialogOpen, projectId)}
+          title="Delete this task?"
+          description="This action cannot be undone. This will permanently delete this task and all related data from our servers."
+          buttonText="Yes, delete task"
         />
       </div>
       <DragOverlay>

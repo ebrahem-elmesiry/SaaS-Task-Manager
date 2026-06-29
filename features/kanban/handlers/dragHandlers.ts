@@ -1,10 +1,18 @@
 import { Status, Task } from "@/types/kanban";
 import { move } from "@dnd-kit/helpers";
 import { isSortable } from "@dnd-kit/react/sortable";
-import { toast } from "sonner";
-import { messages } from "@/messages";
 import { columnTitles } from "@/lib/utils";
 import { DragEndEvent, DragOverEvent, DragStartEvent } from "@dnd-kit/react";
+import { getQueryClient } from "@/lib/get-query-client";
+import { createClient } from "@/lib/supabase/client";
+import { Dispatch, RefObject, SetStateAction } from "react";
+import { logTaskActivity } from "./taskActivityHandlers";
+import { addActivityToCache } from "@/features/TaskDetailPanel/handlers/cacheHandlers";
+import { currentUserType } from "@/types/main";
+import { updateTaskStatus } from "./taskCacheHandlers";
+import { updateTaskStatusDB } from "./taskHandlers";
+import { toast } from "sonner";
+import { messages } from "@/messages";
 
 type ActiveCard = Task & {
   columnId: Status;
@@ -49,7 +57,7 @@ export function handleDragOverFn({
   setTasks,
 }: {
   event: DragOverEvent;
-  setTasks: React.Dispatch<React.SetStateAction<TasksState>>;
+  setTasks: Dispatch<SetStateAction<TasksState>>;
 }) {
   const { source } = event.operation;
   if (!isSortable(source)) return;
@@ -60,18 +68,22 @@ export function handleDragOverFn({
 /* =========================
   3. DRAG END
 ========================= */
-export function handleDragEndFn({
+export async function handleDragEndFn({
+  tasks,
   event,
   activeCard,
   initialTasks,
   setTasks,
   setActiveCard,
+  currentUser,
 }: {
+  tasks: TasksState;
   event: DragEndEvent;
   activeCard?: ActiveCard;
-  initialTasks: React.MutableRefObject<TasksState | null>;
-  setTasks: React.Dispatch<React.SetStateAction<TasksState>>;
+  initialTasks: RefObject<TasksState | null>;
+  setTasks: Dispatch<SetStateAction<TasksState>>;
   setActiveCard: (card?: ActiveCard) => void;
+  currentUser: currentUserType;
 }) {
   // rollback if canceled
   if (event.canceled && initialTasks.current) {
@@ -85,16 +97,58 @@ export function handleDragEndFn({
     setActiveCard(undefined);
     return;
   }
-
+  const { group: column, id: taskId } = source;
+  const status = column as Status;
+  const task = tasks[status].find((t) => t.id === taskId);
   const group = source?.data?.columnId as Status;
   const initialGroup = activeCard?.columnId;
 
-  if (group !== initialGroup) {
-    const columnTitle = columnTitles[group] as Status;
-    toast.success(messages.taskMove.success(columnTitle));
-  }
-
   setActiveCard(undefined);
 
-  // TODO: API update here
+  if (group !== initialGroup && task) {
+    const newStatus = group as Status;
+    const columnTitle = columnTitles[newStatus] as Status;
+    const queryClient = getQueryClient();
+
+    // update status in cache
+    updateTaskStatus({ newStatus, setTasks, taskId: task.id });
+
+    const supabase = createClient();
+    try {
+      // update status in DB
+      await updateTaskStatusDB({
+        newStatus,
+        taskId: task.id,
+      });
+      toast.success(messages.taskMove.success(columnTitle));
+    } catch (error) {
+      console.log("error", error);
+      queryClient.invalidateQueries({ queryKey: ["tasks", task.project_id] });
+      toast.error(messages.taskMove.error(newStatus));
+    }
+
+    const activityUUID = crypto.randomUUID();
+    const { id: user_id, name: user_name, avatar: avatar_url } = currentUser;
+    await logTaskActivity(supabase, {
+      activityUUID,
+      workspace_id: "7ad0401e-2da4-4336-a5ad-29e071eeaace",
+      user_id,
+      entity_id: task.id,
+      taskId: task.id,
+      action: "TASK_MOVED",
+    });
+    addActivityToCache(queryClient, task.id, {
+      activityUUID,
+      userId: user_id,
+      userName: user_name,
+      avatarUrl: avatar_url,
+      action: "TASK_MOVED",
+      entityId: task.id,
+      task: {
+        title: task.title,
+        status: newStatus,
+        project_id: task.project_id,
+      },
+    });
+  }
 }

@@ -9,12 +9,14 @@ import MultiSelectList from "../ProjectModal/MultiSelectListTeam";
 import { ActionButtons } from "../../ActionButtons";
 import { useTaskContext } from "@/context/TaskContext";
 import { teamMembers } from "@/constant/arrays";
-import { Activity, Flag } from "lucide-react";
+import { Activity, Flag, FolderOpen } from "lucide-react";
 import { SubtaskManager } from "./SubtaskManager";
-import { toast } from "sonner";
-import { FormEvent } from "react";
+import { SubmitEvent } from "react";
+import { useQuery } from "@tanstack/react-query";
+import fetchProjects from "@/features/projects/services/fetchProjects";
+import { formatDate } from "@/lib/utils";
 
-const projectOptions = [
+const statusOptions = [
   { label: "TODO", value: "todo" },
   { label: "In Progress", value: "in-progress" },
   { label: "Review", value: "review" },
@@ -38,15 +40,17 @@ export function TaskForm() {
     loading,
   } = useTaskContext();
 
-  const submit = async (e: FormEvent<HTMLFormElement>) => {
+  const submit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const result = await handleSubmit(formData);
-    if (!result.success) {
-      toast.error(result.message);
-      return;
-    }
-    toast.success(result.message);
+    handleSubmit(formData);
   };
+
+  const { data } = useQuery({
+    queryKey: ["projects"],
+    queryFn: fetchProjects,
+  });
+  const projectSelectOptions =
+    data?.map((p) => ({ label: p.name, value: p.id })) ?? [];
 
   return (
     <form onSubmit={submit} className="p-6 space-y-5 overflow-y-auto">
@@ -80,7 +84,7 @@ export function TaskForm() {
             <Flag className="w-4 h-4 inline mr-1" /> Priority
           </Label>
           <CustomSelect
-            value={formData.priority || ""}
+            value={formData.priority}
             onChange={(value) => handleChange("priority", value as Priority)}
             options={priorityOptions}
           />
@@ -88,21 +92,37 @@ export function TaskForm() {
         <DatePicker
           label="Due Date"
           value={formData.dueDate ? new Date(formData.dueDate) : undefined}
-          onChange={(date) => handleChange("dueDate", date?.toString() || "")}
+          onChange={(date) =>
+            handleChange("dueDate", date ? formatDate(date) : "")
+          }
         />
       </div>
 
       {/* Status */}
-      <div>
-        <Label className="text-sm font-medium mb-2 block">
-          <Activity className="w-4 h-4 inline mr-1" /> Status
-        </Label>
-        <CustomSelect
-          isEdit={isEdit}
-          value={formData.status}
-          onChange={(value) => handleChange("status", value)}
-          options={projectOptions}
-        />
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label className="text-sm font-medium mb-2 block">
+            <Activity className="w-4 h-4 inline mr-1" /> Status
+          </Label>
+          <CustomSelect
+            isEdit={isEdit}
+            value={formData.status}
+            onChange={(value) => handleChange("status", value)}
+            options={statusOptions}
+          />
+        </div>
+        <div>
+          <Label className="text-sm font-medium mb-2 block">
+            <FolderOpen className="w-4 h-4 inline mr-1" />
+            Project
+          </Label>
+          <CustomSelect
+            isEdit={isEdit}
+            value={formData.project_id}
+            onChange={(value) => handleChange("project_id", value)}
+            options={projectSelectOptions}
+          />
+        </div>
       </div>
 
       {/* Subtasks */}

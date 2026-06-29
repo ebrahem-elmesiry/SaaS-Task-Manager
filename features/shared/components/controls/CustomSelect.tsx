@@ -14,7 +14,7 @@ type Option = {
 };
 
 type CustomSelectProps = {
-  value?: string;
+  value: string | undefined;
   onChange: (value: string) => void;
   options: Option[];
   placeholder?: string;

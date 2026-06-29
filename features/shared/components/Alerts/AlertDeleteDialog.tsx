@@ -16,6 +16,9 @@ interface Props {
   setIsDeleteDialogOpen: Dispatch<SetStateAction<boolean>>;
   isDeleteDialogOpen: boolean;
   Loading: boolean;
+  title?: string;
+  description?: string;
+  buttonText?: string;
 }
 
 export default function AlertDeleteDialog({
@@ -23,6 +26,9 @@ export default function AlertDeleteDialog({
   onClick,
   isDeleteDialogOpen,
   Loading,
+  title,
+  description,
+  buttonText,
 }: Props) {
   return (
     <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
@@ -35,10 +41,9 @@ export default function AlertDeleteDialog({
     "
       >
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete this project?</AlertDialogTitle>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription className="text-wrap">
-            This action cannot be undone. This will permanently delete the
-            project and all related tasks from our servers.
+            {description}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
@@ -55,7 +60,7 @@ export default function AlertDeleteDialog({
             disabled={Loading}
           >
             {Loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            Yes, delete project
+            {buttonText}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

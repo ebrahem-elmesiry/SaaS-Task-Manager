@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { teamMemberSchema } from "./project.schema";
 
 // ===== Enums =====
 export const prioritySchema = z.enum(["low", "medium", "high"]);
@@ -16,15 +17,6 @@ export const subtaskSchema = z.object({
   completed: z.boolean(),
 });
 
-// ===== Assignee =====
-export const assigneeSchema = z.object({
-  id: z.string(),
-
-  name: z.string().min(1, "Assignee name is required"),
-
-  avatar: z.string(),
-});
-
 // ===== Main Form =====
 export const taskFormSchema = z.object({
   id: z.string(),
@@ -39,11 +31,15 @@ export const taskFormSchema = z.object({
     .min(5, "Description must be at least 5 characters")
     .max(1000, "Description is too long"),
 
-  priority: prioritySchema.nullable(),
+  priority: prioritySchema.optional(),
 
-  subtasks: z.array(subtaskSchema),
+  project_id: z.uuid("You must select a project"),
 
-  assignees: z.array(assigneeSchema),
+  subtasks: z.array(subtaskSchema).min(1, "At least one subtask is required"),
+
+  assignees: z
+    .array(teamMemberSchema)
+    .min(1, "At least one assignee is required"),
 
   dueDate: z
     .string()

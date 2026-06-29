@@ -5,6 +5,7 @@ import MobileSlideBar from "../Sheets/MobileSidebar";
 import { SearchComponent } from "./componentsNavbar/SearchComponent";
 import NotificationCenter from "./componentsNavbar/Notifications";
 import { useMainContext } from "@/context/MainContext";
+import { getAvatarName } from "@/lib/utils";
 
 export function Header() {
   const { currentUser } = useMainContext();
@@ -31,7 +32,7 @@ export function Header() {
           {currentUser.id && (
             <div className="hidden md:flex items-center ml-2 pl-2 border-l">
               <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs">
-                {currentUser.avatar}
+                {currentUser.avatar || getAvatarName(currentUser.name)}
               </div>
             </div>
           )}

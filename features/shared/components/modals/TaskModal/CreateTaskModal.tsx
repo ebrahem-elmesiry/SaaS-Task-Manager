@@ -13,7 +13,7 @@ import { useTaskContext } from "@/context/TaskContext";
 import { TaskForm } from "./TaskForm";
 
 export default function CreateTaskModal() {
-  const { isOpen, setIsOpen, closeModal } = useTaskContext();
+  const { isOpen, setIsOpen, closeModal, isEdit } = useTaskContext();
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -32,7 +32,7 @@ export default function CreateTaskModal() {
         <DialogHeader className="p-6 border-b border-slate-200 dark:border-slate-700">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-xl font-semibold">
-              Create New Task
+              {isEdit ? "Update Task" : "Create New Task"}
             </DialogTitle>
 
             <button

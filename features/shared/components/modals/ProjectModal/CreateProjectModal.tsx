@@ -19,8 +19,6 @@ import MultiSelectList from "./MultiSelectListTeam";
 import { Button } from "@/components/ui/button";
 import { useProjectContext } from "@/context/ProjectContext";
 import { FormState } from "@/types/project";
-import { FormEvent } from "react";
-import { toast } from "sonner";
 
 export function CreateProjectModal() {
   const {
@@ -36,21 +34,17 @@ export function CreateProjectModal() {
   } = useProjectContext();
 
   const teamMembers = [
-    { id: "1", name: "Sarah Chen", avatar: "SC" },
-    { id: "2", name: "Mike Johnson", avatar: "MJ" },
-    { id: "3", name: "Emily Davis", avatar: "ED" },
-    { id: "4", name: "James Wilson", avatar: "JW" },
-    { id: "5", name: "Lisa Anderson", avatar: "LA" },
+    {
+      id: "60187dee-182d-454e-a5b9-d02f6562b436",
+      full_name: "mohamed ahmed",
+      avatar_url: "MA",
+    },
+    {
+      id: "bc02c0f6-4224-4ac2-98f7-d211cfac6cdd",
+      full_name: "ahmed mohamed",
+      avatar_url: "AM",
+    },
   ];
-  const submit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const result = await handleSubmit(formData);
-    if (!result.success) {
-      toast.error(result.message);
-      return;
-    }
-    toast.success(result.message);
-  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -88,7 +82,13 @@ export function CreateProjectModal() {
         </DialogHeader>
 
         {/* Form */}
-        <form onSubmit={submit} className="p-6 space-y-5 overflow-y-auto">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit(formData);
+          }}
+          className="p-6 space-y-5 overflow-y-auto"
+        >
           {/* Project Name */}
           <InputField
             type="text"
@@ -128,7 +128,6 @@ export function CreateProjectModal() {
               value={formData?.startDate ? formData?.startDate : undefined}
               onChange={(date) => handleChange("startDate", date)}
             />
-
             {/* End Date */}
             <DatePicker
               label="End Date"

@@ -43,6 +43,22 @@ export const messages = {
       success: "task deleted successfully",
       error: "Failed to delete task",
     },
+    subtask: {
+      success: "success to update subtask",
+      error: "Failed to update subtask",
+    },
+    comments: {
+      delete: {
+        success: "Comment deleted successfully",
+        error: "Failed to delete comment please try again later",
+      },
+      update: {
+        error: "Failed to update comment please try again later",
+      },
+      add: {
+        error: "Failed to add comment please try again later",
+      },
+    },
   },
 
   settings: {

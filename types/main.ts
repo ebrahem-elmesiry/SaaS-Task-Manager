@@ -1,8 +1,3 @@
-export type returnFn = Promise<{
-  success: boolean;
-  message: string | undefined;
-}>;
-
 // export type returnFnWithOptionalMessage = Omit
 
 export type Role = "admin" | "manager" | "member";

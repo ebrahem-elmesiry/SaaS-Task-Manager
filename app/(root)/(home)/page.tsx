@@ -24,65 +24,6 @@ const progressData = [
   { name: "Week 4", completed: 58 },
 ];
 
-export const activities = [
-  {
-    id: 1,
-    user: "Sarah Chen",
-    action: "completed task",
-    target: "Homepage Redesign",
-    time: "2 minutes ago",
-  },
-  {
-    id: 2,
-    user: "Mike Johnson",
-    action: "commented on",
-    target: "API Integration",
-    time: "15 minutes ago",
-  },
-  {
-    id: 3,
-    user: "Emily Davis",
-    action: "created",
-    target: "Mobile App Sprint",
-    time: "1 hour ago",
-  },
-  {
-    id: 4,
-    user: "James Wilson",
-    action: "assigned you to",
-    target: "Database Migration",
-    time: "2 hours ago",
-  },
-  {
-    id: 5,
-    user: "Lisa Anderson",
-    action: "updated status of",
-    target: "User Testing",
-    time: "3 hours ago",
-  },
-  {
-    id: 6,
-    user: "Lisa Anderson",
-    action: "updated status of",
-    target: "User Testing",
-    time: "3 hours ago",
-  },
-  {
-    id: 7,
-    user: "Lisa Anderson",
-    action: "updated status of",
-    target: "User Testing",
-    time: "3 hours ago",
-  },
-  {
-    id: 8,
-    user: "Lisa Anderson",
-    action: "updated status of",
-    target: "User Testing",
-    time: "3 hours ago",
-  },
-];
-
 const stats = [
   {
     icon: <CheckCircle2 className="text-indigo-600 dark:text-indigo-400" />,
@@ -131,7 +72,7 @@ export default async function Page() {
         <Suspense fallback={<DashboardSkeleton />}>
           <StatsCards items={stats} />
           <ChartsSection statsData={statsData} progressData={progressData} />
-          <RecentActivity activities={activities} />
+          <RecentActivity />
         </Suspense>
       </div>
     </>

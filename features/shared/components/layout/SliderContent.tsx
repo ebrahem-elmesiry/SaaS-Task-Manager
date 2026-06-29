@@ -3,12 +3,7 @@
 import { LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  FolderKanban,
-  CheckSquare,
-  Users,
-} from "lucide-react";
+import { LayoutDashboard, FolderKanban, Users } from "lucide-react";
 import { useLogout } from "@/features/Auth/hooks/useLogout";
 import { useMainContext } from "@/context/MainContext";
 
@@ -28,9 +23,13 @@ export default function SliderContent() {
       name: "Projects",
       icon: FolderKanban,
     },
-    { id: "board", link: "/kanban", name: "Board", icon: CheckSquare },
     { id: "team", link: "/team", name: "Team", icon: Users, adminOnly: true },
-    { id: "profile", link: "/profile", name: "Profile", icon: User },
+    {
+      id: "profile",
+      link: `/profile/${currentUser.id}`,
+      name: "Profile",
+      icon: User,
+    },
   ];
 
   const filteredNavigation = navigation.filter((item) => {

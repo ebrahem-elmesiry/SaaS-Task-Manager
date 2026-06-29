@@ -4,6 +4,7 @@ import { Status, Task, TaskPreviewType } from "@/types/kanban";
 import { CheckCircle2, Clock, MessageSquare, Paperclip } from "lucide-react";
 import TaskActionsMenu from "@/features/shared/components/menus/TaskMenu";
 import { useMainContext } from "@/context/MainContext";
+import Avatar from "@/features/shared/components/Avatar";
 
 interface TaskCardProps {
   id: string;
@@ -27,6 +28,7 @@ export default function TaskCard({
     id: task.id,
     title: task.title,
     description: task.description,
+    project_id: task.project_id,
     priority: task.priority,
     dueDate: task.dueDate,
     subtasks: task.subtasks,
@@ -42,11 +44,6 @@ export default function TaskCard({
     group: status,
     data: { columnId: status },
   });
-
-  const attachments =
-    task.comments?.filter((c) => /data-type="mention"/.test(c.text)).length ||
-    0;
-
   return (
     <div
       ref={ref}
@@ -82,24 +79,22 @@ export default function TaskCard({
         </div>
         <div className="flex items-center gap-1">
           <MessageSquare className="w-3.5 h-3.5" />
-          <span>{task.comments?.length || task.commentsCount}</span>
+          <span>{task.commentsCount}</span>
         </div>
         <div className="flex items-center gap-1">
           <Paperclip className="w-3.5 h-3.5" />
-          <span>{attachments}</span>
+          <span>{task.attachments}</span>
         </div>
       </div>
 
       <div className="flex items-center justify-between">
         <div className="flex -space-x-2">
           {task.assignees.map((assignee) => (
-            <div
+            <Avatar
               key={assignee.id}
-              className="w-6 h-6 rounded-full bg-indigo-600 border-2 border-white dark:border-slate-800 flex items-center justify-center text-xs text-white"
-              title={assignee.name}
-            >
-              {assignee.avatar}
-            </div>
+              avatar_url={assignee.avatar_url}
+              user_name={assignee.full_name}
+            />
           ))}
         </div>
         <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">

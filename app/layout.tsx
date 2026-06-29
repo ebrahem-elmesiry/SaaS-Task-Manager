@@ -5,7 +5,6 @@ import { Inter } from "next/font/google";
 import { currentUserType } from "@/types/main";
 import Providers from "./providers/Providers";
 import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,10 +32,12 @@ export default async function RootLayout({
 }>) {
   const supabase = await createClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const user = session?.user;
+  if (!user?.id) {
+    throw new Error("User not authenticated");
+  }
 
   const { data, error } = await supabase
     .from("profiles")
@@ -45,19 +46,16 @@ export default async function RootLayout({
     .single();
 
   if (error) {
-    console.log(error);
+    console.error("Profile fetch error:", error);
+    throw new Error("Failed to load user profile");
   }
 
-  const [f, l] = user?.user_metadata.full_name.split(" ") || "Unknown";
-  const avatar_name = (f[0] + l[0]).toUpperCase();
-  const role = data?.role;
-
   const currentUser: currentUserType = {
-    id: user?.id || "",
-    name: user?.user_metadata.full_name ?? "Unknown",
-    avatar: data?.avatar_url || avatar_name,
-    role,
-    job_title: data?.job_title || "Unknown Job",
+    id: user?.id,
+    name: user?.user_metadata.full_name,
+    avatar: data?.avatar_url,
+    role: data?.role,
+    job_title: data?.job_title,
   };
 
   return (
@@ -67,7 +65,7 @@ export default async function RootLayout({
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} h-full antialiased`}
       >
-        <body className="min-h-full flex flex-col">
+        <body>
           <Providers currentUser={currentUser}>{children}</Providers>
         </body>
       </html>

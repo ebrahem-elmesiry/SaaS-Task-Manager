@@ -1,9 +1,8 @@
 import { Activity } from "lucide-react";
-import { ActivityType } from "@/types/kanban";
-import ActivityComponent from "./ActivityComponent";
+import ActivityComponent from "../../TaskDetailPanel/Activity/ActivityComponent";
 import ActivityDialogModal from "@/features/shared/components/modals/ActivityDialogModal";
 
-export function RecentActivity({ activities }: { activities: ActivityType[] }) {
+export function RecentActivity() {
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
       <div className="flex items-center justify-between mb-6">
@@ -14,10 +13,10 @@ export function RecentActivity({ activities }: { activities: ActivityType[] }) {
           </h2>
         </div>
 
-        <ActivityDialogModal activities={activities} />
+        <ActivityDialogModal />
       </div>
 
-      <ActivityComponent activities={activities} />
+      <ActivityComponent />
     </div>
   );
 }

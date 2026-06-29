@@ -18,6 +18,7 @@ export default function Column({
   status,
 }: Props) {
   const { ref } = useDroppable({ id: status });
+
   return (
     <div ref={ref} className="shrink-0 w-80">
       <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">

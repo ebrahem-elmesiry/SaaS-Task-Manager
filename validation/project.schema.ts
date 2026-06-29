@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-const teamMemberSchema = z.object({
+export const teamMemberSchema = z.object({
   id: z.string(),
-  name: z.string(),
-  avatar: z.string(),
+  full_name: z.string(),
+  avatar_url: z.string().nullable(),
 });
 
 export const projectSchema = z

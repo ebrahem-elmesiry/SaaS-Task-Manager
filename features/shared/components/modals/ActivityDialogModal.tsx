@@ -8,14 +8,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import ActivityComponent from "@/features/Dashboard/components/ActivityComponent";
-import { ActivityType } from "@/types/kanban";
+import ActivityComponent from "@/features/TaskDetailPanel/Activity/ActivityComponent";
 
-export default function ActivityDialogModal({
-  activities,
-}: {
-  activities: ActivityType[];
-}) {
+export default function ActivityDialogModal() {
   const [open, setOpen] = useState(false);
 
   return (
@@ -33,7 +28,7 @@ export default function ActivityDialogModal({
           <DialogTitle>All Activities</DialogTitle>
         </DialogHeader>
 
-        <ActivityComponent activities={activities} />
+        <ActivityComponent />
       </DialogContent>
     </Dialog>
   );

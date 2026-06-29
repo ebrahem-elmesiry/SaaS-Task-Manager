@@ -1,29 +1,19 @@
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { TaskDetailPanel } from "../TaskDetailPanel/TaskDetailPanel";
-import { TaskHeader } from "../TaskDetailPanel/TaskHeader";
-import { ColumnsType, selectedTaskType } from "@/types/kanban";
-import { Dispatch, SetStateAction } from "react";
+import { TaskDetailPanel } from "../../../TaskDetailPanel/TaskDetailPanel";
+import { TaskHeader } from "../../../TaskDetailPanel/TaskHeader";
+import { Task } from "@/types/kanban";
 
 interface TaskSheetProps {
-  open: boolean;
-  tasks: ColumnsType;
+  taskId: string | null;
   closeSheet: () => void;
-  isTaskDetailsPending: boolean;
-  selectedTask: selectedTaskType | null;
-  onOpenChange: Dispatch<SetStateAction<boolean>>;
+  task: Task | undefined;
 }
 
-export function TaskSheet({
-  open,
-  tasks,
-  closeSheet,
-  selectedTask,
-  onOpenChange,
-  isTaskDetailsPending,
-}: TaskSheetProps) {
+export function TaskSheet({ taskId, task, closeSheet }: TaskSheetProps) {
+  const isOpen = !!taskId;
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet open={isOpen}>
       <SheetContent
         onInteractOutside={closeSheet}
         side="right"
@@ -33,14 +23,10 @@ export function TaskSheet({
           <SheetTitle>TaskDetails</SheetTitle>
         </VisuallyHidden>
         {/* Header */}
-        <TaskHeader onClose={closeSheet} />
+        <TaskHeader task={task} onClose={closeSheet} />
 
         {/* Body */}
-        <TaskDetailPanel
-          tasks={tasks}
-          selectedTask={selectedTask}
-          isTaskDetailsPending={isTaskDetailsPending}
-        />
+        <TaskDetailPanel task={task} />
       </SheetContent>
     </Sheet>
   );

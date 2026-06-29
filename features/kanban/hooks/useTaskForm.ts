@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 import { Assignee, Subtask } from "@/types/kanban";
-import { messages } from "@/messages";
 import { TaskForm, taskFormSchema } from "@/validation/task.schema";
+import { toast } from "sonner";
 
 export const useTaskForm = (initialState: TaskForm) => {
   const [formData, setFormData] = useState<TaskForm>(initialState);
@@ -30,14 +30,10 @@ export const useTaskForm = (initialState: TaskForm) => {
   const validate = (formData: TaskForm) => {
     const result = taskFormSchema.safeParse(formData);
     if (!result.success) {
-      return {
-        success: false,
-        message: result.error.issues[0].message,
-      };
+      toast.error(result.error.issues[0].message);
+      return false;
     }
-    return {
-      success: true,
-    };
+    return true;
   };
 
   return {

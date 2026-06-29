@@ -1,17 +1,12 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { getAvatarName } from "@/lib/utils";
 import { Assignee } from "@/types/kanban";
 import { Users } from "lucide-react";
 
-type TeamMember = {
-  id: string;
-  name: string;
-  avatar: string;
-};
-
 type MultiSelectListProps = {
   label: string;
-  items: TeamMember[];
+  items: Assignee[];
   selected?: Assignee[];
   toggle: (member: Assignee) => void;
 };
@@ -49,10 +44,10 @@ export default function MultiSelectList({
                 className="flex items-center gap-3 cursor-pointer w-full"
               >
                 <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs">
-                  {member.avatar}
+                  {member.avatar_url || getAvatarName(member.full_name)}
                 </div>
 
-                <span className="text-sm">{member.name}</span>
+                <span className="text-sm">{member.full_name}</span>
               </Label>
             </div>
           );

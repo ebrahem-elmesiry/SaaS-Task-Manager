@@ -5,43 +5,49 @@ import Link from "next/link";
 import { useState } from "react";
 import { useProjectContext } from "@/context/ProjectContext";
 import { getStatusColor } from "@/lib/utils";
-import { toast } from "sonner";
 import ProjectActionsMenu from "../../shared/components/menus/ProjectMenu";
 import AlertDeleteDialog from "../../shared/components/Alerts/AlertDeleteDialog";
 import { useMainContext } from "@/context/MainContext";
+import { Assignee } from "@/types/kanban";
+import { ProjectGridSkeleton } from "@/features/shared/components/loading/ProjectGridSkeleton";
+import fetchProjects from "../services/fetchProjects";
+import { useQuery } from "@tanstack/react-query";
+import EmptyProjects from "./EmptyProjects";
+import ErrorProjects from "./ErrorProjects";
+import Avatar from "@/features/shared/components/Avatar";
 
 export default function ProjectCard() {
-  const { deleteProject, projects, Loading, handleEditInit } =
-    useProjectContext();
+  const { deleteProject, Loading, handleEditInit } = useProjectContext();
   const { currentUser } = useMainContext();
+
+  const { data, error, isPending, refetch } = useQuery({
+    queryKey: ["projects"],
+    queryFn: fetchProjects,
+  });
 
   const [projectId, setProjectId] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const deleteFn = async (projectId: string) => {
-    const result = await deleteProject(projectId);
-    if (!result.success) {
-      toast.error(result.message);
-      return;
-    }
-    toast.success(result.message);
-  };
+  if (error) return <ErrorProjects refetch={refetch} />;
+
+  if (isPending) return <ProjectGridSkeleton />;
+  if (!data || data?.length === 0) return <EmptyProjects />;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      {projects.map((project) => (
+      {data?.map((project) => (
         <div
           key={project.id}
           className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-all cursor-pointer group"
         >
           {/* Name, Description */}
           <div className="flex items-start justify-between mb-4">
-            <Link className="w-full" href={`/kanban?projectId=${project.id}`}>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+            <Link className="w-full min-w-0" href={`/kanban/${project.id}`}>
+              <div>
+                <h3 className="truncate text-lg font-semibold text-slate-900 dark:text-white mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                   {project.name}
                 </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-1">
+                <p className="text-sm text-slate-500 dark:text-slate-400 truncate">
                   {project.description}
                 </p>
               </div>
@@ -81,14 +87,12 @@ export default function ProjectCard() {
             {/* Team Information */}
             <div className="flex items-center justify-between">
               <div className="flex -space-x-2">
-                {project.team.slice(0, 4).map((member) => (
-                  <div
+                {project.team.slice(0, 4).map((member: Assignee) => (
+                  <Avatar
                     key={member.id}
-                    className="w-8 h-8 rounded-full bg-indigo-600 border-2 border-white dark:border-slate-800 flex items-center justify-center text-xs text-white font-medium"
-                    title={member.name}
-                  >
-                    {member.avatar}
-                  </div>
+                    avatar_url={member.avatar_url}
+                    user_name={member.full_name}
+                  />
                 ))}
 
                 {project.team.length > 4 && (
@@ -131,9 +135,12 @@ export default function ProjectCard() {
         setIsDeleteDialogOpen={setIsDeleteDialogOpen}
         onClick={async (e) => {
           e.preventDefault();
-          await deleteFn(projectId);
+          await deleteProject(projectId);
           setIsDeleteDialogOpen(false);
         }}
+        title="Delete this project?"
+        description="This action cannot be undone. This will permanently delete the project and all related tasks from our servers."
+        buttonText="Yes, delete project"
       />
     </div>
   );

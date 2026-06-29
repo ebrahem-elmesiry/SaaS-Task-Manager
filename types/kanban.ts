@@ -10,8 +10,8 @@ export type Status = "todo" | "in-progress" | "review" | "done";
 
 export type Assignee = {
   id: string;
-  name: string;
-  avatar: string;
+  full_name: string;
+  avatar_url: string | null;
 };
 
 // =====================
@@ -29,12 +29,12 @@ export type Subtask = {
 // =====================
 
 export type ActivityType = {
-  id: number;
-  user: string;
+  id: string;
+  user: { id: string; full_name: string; avatar_url: string | undefined };
   action: string;
   target: string;
   time: string;
-  avatar?: string;
+  task: { id: string; title: string; status: Status; project_id: string };
 };
 
 export type Comment = {
@@ -44,10 +44,17 @@ export type Comment = {
   text: string;
   created_at: string;
   parent_id?: string;
-  avatar: string;
+  avatar: string | undefined;
   reply_to_user_id?: string;
   replies?: Comment[];
 };
+
+export type ReplyState = {
+  commentId: string;
+  comment: string;
+  name: string;
+  user_id?: string;
+} | null;
 
 // =====================
 // BASE TASK (SOURCE OF TRUTH)
@@ -56,6 +63,7 @@ export type Comment = {
 export type TaskBase = {
   id: string;
   title: string;
+  project_id: string;
   description: string;
   priority: Priority;
   dueDate: string;
@@ -67,27 +75,11 @@ export type TaskBase = {
 // =====================
 
 export type Task = TaskBase & {
-  // columnId: string;
+  status: Status;
   subtasks: Subtask[];
   commentsCount: number;
   attachments: number;
-  comments?: Comment[];
 };
-
-// =====================
-// FORM
-// =====================
-
-// export type TaskForm = {
-//   id: string;
-//   title: string;
-//   description: string;
-//   priority: Priority | null;
-//   subtasks: Subtask[];
-//   assignees: Assignee[];
-//   dueDate: string;
-//   status: Status | undefined;
-// };
 
 // =====================
 // FORM STATE (UI SAFE)
@@ -110,13 +102,4 @@ export type ColumnsType = Record<Status, Task[]>;
 export type TaskPreviewType = TaskBase & {
   status: Status;
   subtasks: Subtask[];
-};
-
-// =====================
-// STATE
-// =====================
-
-export type selectedTaskType = {
-  taskId: string;
-  status: Status | undefined;
 };
