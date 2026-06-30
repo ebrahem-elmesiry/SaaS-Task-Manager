@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { messages } from "@/messages";
 
 export async function loginAction(formData: {
   email: string;
@@ -14,8 +15,14 @@ export async function loginAction(formData: {
   });
 
   if (error) {
-    throw new Error(error.message);
+    return {
+      success: false,
+      message: error.message,
+    };
   }
 
-  return true;
+  return {
+    success: true,
+    message: messages.auth.login.success,
+  };
 }

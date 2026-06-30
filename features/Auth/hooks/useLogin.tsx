@@ -23,11 +23,15 @@ export function useLogin() {
         throw new Error(result.error.issues[0].message);
       }
 
-      return loginAction(data);
+      const { success, message } = await loginAction(data);
+      if (!success) {
+        throw new Error(message);
+      }
+      return { message };
     },
 
-    onSuccess: () => {
-      toast.success(messages.auth.login.success);
+    onSuccess: ({ message }) => {
+      toast.success(message);
       router.push("/");
     },
 

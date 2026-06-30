@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { messages } from "@/messages";
 
 type SignupInput = {
   email: string;
@@ -23,8 +24,14 @@ export async function signupAction(data: SignupInput) {
   });
 
   if (authError) {
-    throw new Error(authError.message);
+    return {
+      success: false,
+      message: authError.message,
+    };
   }
 
-  return true;
+  return {
+    success: true,
+    message: messages.auth.signup.success,
+  };
 }

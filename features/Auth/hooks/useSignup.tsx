@@ -24,11 +24,15 @@ export function useSignup() {
       if (!result.success) {
         throw new Error(result.error.issues[0].message);
       }
-      return signupAction(data);
+      const { success, message } = await signupAction(data);
+      if (!success) {
+        throw new Error(message);
+      }
+      return { message };
     },
 
-    onSuccess: () => {
-      toast.success(messages.auth.signup.success);
+    onSuccess: ({ message }) => {
+      toast.success(message);
       router.push("/role");
     },
 
