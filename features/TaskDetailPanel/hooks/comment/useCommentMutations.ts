@@ -12,7 +12,6 @@ import {
   deleteReply,
 } from "../../handlers/commentHandlers";
 import { insertMentions } from "../../handlers/mentionHandlers";
-import { logCommentActivity } from "../../handlers/activityHandlers";
 import {
   addCommentToCache,
   addReplyToCache,
@@ -20,6 +19,7 @@ import {
   removeCommentFromCache,
   removeReplyFromCache,
 } from "../../handlers/cacheHandlers";
+import { logTaskActivity } from "@/features/kanban/handlers/taskActivityHandlers";
 
 export function useDeleteCommentMutation(
   taskId: string,
@@ -37,13 +37,14 @@ export function useDeleteCommentMutation(
         await deleteReply(supabase, { id: params.replyId });
       } else {
         await deleteComment(supabase, { id: params.commentId });
-        await logCommentActivity(supabase, {
+        await logTaskActivity(supabase, {
           activityUUID,
           workspace_id: "7ad0401e-2da4-4336-a5ad-29e071eeaace",
           user_id,
           entity_id: params.commentId,
           taskId,
           action: "COMMENT_DELETED",
+          metadata: { taskTitle: task?.title, deletedBy: user_name },
         });
       }
     },
@@ -75,6 +76,7 @@ export function useDeleteCommentMutation(
             status: task.status,
             project_id: task.project_id,
           },
+          metadata: { taskTitle: task?.title, deletedBy: user_name },
         });
       }
 
@@ -200,13 +202,14 @@ export function useAddCommentMutation(taskId: string, task: Task | undefined) {
           entityId: params.id,
           entityType: "comment_id",
         });
-        await logCommentActivity(supabase, {
+        await logTaskActivity(supabase, {
           activityUUID,
           workspace_id: "7ad0401e-2da4-4336-a5ad-29e071eeaace",
           user_id,
           entity_id: params.id,
           taskId,
           action: "COMMENT_ADDED",
+          metadata: { taskTitle: task?.title },
         });
       }
     },
@@ -247,6 +250,7 @@ export function useAddCommentMutation(taskId: string, task: Task | undefined) {
             status: task.status,
             project_id: task.project_id,
           },
+          metadata: { taskTitle: task.title },
         });
       }
 

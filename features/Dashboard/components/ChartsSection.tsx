@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   BarChart,
   Bar,
@@ -13,10 +12,14 @@ import {
   Line,
 } from "recharts";
 import { CustomSelect } from "../../shared/components/controls/CustomSelect";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { DashboardError } from "./DashboardError";
 
 type ChartsSectionProps = {
-  statsData: { name: string; tasks: number }[];
-  progressData: { name: string; completed: number }[];
+  statsData: { name: string; tasks: number }[] | undefined;
+  taskWeekly: { name: string; completed: number }[] | undefined;
+  isTaskDailyField: "rejected" | "fulfilled";
 };
 
 const timeOptions = [
@@ -25,8 +28,27 @@ const timeOptions = [
   { label: "Last 3 months", value: "3m" },
 ];
 
-export function ChartsSection({ statsData, progressData }: ChartsSectionProps) {
-  const [timeRange, setTimeRange] = useState("7d");
+export function ChartsSection({
+  statsData,
+  taskWeekly,
+  isTaskDailyField,
+}: ChartsSectionProps) {
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams.toString());
+  const range = searchParams.get("range") || undefined;
+  const { replace } = useRouter();
+
+  useEffect(() => {
+    if (!range) {
+      replace("/?range=7d", { scroll: false });
+    }
+  }, [range, replace]);
+
+  function handleAddDate(val: string) {
+    params.set("range", val);
+    replace(`?${params.toString()}`, { scroll: false });
+  }
+  if (isTaskDailyField === "rejected") return <DashboardError />;
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Bar Chart */}
@@ -37,8 +59,8 @@ export function ChartsSection({ statsData, progressData }: ChartsSectionProps) {
           </h2>
 
           <CustomSelect
-            value={timeRange}
-            onChange={setTimeRange}
+            value={range}
+            onChange={handleAddDate}
             options={timeOptions}
             className="w-40 text-sm px-3 py-1.5"
           />
@@ -65,7 +87,7 @@ export function ChartsSection({ statsData, progressData }: ChartsSectionProps) {
         </h2>
 
         <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={progressData}>
+          <LineChart data={taskWeekly}>
             <CartesianGrid
               strokeDasharray="3 3"
               className="dark:stroke-slate-700"

@@ -7,11 +7,10 @@ export function DashboardSkeleton() {
             key={i}
             className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700"
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-5">
               <div className="w-10 h-10 bg-slate-200 dark:bg-slate-700 rounded-lg" />
-              <div className="h-5 w-12 bg-slate-200 dark:bg-slate-700 rounded-full" />
+              <div className="h-7 w-7 bg-slate-200 dark:bg-slate-700 rounded-lg" />
             </div>
-            <div className="h-8 bg-slate-200 dark:bg-slate-700 rounded w-20 mb-2" />
             <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-32" />
           </div>
         ))}

@@ -37,6 +37,7 @@ export const useAddTask = () => {
         entity_id: taskId,
         taskId: taskId,
         action: "TASK_CREATED",
+        metadata: { taskTitle: data.title },
       });
     },
 
@@ -61,6 +62,7 @@ export const useAddTask = () => {
           status: newData.status as Status,
           project_id: newData.project_id,
         },
+        metadata: { taskTitle: newData.title },
       });
       return previousData;
     },

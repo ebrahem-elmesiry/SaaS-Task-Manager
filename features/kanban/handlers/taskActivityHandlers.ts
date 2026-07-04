@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { Metadata } from "@/types/kanban";
 
 type SupabaseClient = ReturnType<typeof createClient>;
 
@@ -11,6 +12,7 @@ export async function logTaskActivity(
     entity_id: string;
     taskId: string;
     action: string;
+    metadata?: Metadata;
   },
 ) {
   const { error } = await supabase.from("activity_log").insert({
@@ -20,6 +22,7 @@ export async function logTaskActivity(
     action: params.action,
     entity_id: params.entity_id,
     taskId: params.taskId,
+    metadata: params.metadata,
   });
 
   if (error) throw new Error(error.message);

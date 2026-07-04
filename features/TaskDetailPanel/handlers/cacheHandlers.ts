@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
-import { ActivityType, Comment, Status } from "@/types/kanban";
+import { ActivityType, Comment, Metadata, Status } from "@/types/kanban";
 import { formatTimeAgo } from "@/lib/utils";
 import type { currentUserType } from "@/types/main";
 
@@ -66,6 +66,7 @@ export function addReplyToCache(
   });
 }
 
+type ActivityWithoutCreatedAt = Omit<ActivityType, "created_at">;
 export function addActivityToCache(
   queryClient: QueryClient,
   taskId: string,
@@ -76,10 +77,10 @@ export function addActivityToCache(
     userName: string;
     avatarUrl: string | undefined;
     entityId: string;
-    task: { title: string; status: Status; project_id: string };
+    task?: { title: string; status: Status; project_id: string };
+    metadata?: Metadata;
   },
 ) {
-  const { title, status, project_id } = params.task;
   const newActivity = {
     id: params.activityUUID,
     user: {
@@ -90,16 +91,22 @@ export function addActivityToCache(
     action: params.action,
     target: params.entityId,
     time: formatTimeAgo(new Date().toISOString()),
-    task: {
-      id: taskId,
-      title,
-      status,
-      project_id,
-    },
+    task: params.task
+      ? {
+          id: taskId,
+          title: params.task?.title,
+          status: params.task?.status,
+          project_id: params.task?.project_id,
+        }
+      : undefined,
+    metadata: params.metadata,
   };
-  queryClient.setQueryData<ActivityType[]>(["activity", taskId], (old) => {
-    return [...(old || []), newActivity];
-  });
+  queryClient.setQueryData<ActivityWithoutCreatedAt[]>(
+    ["activity", taskId],
+    (old) => {
+      return [...(old || []), newActivity];
+    },
+  );
 }
 
 export function removeCommentFromCache(

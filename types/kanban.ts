@@ -28,13 +28,24 @@ export type Subtask = {
 // ACTIVITY & COMMENTS
 // =====================
 
+export type Metadata = {
+  initialStatus?: Status;
+  currentStatus?: Status;
+  taskTitle?: string;
+  deletedBy?: string;
+};
+
 export type ActivityType = {
   id: string;
   user: { id: string; full_name: string; avatar_url: string | undefined };
   action: string;
   target: string;
   time: string;
-  task: { id: string; title: string; status: Status; project_id: string };
+  metadata?: Metadata;
+  task:
+    | { id: string; title: string; status: Status; project_id: string }
+    | undefined;
+  created_at: string;
 };
 
 export type Comment = {

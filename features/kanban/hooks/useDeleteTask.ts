@@ -17,6 +17,7 @@ export const useDeleteTask = () => {
   async function deleteTask(data: {
     id: string;
     status: Status;
+    title: string | undefined;
     project_id: string;
   }) {
     await logTaskActivity(supabase, {
@@ -26,6 +27,7 @@ export const useDeleteTask = () => {
       action: "TASK_DELETED",
       entity_id: data?.id,
       taskId: data?.id,
+      metadata: { taskTitle: data.title, deletedBy: user_name },
     });
 
     const { error } = await supabase.from("tasks").delete().eq("id", data.id);
@@ -37,19 +39,11 @@ export const useDeleteTask = () => {
     mutationFn: deleteTask,
 
     onMutate: async (data) => {
-      const tasks = queryClient.getQueryData<ColumnsType>([
-        "tasks",
-        data.project_id,
-      ]);
-      const title = tasks?.[data.status].find((t) => t.id === data.id)
-        ?.title as string;
-
       await queryClient.cancelQueries({ queryKey: ["tasks", data.project_id] });
       const previousData = queryClient.getQueryData<ColumnsType>([
         "tasks",
         data.project_id,
       ]);
-
       addActivityToCache(queryClient, data.id, {
         activityUUID,
         userId: user_id,
@@ -57,11 +51,7 @@ export const useDeleteTask = () => {
         avatarUrl: avatar_url,
         action: "TASK_DELETED",
         entityId: data.id,
-        task: {
-          title,
-          status: data.status as Status,
-          project_id: data.project_id,
-        },
+        metadata: { taskTitle: data.title, deletedBy: user_name },
       });
 
       queryClient.setQueryData<ColumnsType>(

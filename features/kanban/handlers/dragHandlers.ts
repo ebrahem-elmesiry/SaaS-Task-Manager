@@ -109,7 +109,6 @@ export async function handleDragEndFn({
     const newStatus = group as Status;
     const columnTitle = columnTitles[newStatus] as Status;
     const queryClient = getQueryClient();
-
     // update status in cache
     updateTaskStatus({ newStatus, setTasks, taskId: task.id });
 
@@ -136,6 +135,11 @@ export async function handleDragEndFn({
       entity_id: task.id,
       taskId: task.id,
       action: "TASK_MOVED",
+      metadata: {
+        currentStatus: newStatus,
+        initialStatus: initialGroup as Status,
+        taskTitle: task.title,
+      },
     });
     addActivityToCache(queryClient, task.id, {
       activityUUID,
@@ -146,8 +150,13 @@ export async function handleDragEndFn({
       entityId: task.id,
       task: {
         title: task.title,
-        status: newStatus,
+        status: task.status,
         project_id: task.project_id,
+      },
+      metadata: {
+        currentStatus: newStatus,
+        initialStatus: initialGroup as Status,
+        taskTitle: task.title,
       },
     });
   }

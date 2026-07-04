@@ -21,6 +21,7 @@ async function getActivityFromDB(taskId: string) {
     console.log("error comments", error);
     throw new Error(error.message);
   }
+  console.log("data", data);
   const formatData = formatActivity(data);
   const queryClient = getQueryClient();
   queryClient.setQueryData<ActivityType[]>(["activity", taskId], formatData);

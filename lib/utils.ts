@@ -51,9 +51,28 @@ export function formatTimeAgo(date: Date | string) {
   const now = new Date();
   const past = new Date(date);
 
+  const isDateOnly =
+    past.getHours() === 0 &&
+    past.getMinutes() === 0 &&
+    past.getSeconds() === 0 &&
+    past.getMilliseconds() === 0 &&
+    now.getTime() - past.getTime() > 0;
+
+  if (isDateOnly) {
+    const todayStr = now.toDateString();
+    const pastStr = past.toDateString();
+    if (pastStr === todayStr) return "today";
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (pastStr === yesterday.toDateString()) return "yesterday";
+    const dayDiff = Math.round((now.getTime() - past.getTime()) / (1000 * 60 * 60 * 24));
+    return `${dayDiff} day${dayDiff === 1 ? "" : "s"} ago`;
+  }
+
   const diffMs = now.getTime() - past.getTime();
 
   const seconds = Math.floor(diffMs / 1000);
+  if (seconds <= 0) return "just now";
   if (seconds < 60) return `${seconds} second${seconds === 1 ? "" : "s"} ago`;
 
   const minutes = Math.floor(seconds / 60);
@@ -65,23 +84,6 @@ export function formatTimeAgo(date: Date | string) {
   const days = Math.floor(hours / 24);
   return `${days} day${days === 1 ? "" : "s"} ago`;
 }
-
-// export function formatTimeAgo(date: Date | string) {
-//   const now = new Date();
-//   const past = new Date(date);
-
-//   const diffMs = now.getTime() - past.getTime();
-
-//   const seconds = Math.floor(diffMs / 1000);
-//   const minutes = Math.floor(seconds / 60);
-//   const hours = Math.floor(minutes / 60);
-//   const days = Math.floor(hours / 24);
-
-//   if (seconds < 60) return `${seconds} seconds ago`;
-//   if (minutes < 60) return `${minutes} minutes ago`;
-//   if (hours < 24) return `${hours} hours ago`;
-//   return `${days} days ago`;
-// }
 
 export function formatDate(date: string | Date) {
   const d = new Date(date);

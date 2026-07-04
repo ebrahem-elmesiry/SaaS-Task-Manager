@@ -55,6 +55,7 @@ export default async function fetchTasks(projectId?: string) {
         subtasks: item.subtasks || [],
         commentsCount: item.comments?.length || 0,
         attachments: 0,
+        // created_at: item.created_at,
       });
     }
   }

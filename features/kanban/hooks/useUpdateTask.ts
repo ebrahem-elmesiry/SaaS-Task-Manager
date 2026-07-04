@@ -40,6 +40,7 @@ export const useUpdateTask = () => {
       entity_id: data.id,
       taskId: data.id,
       action: "TASK_UPDATED",
+      metadata: { taskTitle: data.title },
     });
   }
 
@@ -67,6 +68,7 @@ export const useUpdateTask = () => {
           status: newData.status as Status,
           project_id: newData.project_id,
         },
+        metadata: { taskTitle: newData.title },
       });
       return previousData;
     },

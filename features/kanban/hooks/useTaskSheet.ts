@@ -34,6 +34,17 @@ export function useTaskSheet(projectId: string) {
     }
   };
 
+  const queryClient = getQueryClient();
+  const {
+    data,
+    isPending: taskPending,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["tasks", projectId],
+    queryFn: () => fetchTasks(projectId),
+  });
+
   async function handleDelete(
     e: MouseEvent<HTMLButtonElement>,
     setIsDeleteDialogOpen: Dispatch<SetStateAction<boolean>>,
@@ -41,9 +52,12 @@ export function useTaskSheet(projectId: string) {
   ) {
     e.preventDefault();
     if (!taskToDelete) return;
-
+    const title = data?.[taskToDelete.status].find(
+      (t) => t.id === taskToDelete.taskId,
+    )?.title;
     await deleteTask({
       id: taskToDelete.taskId,
+      title,
       status: taskToDelete.status,
       project_id: projectId,
     });
@@ -61,17 +75,6 @@ export function useTaskSheet(projectId: string) {
   const [activeCard, setActiveCard] = useState<ActiveCard | undefined>(
     undefined,
   );
-
-  const queryClient = getQueryClient();
-  const {
-    data,
-    isPending: taskPending,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["tasks", projectId],
-    queryFn: () => fetchTasks(projectId),
-  });
 
   function updateTasksCache(
     updater: ColumnsType | ((data: ColumnsType) => ColumnsType),

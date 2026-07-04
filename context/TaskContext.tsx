@@ -44,6 +44,7 @@ interface TaskContextType {
   deleteTask: (data: {
     id: string;
     status: Status;
+    title: string | undefined;
     project_id: string;
   }) => Promise<void>;
 

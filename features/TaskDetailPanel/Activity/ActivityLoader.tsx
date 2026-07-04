@@ -11,7 +11,7 @@ export default function ActivityLoader() {
       </h4>
 
       <div className="space-y-4">
-        {[1, 2].map((i) => (
+        {[1, 2, 3].map((i) => (
           <div
             key={i}
             className="flex items-start gap-3 border-b pb-3 border-slate-100 dark:border-slate-700 last:border-0"
