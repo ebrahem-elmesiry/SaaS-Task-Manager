@@ -1,4 +1,4 @@
-import { statsData } from "@/types/dashbaord";
+import { weekTask } from "@/types/dashbaord";
 import { formatDate } from "@/lib/utils";
 import fetchTasks from "@/features/kanban/services/fetchTasks";
 import fetchTeam from "@/features/team/services/fetchTeam";
@@ -7,8 +7,23 @@ import { ColumnsType } from "@/types/kanban";
 import { TrendingUp, Users, CheckCircle2, Clock } from "lucide-react";
 import fetchTaskWeekly from "./fetchTaskWeekly";
 import fetchActivities from "./fetchActivities";
+import { createClient } from "@/lib/supabase/server";
 
-export default async function fetchAll({ filterDays }: { filterDays: string }) {
+export default async function fetchAll({
+  filterDays,
+  workspace_id,
+}: {
+  workspace_id: string;
+  filterDays: string;
+}) {
+  const supabase = await createClient();
+  const { data: projects, error: projectErr } = await supabase
+    .from("projects")
+    .select("id")
+    .eq("workspace_id", workspace_id);
+
+  const projectIds = projects?.map((p) => p.id) || [];
+
   // ── Return values map to Dashboard components ──
   // StatsCards       ← stats, isTeamField, isTasksField
   // ChartsSection    ← taskDaily.data (as statsData), taskWeekly.data, isTaskDailyField
@@ -68,30 +83,27 @@ export default async function fetchAll({ filterDays }: { filterDays: string }) {
   // Fetch Data Here
   const [tasks, team, taskDailyFetch, taskWeeklyFetch, getAllActivities] =
     await Promise.allSettled([
-      fetchTasks(),
-      fetchTeam("7ad0401e-2da4-4336-a5ad-29e071eeaace"),
-      fetchTasksDaily(endOfWeek, startOfWeek),
-      fetchTaskWeekly(week1, week2, week3, week4),
-      fetchActivities(),
+      fetchTasks(projectIds),
+      fetchTeam(workspace_id),
+      fetchTasksDaily(endOfWeek, startOfWeek, projectIds),
+      fetchTaskWeekly(week1, week2, week3, week4, projectIds),
+      fetchActivities(workspace_id),
     ]);
 
   // Values
-  const completedTasks = getPromiseSettledValue<ColumnsType | undefined>(
-    tasks,
-  )?.["done"].length;
-  const inProgressTasks = getPromiseSettledValue<ColumnsType | undefined>(
-    tasks,
-  )?.["in-progress"].length;
+  const completedTasks = getPromiseSettledValue<ColumnsType | null>(tasks)?.[
+    "done"
+  ].length;
+  const inProgressTasks = getPromiseSettledValue<ColumnsType | null>(tasks)?.[
+    "in-progress"
+  ].length;
 
   const allTasks = Object.values(
-    getPromiseSettledValue<ColumnsType | undefined>(tasks) || [],
+    getPromiseSettledValue<ColumnsType | null>(tasks) || [],
   ).flat().length;
 
-  const teamCount = getPromiseSettledValue(team)?.data.length;
-  const taskDaily = getPromiseSettledValue<{
-    data: statsData[];
-    success: boolean;
-  } | null>(taskDailyFetch);
+  const teamCount = getPromiseSettledValue(team)?.length;
+  const taskDaily = getPromiseSettledValue(taskDailyFetch);
 
   const rate = completedTasks ? (completedTasks / allTasks) * 100 : 0;
   const stats = [
@@ -130,12 +142,13 @@ export default async function fetchAll({ filterDays }: { filterDays: string }) {
   ];
 
   const allActivity = getPromiseSettledValue(getAllActivities);
-  const taskWeekly = getPromiseSettledValue(taskWeeklyFetch);
+  const taskWeekly = getPromiseSettledValue<weekTask[] | null>(taskWeeklyFetch);
 
   return {
     stats,
     taskDaily,
     taskWeekly,
+    projectErr,
     allActivity,
     isAllActivityField: getAllActivities.status,
     isTasksField: tasks.status,

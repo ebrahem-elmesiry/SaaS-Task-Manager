@@ -6,12 +6,14 @@ import { Status, ColumnsType } from "@/types/kanban";
 import { getQueryClient } from "@/lib/get-query-client";
 import { logTaskActivity } from "../handlers/taskActivityHandlers";
 import { addActivityToCache } from "@/features/TaskDetailPanel/handlers/cacheHandlers";
-import { useMainContext } from "@/context/MainContext";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 
-export const useDeleteTask = () => {
+export const useDeleteTask = ({ workspaceId }: { workspaceId: string }) => {
   const queryClient = getQueryClient();
   const supabase = createClient();
-  const { currentUser } = useMainContext();
+  const currentUser = useCurrentUser();
+  if (!currentUser) throw new Error("User not found");
+
   const { id: user_id, name: user_name, avatar: avatar_url } = currentUser;
   const activityUUID = crypto.randomUUID();
   async function deleteTask(data: {
@@ -22,7 +24,7 @@ export const useDeleteTask = () => {
   }) {
     await logTaskActivity(supabase, {
       activityUUID,
-      workspace_id: "7ad0401e-2da4-4336-a5ad-29e071eeaace",
+      workspace_id: workspaceId,
       user_id,
       action: "TASK_DELETED",
       entity_id: data?.id,

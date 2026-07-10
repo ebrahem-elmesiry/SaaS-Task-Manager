@@ -5,23 +5,27 @@ import { useMutation } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { getQueryClient } from "@/lib/get-query-client";
+import { useParams } from "next/navigation";
 
 export const useAddProject = () => {
   const queryClient = getQueryClient();
   const supabase = createClient();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
 
-  async function addProjects(date: FormState) {
+  async function addProjects(data: FormState) {
     const { data: projectData, error: projectError } = await supabase
       .from("projects")
       .insert({
-        due_date: date.endDate,
-        name: date.name,
-        workspace_id: "7ad0401e-2da4-4336-a5ad-29e071eeaace",
+        due_date: data.endDate,
+        startDate: data.startDate,
+        name: data.name,
+        workspace_id: workspaceId,
+        description: data.description,
       })
       .select()
       .single();
     if (projectError) throw new Error(projectError.message);
-    const team = date.team.map((t) => ({
+    const team = data.team.map((t) => ({
       project_id: projectData.id,
       user_id: t.id,
     }));

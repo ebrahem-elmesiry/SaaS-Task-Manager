@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { messages } from "@/messages";
 import { createClient } from "@/lib/supabase/client";
 import { getQueryClient } from "@/lib/get-query-client";
-import { useMainContext } from "@/context/MainContext";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 import { Comment, Task } from "@/types/kanban";
 import {
   addComment,
@@ -24,8 +24,10 @@ import { logTaskActivity } from "@/features/kanban/handlers/taskActivityHandlers
 export function useDeleteCommentMutation(
   taskId: string,
   task: Task | undefined,
+  workspaceId: string,
 ) {
-  const { currentUser } = useMainContext();
+  const currentUser = useCurrentUser();
+  if (!currentUser?.id) throw new Error("User not found");
   const { id: user_id, name: user_name, avatar: avatar_url } = currentUser;
 
   const queryClient = getQueryClient();
@@ -39,7 +41,7 @@ export function useDeleteCommentMutation(
         await deleteComment(supabase, { id: params.commentId });
         await logTaskActivity(supabase, {
           activityUUID,
-          workspace_id: "7ad0401e-2da4-4336-a5ad-29e071eeaace",
+          workspace_id: workspaceId,
           user_id,
           entity_id: params.commentId,
           taskId,
@@ -163,8 +165,13 @@ export function useEditCommentMutation(taskId: string) {
   });
 }
 
-export function useAddCommentMutation(taskId: string, task: Task | undefined) {
-  const { currentUser } = useMainContext();
+export function useAddCommentMutation(
+  taskId: string,
+  task: Task | undefined,
+  workspaceId: string,
+) {
+  const currentUser = useCurrentUser();
+  if (!currentUser?.id) throw new Error("User not found");
   const { id: user_id, name: user_name, avatar: avatar_url } = currentUser;
 
   const queryClient = getQueryClient();
@@ -204,7 +211,7 @@ export function useAddCommentMutation(taskId: string, task: Task | undefined) {
         });
         await logTaskActivity(supabase, {
           activityUUID,
-          workspace_id: "7ad0401e-2da4-4336-a5ad-29e071eeaace",
+          workspace_id: workspaceId,
           user_id,
           entity_id: params.id,
           taskId,

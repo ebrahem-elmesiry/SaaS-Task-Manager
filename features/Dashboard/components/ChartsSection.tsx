@@ -12,14 +12,15 @@ import {
   Line,
 } from "recharts";
 import { CustomSelect } from "../../shared/components/controls/CustomSelect";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { DashboardError } from "./DashboardError";
+import { SectionError } from "./SectionError";
 
 type ChartsSectionProps = {
-  statsData: { name: string; tasks: number }[] | undefined;
-  taskWeekly: { name: string; completed: number }[] | undefined;
+  statsData: { name: string; tasks: number }[] | null;
+  taskWeekly: { name: string; completed: number }[] | null;
   isTaskDailyField: "rejected" | "fulfilled";
+  isTaskWeeklyField: "rejected" | "fulfilled";
 };
 
 const timeOptions = [
@@ -32,23 +33,30 @@ export function ChartsSection({
   statsData,
   taskWeekly,
   isTaskDailyField,
+  isTaskWeeklyField,
 }: ChartsSectionProps) {
   const searchParams = useSearchParams();
+  const { workspaceId } = useParams();
   const params = new URLSearchParams(searchParams.toString());
   const range = searchParams.get("range") || undefined;
   const { replace } = useRouter();
 
   useEffect(() => {
     if (!range) {
-      replace("/?range=7d", { scroll: false });
+      replace(`/dashboard/${workspaceId}/?range=7d`, {
+        scroll: false,
+      });
     }
-  }, [range, replace]);
+  }, [range, replace, workspaceId]);
 
   function handleAddDate(val: string) {
     params.set("range", val);
-    replace(`?${params.toString()}`, { scroll: false });
+    replace(`?${params.toString()}`, {
+      scroll: false,
+    });
   }
-  if (isTaskDailyField === "rejected") return <DashboardError />;
+  const isTaskWeeklyEmpty = taskWeekly?.every((t) => t.completed === 0);
+  const isTaskDailyEmpty = statsData?.every((t) => t.tasks === 0);
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Bar Chart */}
@@ -66,18 +74,26 @@ export function ChartsSection({
           />
         </div>
 
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={statsData}>
-            <CartesianGrid
-              strokeDasharray="3 3"
-              className="dark:stroke-slate-700"
-            />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="tasks" fill="#6366f1" radius={[8, 8, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
+        {statsData === null || isTaskDailyField === "rejected" ? (
+          <SectionError />
+        ) : isTaskDailyEmpty ? (
+          <div className="h-62.5 flex items-center justify-center text-sm text-slate-500">
+            No completed tasks in this period
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={statsData}>
+              <CartesianGrid
+                strokeDasharray="3 3"
+                className="dark:stroke-slate-700"
+              />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="tasks" fill="#6366f1" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
       {/* Line Chart */}
@@ -86,23 +102,31 @@ export function ChartsSection({
           Completion Trend
         </h2>
 
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={taskWeekly}>
-            <CartesianGrid
-              strokeDasharray="3 3"
-              className="dark:stroke-slate-700"
-            />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="completed"
-              stroke="#10b981"
-              strokeWidth={2}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        {taskWeekly === null || isTaskWeeklyField === "rejected" ? (
+          <SectionError />
+        ) : isTaskWeeklyEmpty ? (
+          <div className="h-62.5 flex items-center justify-center text-sm text-slate-500">
+            No completion data available
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={taskWeekly}>
+              <CartesianGrid
+                strokeDasharray="3 3"
+                className="dark:stroke-slate-700"
+              />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="completed"
+                stroke="#10b981"
+                strokeWidth={2}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </div>
   );

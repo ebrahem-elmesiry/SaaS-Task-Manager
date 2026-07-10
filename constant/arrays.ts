@@ -6,12 +6,12 @@ export const teamMembers = [
   {
     id: "bc02c0f6-4224-4ac2-98f7-d211cfac6cdd",
     full_name: "ahmed mohamed",
-    avatar_url: "",
+    avatar_url: undefined,
   },
   {
     id: "60187dee-182d-454e-a5b9-d02f6562b436",
     full_name: "mohamed ahmed",
-    avatar_url: "",
+    avatar_url: undefined,
   },
 ];
 

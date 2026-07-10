@@ -42,7 +42,7 @@ export function useTaskSheet(projectId: string) {
     refetch,
   } = useQuery({
     queryKey: ["tasks", projectId],
-    queryFn: () => fetchTasks(projectId),
+    queryFn: () => fetchTasks(undefined, projectId),
   });
 
   async function handleDelete(

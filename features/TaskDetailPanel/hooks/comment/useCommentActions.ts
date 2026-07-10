@@ -61,14 +61,16 @@ export function useCommentActions(taskId: string, status: Status) {
   const [reply, setReply] = useState<ReplyState>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const params = useParams();
-  const { projectId } = params;
+  const { projectId, workspaceId } = useParams<{
+    projectId: string;
+    workspaceId: string;
+  }>();
   const tasks = queryClient.getQueryData<ColumnsType>(["tasks", projectId]);
   const task = tasks?.[status].find((t) => t.id === taskId);
 
-  const deleteMutation = useDeleteCommentMutation(taskId, task);
+  const deleteMutation = useDeleteCommentMutation(taskId, task, workspaceId);
   const editMutation = useEditCommentMutation(taskId);
-  const addMutation = useAddCommentMutation(taskId, task);
+  const addMutation = useAddCommentMutation(taskId, task, workspaceId);
 
   function handleDelete(commentId: string, replyId?: string) {
     setDeleteTarget({ commentId, replyId });

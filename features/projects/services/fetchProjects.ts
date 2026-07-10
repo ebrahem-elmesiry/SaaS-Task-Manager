@@ -4,10 +4,13 @@ import { createClient } from "@/lib/supabase/server";
 import { getProjectStatus } from "@/lib/utils";
 import { Assignee, Task } from "@/types/kanban";
 
-export default async function fetchProjects() {
+export default async function fetchProjects(workspaceId: string) {
   const supabase = await createClient();
 
-  const { data, error } = await supabase.from("projects").select(`
+  const { data, error } = await supabase
+    .from("projects")
+    .select(
+      `
         *,
         project_assignments(
             profiles(
@@ -15,7 +18,9 @@ export default async function fetchProjects() {
             )
           ),
         tasks(*)
-      `);
+      `,
+    )
+    .eq("workspace_id", workspaceId);
 
   if (error) {
     console.log("project fetch error => ", error);
@@ -35,11 +40,13 @@ export default async function fetchProjects() {
       description: d.description,
       progress,
       status: getProjectStatus(progress, d.due_date),
-      startDate: d.created_at,
+      startDate: d.startDate,
       endDate: d.due_date,
       team:
-        d.project_assignments.map((t: { profiles: Assignee }) => t.profiles) ??
-        [],
+        d.project_assignments.map((t: { profiles: Assignee }) => ({
+          ...t.profiles,
+          avatar_url: t.profiles.avatar_url ?? undefined,
+        })) ?? [],
       tasks: {
         total: allTasks,
         completed: completedTasks,

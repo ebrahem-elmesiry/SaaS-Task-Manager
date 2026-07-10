@@ -4,14 +4,14 @@ import { NotificationState } from "@/types/profile";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
-import { useMainContext } from "@/context/MainContext";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 
 export default function useNotifications({
   NotificationData,
 }: {
   NotificationData: NotificationState;
 }) {
-  const { currentUser } = useMainContext();
+  const currentUser = useCurrentUser();
   const [notifications, setNotifications] =
     useState<NotificationState>(NotificationData);
 
@@ -20,7 +20,7 @@ export default function useNotifications({
     const { data, error } = await supabase
       .from("account")
       .update(notifications)
-      .eq("id", currentUser.id)
+      .eq("id", currentUser?.id)
       .select()
       .single();
 

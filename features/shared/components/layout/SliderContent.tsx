@@ -2,48 +2,77 @@
 
 import { LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { LayoutDashboard, FolderKanban, Users } from "lucide-react";
 import { useLogout } from "@/features/Auth/hooks/useLogout";
-import { useMainContext } from "@/context/MainContext";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
+import Avatar from "../Avatar";
 
 export default function SliderContent() {
-  const { currentUser } = useMainContext();
+  const currentUser = useCurrentUser();
+
+  const { workspaceId } = useParams();
+  const { logout } = useLogout();
 
   const navigation = [
     {
+      id: "workspaces",
+      link: "/workspaces",
+      name: "Workspace",
+      icon: LayoutDashboard,
+      enabled: true,
+    },
+    {
       id: "dashboard",
-      link: "/",
+      link: "/dashboard",
       name: "Dashboard",
       icon: LayoutDashboard,
+      enabled: !!workspaceId,
     },
     {
       id: "projects",
       link: "/projects",
       name: "Projects",
       icon: FolderKanban,
+      enabled: !!workspaceId,
     },
-    { id: "team", link: "/team", name: "Team", icon: Users, adminOnly: true },
+    {
+      id: "team",
+      link: "/team",
+      name: "Team",
+      icon: Users,
+      enabled: !!workspaceId,
+    },
     {
       id: "profile",
-      link: `/profile/${currentUser.id}`,
+      link: `/profile`,
       name: "Profile",
       icon: User,
+      enabled: true,
     },
   ];
 
-  const filteredNavigation = navigation.filter((item) => {
-    if (
-      item.adminOnly &&
-      !(currentUser?.role === "admin" || currentUser?.role === "manager")
-    ) {
-      return false;
-    }
-    return true;
-  });
-
   const pathName = usePathname();
-  const { logout } = useLogout();
+  const getPathName = pathName
+    .split("/")
+    .filter((f) => f !== workspaceId && f !== currentUser?.id);
+  if (!currentUser) return null;
+  const [first_name, last_name] = currentUser?.name.split(" ");
+  const full_name =
+    first_name[0].toUpperCase() +
+    first_name.slice(1) +
+    " " +
+    last_name[0].toUpperCase() +
+    last_name.slice(1);
+
+  function handleLink(link: string, id: string) {
+    if (id === "profile") return `/profile/${currentUser?.id}`;
+    if (id === "dashboard") return `/dashboard/${workspaceId}`;
+    if (id === "workspaces") return `/workspaces`;
+    return `/dashboard/${workspaceId}/${link}`;
+  }
+
+  const urlLink = getPathName[getPathName.length - 1];
 
   return (
     <>
@@ -57,19 +86,31 @@ export default function SliderContent() {
       </div>
 
       <nav className="flex-1 p-4 space-y-1">
-        {filteredNavigation.map((item) => {
+        {navigation.map((item) => {
           const Icon = item.icon;
+
+          const link = handleLink(item.link, item.id);
 
           return (
             <Link
-              href={item.link}
+              href={link}
+              onClick={(e) => {
+                if (!item.enabled) {
+                  e.preventDefault();
+                }
+              }}
               key={item.id}
               className={`
                 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors
                 ${
-                  pathName === item.link
+                  urlLink === item.id
                     ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
                     : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                }
+                ${
+                  item.enabled && !!item.enabled
+                    ? ""
+                    : "pointer-events-none opacity-50 cursor-not-allowed"
                 }
               `}
             >
@@ -91,15 +132,16 @@ export default function SliderContent() {
 
         <div className="pt-3">
           <div className="flex items-center gap-3 px-3 py-2 mb-2">
-            <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-xs text-white">
-              JD
-            </div>
+            <Avatar
+              avatar_url={currentUser?.avatar}
+              user_name={currentUser?.name}
+            />
             <div className="flex-1 min-w-0">
               <div className="text-sm font-medium text-slate-900 dark:text-white truncate">
-                John Doe
+                {full_name}
               </div>
               <div className="text-xs text-slate-500 dark:text-slate-400 capitalize">
-                Admin
+                {currentUser?.role}
               </div>
             </div>
           </div>

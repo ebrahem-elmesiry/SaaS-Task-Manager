@@ -11,7 +11,7 @@ export type Status = "todo" | "in-progress" | "review" | "done";
 export type Assignee = {
   id: string;
   full_name: string;
-  avatar_url: string | null;
+  avatar_url: string | undefined;
 };
 
 // =====================

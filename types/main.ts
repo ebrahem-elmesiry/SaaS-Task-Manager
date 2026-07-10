@@ -10,6 +10,6 @@ export type currentUserType = {
   id: string;
   name: string;
   role: Role;
-  avatar?: string;
+  avatar: string | undefined;
   job_title?: string;
 };

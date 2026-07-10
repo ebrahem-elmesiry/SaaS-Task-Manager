@@ -5,7 +5,7 @@ import { messages } from "@/messages";
 import { TaskForm } from "@/validation/task.schema";
 import { ColumnsType, Status } from "@/types/kanban";
 import { getQueryClient } from "@/lib/get-query-client";
-import { useMainContext } from "@/context/MainContext";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 import {
   insertTask,
   insertSubtasks,
@@ -15,15 +15,16 @@ import { addTaskToCache } from "../handlers/taskCacheHandlers";
 import { logTaskActivity } from "../handlers/taskActivityHandlers";
 import { addActivityToCache } from "../../TaskDetailPanel/handlers/cacheHandlers";
 
-export const useAddTask = () => {
-  const { currentUser } = useMainContext();
-  const { id: user_id, name: user_name, avatar: avatar_url } = currentUser;
+export const useAddTask = ({ workspaceId }: { workspaceId: string }) => {
+  const currentUser = useCurrentUser();
 
   const queryClient = getQueryClient();
   const supabase = createClient();
 
   const activityUUID = crypto.randomUUID();
   const taskId = crypto.randomUUID();
+
+  if (!currentUser) throw new Error("User not found");
 
   const { isPending, mutate } = useMutation({
     mutationFn: async (data: TaskForm) => {
@@ -32,8 +33,8 @@ export const useAddTask = () => {
       await insertAssignees(supabase, taskId, data.assignees);
       await logTaskActivity(supabase, {
         activityUUID,
-        workspace_id: "7ad0401e-2da4-4336-a5ad-29e071eeaace",
-        user_id,
+        workspace_id: workspaceId,
+        user_id: currentUser.id,
         entity_id: taskId,
         taskId: taskId,
         action: "TASK_CREATED",
@@ -49,12 +50,13 @@ export const useAddTask = () => {
         "tasks",
         newData.project_id,
       ]);
+
       addTaskToCache(queryClient, newData.project_id, taskId, newData);
       addActivityToCache(queryClient, taskId, {
         activityUUID,
-        userId: user_id,
-        userName: user_name,
-        avatarUrl: avatar_url,
+        userId: currentUser.id,
+        userName: currentUser.name,
+        avatarUrl: currentUser.avatar,
         action: "TASK_CREATED",
         entityId: taskId,
         task: {

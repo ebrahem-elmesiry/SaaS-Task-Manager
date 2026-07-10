@@ -15,6 +15,7 @@ import { SubmitEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import fetchProjects from "@/features/projects/services/fetchProjects";
 import { formatDate } from "@/lib/utils";
+import { useParams } from "next/navigation";
 
 const statusOptions = [
   { label: "TODO", value: "todo" },
@@ -39,6 +40,7 @@ export function TaskForm() {
     isEdit,
     loading,
   } = useTaskContext();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
 
   const submit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,7 +49,7 @@ export function TaskForm() {
 
   const { data } = useQuery({
     queryKey: ["projects"],
-    queryFn: fetchProjects,
+    queryFn: () => fetchProjects(workspaceId),
   });
   const projectSelectOptions =
     data?.map((p) => ({ label: p.name, value: p.id })) ?? [];

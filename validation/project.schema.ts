@@ -3,7 +3,7 @@ import { z } from "zod";
 export const teamMemberSchema = z.object({
   id: z.string(),
   full_name: z.string(),
-  avatar_url: z.string().nullable(),
+  avatar_url: z.union([z.string(), z.undefined()]),
 });
 
 export const projectSchema = z

@@ -3,7 +3,7 @@ import TaskActionsMenu from "../shared/components/menus/TaskMenu";
 import { SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Task } from "@/types/kanban";
 import EmptyTaskDetails from "./EmptyTaskDetails";
-import { useMainContext } from "@/context/MainContext";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 
 type TaskHeaderProps = {
   onClose: () => void;
@@ -11,7 +11,7 @@ type TaskHeaderProps = {
 };
 
 export function TaskHeader({ onClose, task }: TaskHeaderProps) {
-  const { currentUser } = useMainContext();
+  const currentUser = useCurrentUser();
 
   if (!task) return <EmptyTaskDetails />;
 
@@ -28,7 +28,7 @@ export function TaskHeader({ onClose, task }: TaskHeaderProps) {
           Task Details
         </SheetTitle>
       </div>
-      {currentUser.role !== "member" && (
+      {currentUser?.role !== "member" && (
         <div className="flex items-center gap-2">
           <TaskActionsMenu taskPreview={task} />
         </div>

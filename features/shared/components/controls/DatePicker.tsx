@@ -25,7 +25,6 @@ export default function DatePicker({
   onChange,
   placeholder = "Pick a date",
 }: DatePickerProps) {
-  console.log("value", value);
   return (
     <div>
       <Label className="text-sm font-medium mb-2 block">

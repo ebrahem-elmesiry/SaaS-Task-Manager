@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import ActionsMenu from "../../shared/components/ActionsDropMenu";
 import { Comment } from "@/types/kanban";
 import { formatTimeAgo } from "@/lib/utils";
-import { useMainContext } from "@/context/MainContext";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 import Avatar from "@/features/shared/components/Avatar";
 
 type CommentItemProps = {
@@ -52,11 +52,11 @@ export function CommentItem({
   isDisabled,
   editingId,
 }: CommentItemProps) {
-  const { currentUser } = useMainContext();
+  const currentUser = useCurrentUser();
   const plainText = text.replace(/<[^>]*>/g, "");
   const isLong = plainText.length > MAX_LENGTH;
   const isExpanded = expanded[id];
-  const me = currentUser.id;
+  const me = currentUser?.id;
 
   const safeCommentId = commentId ?? id;
 

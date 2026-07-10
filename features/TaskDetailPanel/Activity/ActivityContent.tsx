@@ -1,6 +1,7 @@
 import Avatar from "@/features/shared/components/Avatar";
 import Link from "next/link";
 import ActivityLine from "./ActivityLine";
+import ActivityEmpty from "./ActivityEmpty";
 import { ActivityType } from "@/types/kanban";
 import { Loader2 } from "lucide-react";
 
@@ -10,7 +11,7 @@ interface Props {
 }
 
 export default function ActivityContent({ activity, isRefetching }: Props) {
-  if (!activity || activity?.length === 0) return "there is no activity";
+  if (!activity || activity?.length === 0) return <ActivityEmpty />;
   if (isRefetching) return <Loader2 className="w-4 h-4 animate-spin" />;
   return (
     <>

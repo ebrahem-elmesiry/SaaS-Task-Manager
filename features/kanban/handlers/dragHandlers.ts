@@ -76,6 +76,7 @@ export async function handleDragEndFn({
   setTasks,
   setActiveCard,
   currentUser,
+  workspaceId,
 }: {
   tasks: TasksState;
   event: DragEndEvent;
@@ -83,8 +84,10 @@ export async function handleDragEndFn({
   initialTasks: RefObject<TasksState | null>;
   setTasks: Dispatch<SetStateAction<TasksState>>;
   setActiveCard: (card?: ActiveCard) => void;
-  currentUser: currentUserType;
+  currentUser: currentUserType | null;
+  workspaceId: string;
 }) {
+  if (!currentUser) throw new Error("User not found");
   // rollback if canceled
   if (event.canceled && initialTasks.current) {
     setTasks(initialTasks.current);
@@ -130,7 +133,7 @@ export async function handleDragEndFn({
     const { id: user_id, name: user_name, avatar: avatar_url } = currentUser;
     await logTaskActivity(supabase, {
       activityUUID,
-      workspace_id: "7ad0401e-2da4-4336-a5ad-29e071eeaace",
+      workspace_id: workspaceId,
       user_id,
       entity_id: task.id,
       taskId: task.id,

@@ -1,7 +1,7 @@
 import { formatActivity } from "@/features/TaskDetailPanel/handlers/formatActivity";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function fetchActivities() {
+export default async function fetchActivities(workspaceId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("activity_log")
@@ -12,11 +12,12 @@ export default async function fetchActivities() {
     `,
     )
     .limit(5)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .eq("workspace_id", workspaceId);
 
   if (error) {
-    console.log("error comments", error);
-    throw new Error(error.message);
+    console.error("field to fetch comments", error);
+    return null;
   }
 
   const formatData = formatActivity(data);

@@ -5,12 +5,16 @@ import { PageHeader } from "@/features/shared/components/PageHeader";
 import { getQueryClient } from "@/lib/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
-export default async function Page() {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ workspaceId: string }>;
+}) {
   const queryClient = getQueryClient();
-
+  const { workspaceId } = await params;
   await queryClient.prefetchQuery({
     queryKey: ["projects"],
-    queryFn: fetchProjects,
+    queryFn: () => fetchProjects(workspaceId),
   });
 
   return (
@@ -23,7 +27,7 @@ export default async function Page() {
             action="project"
           />
 
-          <ProjectCard />
+          <ProjectCard workspaceId={workspaceId} />
         </div>
       </ProjectProvider>
     </HydrationBoundary>

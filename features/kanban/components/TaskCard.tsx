@@ -3,7 +3,7 @@ import { useSortable } from "@dnd-kit/react/sortable";
 import { Status, Task, TaskPreviewType } from "@/types/kanban";
 import { CheckCircle2, Clock, MessageSquare, Paperclip } from "lucide-react";
 import TaskActionsMenu from "@/features/shared/components/menus/TaskMenu";
-import { useMainContext } from "@/context/MainContext";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 import Avatar from "@/features/shared/components/Avatar";
 
 interface TaskCardProps {
@@ -23,7 +23,7 @@ export default function TaskCard({
   onTaskClick,
   isOverlay = false,
 }: TaskCardProps) {
-  const { currentUser } = useMainContext();
+  const currentUser = useCurrentUser();
   const taskPreview: TaskPreviewType = {
     id: task.id,
     title: task.title,
@@ -61,7 +61,7 @@ export default function TaskCard({
         >
           {task.priority[0].toLocaleUpperCase() + task.priority.slice(1)}
         </span>
-        {currentUser.role !== "member" && (
+        {currentUser?.role !== "member" && (
           <TaskActionsMenu taskPreview={taskPreview} />
         )}
       </div>

@@ -4,11 +4,14 @@ import { DashboardSkeleton } from "@/features/shared/components/loading/Dashboar
 import Dashboard from "@/features/Dashboard/components/Dashboard";
 
 export default async function Page({
+  params,
   searchParams,
 }: {
+  params: Promise<{ workspaceId: string }>;
   searchParams: Promise<{ range: string }>;
 }) {
   const { range } = await searchParams;
+  const { workspaceId } = await params;
 
   return (
     <>
@@ -19,7 +22,7 @@ export default async function Page({
           description="Welcome back! Here's what's happening today."
         />
         <Suspense fallback={<DashboardSkeleton />}>
-          <Dashboard range={range} />
+          <Dashboard range={range} workspace_id={workspaceId} />
         </Suspense>
       </div>
     </>

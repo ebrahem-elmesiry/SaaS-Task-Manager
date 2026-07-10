@@ -70,6 +70,7 @@ export const useUpdateProject = () => {
         name: data.name,
         description: data.description,
         due_date: data.endDate,
+        startDate: data.startDate,
       })
       .eq("id", data.id);
     if (error) throw new Error(error.message);

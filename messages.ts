@@ -79,6 +79,12 @@ export const messages = {
       error: "Failed to update password",
     },
   },
+  workspace: {
+    create: {
+      success: "Workspace created successfully",
+      error: "Failed to create workspace",
+    },
+  },
   team: {
     create: {
       success: "Member added successfully",

@@ -4,13 +4,13 @@ import {
 } from "@/validation/profile.schema";
 import React, { useState } from "react";
 import { messages } from "@/messages";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
-import { useMainContext } from "@/context/MainContext";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 
 export default function useChangeInput(initialValue: AccountDetailsType) {
-  const { currentUser } = useMainContext();
+  const currentUser = useCurrentUser();
 
   const [accountDetail, setAccountDetail] = useState<AccountDetailsType>({
     fullName: initialValue.fullName,
@@ -58,7 +58,7 @@ export default function useChangeInput(initialValue: AccountDetailsType) {
     const { data, error } = await supabase
       .from("account")
       .update(accountDetail)
-      .eq("id", currentUser.id)
+      .eq("id", currentUser?.id)
       .select()
       .single();
 

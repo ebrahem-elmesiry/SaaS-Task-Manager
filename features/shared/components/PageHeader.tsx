@@ -2,18 +2,19 @@
 
 import { CreateProjectModal } from "./modals/ProjectModal/CreateProjectModal";
 import CreateTaskModal from "./modals/TaskModal/CreateTaskModal";
-import { useMainContext } from "@/context/MainContext";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 import { CreateMemberModal } from "./modals/MemberModal/CreateMemberModal";
+import { CreateWorkspaceModal } from "./modals/WorkspaceModal/CreateWorkspaceModal";
 
 type PageHeaderProps = {
   title: string;
   description?: string;
-  action?: "project" | "task" | "team";
+  action?: "project" | "task" | "team" | "workspace";
 };
 
 export function PageHeader({ title, description, action }: PageHeaderProps) {
-  const { currentUser } = useMainContext();
-  const role = currentUser.role;
+  const currentUser = useCurrentUser();
+  const role = currentUser?.role;
   return (
     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
       <div>
@@ -34,6 +35,8 @@ export function PageHeader({ title, description, action }: PageHeaderProps) {
           <CreateTaskModal />
         ) : action === "team" ? (
           <CreateMemberModal />
+        ) : action === "workspace" ? (
+          <CreateWorkspaceModal />
         ) : null)}
     </div>
   );

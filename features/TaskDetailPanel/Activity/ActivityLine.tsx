@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -7,6 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { ActivityType } from "@/types/kanban";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 interface Props {
   action: string;
@@ -14,11 +17,12 @@ interface Props {
 }
 
 export default function ActivityLine({ activity, action }: Props) {
+  const { workspaceId } = useParams();
   let done;
   let target;
   let target_id =
     activity.task &&
-    `/kanban/${activity.task.project_id}?taskId=${activity.task.id}&status=${activity.task.status ? activity.task.status : activity.metadata?.currentStatus}`;
+    `/dashboard/${workspaceId}/projects/kanban/${activity.task.project_id}?taskId=${activity.task.id}&status=${activity.task.status ? activity.task.status : activity.metadata?.currentStatus}`;
 
   const ifTask = activity.task
     ? activity.task.title

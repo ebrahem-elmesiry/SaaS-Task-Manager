@@ -7,7 +7,7 @@ import { useProjectContext } from "@/context/ProjectContext";
 import { getStatusColor } from "@/lib/utils";
 import ProjectActionsMenu from "../../shared/components/menus/ProjectMenu";
 import AlertDeleteDialog from "../../shared/components/Alerts/AlertDeleteDialog";
-import { useMainContext } from "@/context/MainContext";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 import { Assignee } from "@/types/kanban";
 import { ProjectGridSkeleton } from "@/features/shared/components/loading/ProjectGridSkeleton";
 import fetchProjects from "../services/fetchProjects";
@@ -15,24 +15,24 @@ import { useQuery } from "@tanstack/react-query";
 import EmptyProjects from "./EmptyProjects";
 import ErrorProjects from "./ErrorProjects";
 import Avatar from "@/features/shared/components/Avatar";
+import { usePathname } from "next/navigation";
 
-export default function ProjectCard() {
+export default function ProjectCard({ workspaceId }: { workspaceId: string }) {
   const { deleteProject, Loading, handleEditInit } = useProjectContext();
-  const { currentUser } = useMainContext();
+  const currentUser = useCurrentUser();
 
   const { data, error, isPending, refetch } = useQuery({
     queryKey: ["projects"],
-    queryFn: fetchProjects,
+    queryFn: () => fetchProjects(workspaceId),
   });
 
+  const pathName = usePathname();
   const [projectId, setProjectId] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   if (error) return <ErrorProjects refetch={refetch} />;
-
   if (isPending) return <ProjectGridSkeleton />;
   if (!data || data?.length === 0) return <EmptyProjects />;
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
       {data?.map((project) => (
@@ -42,7 +42,10 @@ export default function ProjectCard() {
         >
           {/* Name, Description */}
           <div className="flex items-start justify-between mb-4">
-            <Link className="w-full min-w-0" href={`/kanban/${project.id}`}>
+            <Link
+              className="w-full min-w-0"
+              href={`${pathName}/kanban/${project.id}`}
+            >
               <div>
                 <h3 className="truncate text-lg font-semibold text-slate-900 dark:text-white mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                   {project.name}
@@ -54,7 +57,7 @@ export default function ProjectCard() {
             </Link>
 
             {/* Project Menu */}
-            {currentUser.role !== "member" && (
+            {currentUser?.role !== "member" && (
               <ProjectActionsMenu
                 setIsDeleteDialogOpen={setIsDeleteDialogOpen}
                 editData={project}

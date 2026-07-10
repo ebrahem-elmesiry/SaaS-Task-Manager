@@ -2,24 +2,26 @@
 
 import { ThemeProvider } from "../../features/shared/hooks/Theme/ThemeProvider";
 import { Toaster } from "sonner";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { MainProvider } from "@/context/MainContext";
-import { currentUserType } from "@/types/main";
+import {
+  QueryClientProvider,
+  HydrationBoundary,
+  type DehydratedState,
+} from "@tanstack/react-query";
 import { Sidebar } from "@/features/shared/components/layout/Sidebar";
 import { Header } from "@/features/shared/components/layout/Navbar";
 import { getQueryClient } from "@/lib/get-query-client";
 
 export default function Providers({
   children,
-  currentUser,
+  dehydratedState,
 }: {
   children: React.ReactNode;
-  currentUser: currentUserType;
+  dehydratedState: DehydratedState;
 }) {
   const queryClient = getQueryClient();
   return (
-    <MainProvider currentUser={currentUser}>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <HydrationBoundary state={dehydratedState}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -35,7 +37,7 @@ export default function Providers({
             </main>
           </div>
         </ThemeProvider>
-      </QueryClientProvider>
-    </MainProvider>
+      </HydrationBoundary>
+    </QueryClientProvider>
   );
 }

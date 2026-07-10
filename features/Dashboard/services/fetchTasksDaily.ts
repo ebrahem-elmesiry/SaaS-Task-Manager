@@ -4,6 +4,7 @@ import { statsData } from "@/types/dashbaord";
 export default async function fetchTasksDaily(
   startOfWeek: string,
   endOfWeek: string,
+  projectIds: string[],
 ) {
   const supabase = await createClient();
 
@@ -11,15 +12,13 @@ export default async function fetchTasksDaily(
     .from("tasks")
     .select("*")
     .eq("status", "done")
+    .in("project_id", projectIds)
     .gte("created_at", startOfWeek)
     .lte("created_at", endOfWeek);
 
   if (error) {
-    console.log("error", error);
-    return {
-      success: false,
-      data: [],
-    };
+    console.error("field to fetch tasksDaily", error);
+    return null;
   }
 
   const statsData: [string, statsData][] = [
@@ -32,7 +31,7 @@ export default async function fetchTasksDaily(
     ["Sun", { name: "Sun", tasks: 0 }],
   ];
   const statsMap = new Map(statsData);
-  for (const s of data) {
+  for (const s of data ?? []) {
     const date = new Date(s.created_at);
     const dayName = date
       .toLocaleDateString("en-US", {
@@ -47,8 +46,5 @@ export default async function fetchTasksDaily(
   }
 
   const lastData = [...statsMap.values()];
-  return {
-    success: true,
-    data: lastData,
-  };
+  return lastData || [];
 }

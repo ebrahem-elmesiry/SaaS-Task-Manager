@@ -18,13 +18,14 @@ import { useTaskSheet } from "../hooks/useTaskSheet";
 import TaskError from "./TaskError";
 import EmptyKanban from "./EmptyKanban";
 import { useTaskContext } from "@/context/TaskContext";
-import { useMainContext } from "@/context/MainContext";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
+import { useParams } from "next/navigation";
 
 export default function Columns({ projectId }: { projectId: string }) {
   const { openModal, loading, isDeleteDialogOpen, setIsDeleteDialogOpen } =
     useTaskContext();
 
-  const { currentUser } = useMainContext();
+  const currentUser = useCurrentUser();
 
   const {
     handleTaskClick,
@@ -43,6 +44,7 @@ export default function Columns({ projectId }: { projectId: string }) {
     setActiveCard,
   } = useTaskSheet(projectId);
 
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   if (error) return <TaskError onRetry={() => refetch()} />;
 
   if (taskPending) return <KanbanBoardSkeleton />;
@@ -52,7 +54,6 @@ export default function Columns({ projectId }: { projectId: string }) {
   if (isDataEmpty) return <EmptyKanban />;
 
   const task = data[status]?.find((col) => col.id === taskId);
-
   return (
     <DragDropProvider
       onDragStart={(event) =>
@@ -78,6 +79,7 @@ export default function Columns({ projectId }: { projectId: string }) {
           setTasks: updateTasksCache,
           setActiveCard,
           currentUser,
+          workspaceId,
         })
       }
     >

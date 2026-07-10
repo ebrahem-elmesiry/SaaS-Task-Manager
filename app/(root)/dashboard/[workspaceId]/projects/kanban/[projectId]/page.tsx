@@ -14,7 +14,7 @@ export default async function Page({
   const queryClient = getQueryClient();
   await queryClient.prefetchQuery({
     queryKey: ["tasks", projectId],
-    queryFn: () => fetchTasks(projectId),
+    queryFn: () => fetchTasks(undefined, projectId),
   });
 
   return (

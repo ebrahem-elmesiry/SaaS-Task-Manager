@@ -36,15 +36,17 @@ export function CreateProjectModal() {
   const teamMembers = [
     {
       id: "60187dee-182d-454e-a5b9-d02f6562b436",
-      full_name: "mohamed ahmed",
-      avatar_url: "MA",
+      full_name: "mohamed ahmed2",
+      avatar_url: undefined,
     },
     {
       id: "bc02c0f6-4224-4ac2-98f7-d211cfac6cdd",
-      full_name: "ahmed mohamed",
-      avatar_url: "AM",
+      full_name: "ahmed mohamed2",
+      avatar_url: undefined,
     },
   ];
+
+  console.log("formData", formData);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

@@ -14,6 +14,7 @@ import { ActivityType } from "@/types/kanban";
 import { useGetMoreActivities } from "@/features/Dashboard/hooks/useGetMoreActivities";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useParams } from "next/navigation";
 
 interface Props {
   activity: ActivityType[];
@@ -21,6 +22,7 @@ interface Props {
 
 export default function ActivityDialogModal({ activity }: Props) {
   const [open, setOpen] = useState(false);
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const {
     activity: moreActivity,
     fetchNextPage,
@@ -28,7 +30,8 @@ export default function ActivityDialogModal({ activity }: Props) {
     hasNextPage,
     isFetchingNextPage,
     isRefetching,
-  } = useGetMoreActivities(activity);
+  } = useGetMoreActivities(activity, workspaceId);
+
   const format = moreActivity.pages.map((p) => p.activities).flat();
 
   return (

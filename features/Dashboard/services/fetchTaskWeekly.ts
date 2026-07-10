@@ -6,6 +6,7 @@ export default async function fetchTaskWeekly(
   week2: { start: string; end: string },
   week3: { start: string; end: string },
   week4: { start: string; end: string },
+  projectIds: string[],
 ) {
   const supabase = await createClient();
 
@@ -13,16 +14,9 @@ export default async function fetchTaskWeekly(
     .from("tasks")
     .select("id, created_at")
     .eq("status", "done")
+    .in("project_id", projectIds)
     .gte("created_at", week1.start)
     .lte("created_at", week4.end);
-
-  if (error) {
-    console.log("error", error);
-    return {
-      success: false,
-      data: [],
-    };
-  }
 
   const progressData: [string, weekTask][] = [
     ["Week 1", { name: "Week 1", completed: 0 }],
@@ -30,6 +24,12 @@ export default async function fetchTaskWeekly(
     ["Week 3", { name: "Week 3", completed: 0 }],
     ["Week 4", { name: "Week 4", completed: 0 }],
   ];
+
+  if (error) {
+    console.error("filed to fetch taskWeekly", error);
+    return null;
+  }
+
   const newMap = new Map(progressData);
   function increase(week: string) {
     const getWeek = newMap.get(week);
@@ -52,8 +52,5 @@ export default async function fetchTaskWeekly(
     }
   }
   const formatDate = [...newMap.values()];
-  return {
-    success: true,
-    data: formatDate,
-  };
+  return formatDate || [];
 }

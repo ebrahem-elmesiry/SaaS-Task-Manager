@@ -33,24 +33,9 @@ export const useProjectForm = (initialState: FormState) => {
     if (!result.success) {
       toast.error(result.error.issues[0].message);
       return false;
-      // return {
-      //   success: false,
-      //   message: result.error.issues[0].message,
-      // };
     }
-    // return {
-    //   success: true,
-    // };
     return true;
   };
-  // const validate = () => {
-  //   const result = projectSchema.safeParse(formData);
-  //   if (!result.success) {
-  //     toast.error(result.error.issues[0].message);
-  //     return false;
-  //   }
-  //   return true;
-  // };
 
   return {
     formData,

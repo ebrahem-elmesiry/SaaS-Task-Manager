@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { formatActivity } from "@/features/TaskDetailPanel/handlers/formatActivity";
 import { ActivityType } from "@/types/kanban";
 
-async function getActivityFromDB(cursor: string | null) {
+async function getActivityFromDB(cursor: string | null, workspaceId: string) {
   const supabase = createClient();
   let query = supabase
     .from("activity_log")
@@ -15,6 +15,7 @@ async function getActivityFromDB(cursor: string | null) {
         profiles(id,full_name,avatar_url)
         `,
     )
+    .eq("workspace_id", workspaceId)
     .order("created_at", { ascending: false })
     .limit(5);
 
@@ -33,7 +34,10 @@ async function getActivityFromDB(cursor: string | null) {
   return { activities, nextCursor: getLastActivity };
 }
 
-export function useGetMoreActivities(initialData: ActivityType[]) {
+export function useGetMoreActivities(
+  initialData: ActivityType[],
+  workspaceId: string,
+) {
   const {
     data: activity,
     isFetchingNextPage,
@@ -46,13 +50,14 @@ export function useGetMoreActivities(initialData: ActivityType[]) {
     nextCursor: string | null;
   }>({
     queryKey: ["activity", "all"],
-    queryFn: ({ pageParam }) => getActivityFromDB(pageParam as string | null),
+    queryFn: ({ pageParam }) =>
+      getActivityFromDB(pageParam as string | null, workspaceId),
     staleTime: 10 * 1000,
     initialData: {
       pages: [
         {
           activities: initialData,
-          nextCursor: initialData[initialData.length - 1].created_at ?? null,
+          nextCursor: initialData[initialData.length - 1]?.created_at ?? null,
         },
       ],
       pageParams: [null],

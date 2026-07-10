@@ -33,7 +33,7 @@ export function useSignup() {
 
     onSuccess: ({ message }) => {
       toast.success(message);
-      router.push("/role");
+      router.push("/workspaces");
     },
 
     onError: (err) => {

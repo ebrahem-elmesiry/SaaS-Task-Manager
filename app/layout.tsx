@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { currentUserType } from "@/types/main";
 import Providers from "./providers/Providers";
 import { createClient } from "@/lib/supabase/server";
+import { getQueryClient } from "@/lib/get-query-client";
+import { dehydrate } from "@tanstack/react-query";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,19 +36,26 @@ export default async function RootLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user?.id)
-    .single();
+  const queryClient = getQueryClient();
 
-  const currentUser: currentUserType = {
-    id: data?.id,
-    name: user?.user_metadata.full_name,
-    avatar: data?.avatar_url,
-    role: data?.role,
-    job_title: data?.job_title,
-  };
+  if (user) {
+    await queryClient.prefetchQuery({
+      queryKey: ["currentUser"],
+      queryFn: async () => {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("full_name, avatar_url, job_title")
+          .eq("id", user.id)
+          .single();
+        return {
+          id: user.id,
+          name: profile?.full_name ?? "",
+          avatar: profile?.avatar_url || undefined,
+          job_title: profile?.job_title ?? undefined,
+        };
+      },
+    });
+  }
 
   return (
     <>
@@ -57,7 +65,9 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} h-full antialiased`}
       >
         <body>
-          <Providers currentUser={currentUser}>{children}</Providers>
+          <Providers dehydratedState={dehydrate(queryClient)}>
+            {children}
+          </Providers>
         </body>
       </html>
     </>

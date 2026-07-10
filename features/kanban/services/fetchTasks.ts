@@ -3,10 +3,14 @@
 import { createClient } from "@/lib/supabase/server";
 import { Assignee, ColumnsType, Status } from "@/types/kanban";
 
-export default async function fetchTasks(projectId?: string) {
+export default async function fetchTasks(
+  projectIds?: string[],
+  projectId?: string,
+) {
   const supabase = await createClient();
 
-  let query = supabase.from("tasks").select(`
+  let query = supabase.from("tasks").select(
+    `
       *,
       subtasks(*),
       task_assignments(
@@ -19,15 +23,17 @@ export default async function fetchTasks(projectId?: string) {
         *,
         mentions(count)
       )
-    `);
+    `,
+  );
 
+  if (projectIds) query = query.in("project_id", projectIds);
   if (projectId) query = query.eq("project_id", projectId);
 
   const { data, error } = await query;
 
   if (error) {
-    console.log("project fetch error => ", error);
-    return;
+    console.error("tasks fetch error => ", error);
+    return null;
   }
 
   const grouped: ColumnsType = {

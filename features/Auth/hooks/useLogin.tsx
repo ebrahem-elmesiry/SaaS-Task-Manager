@@ -32,7 +32,7 @@ export function useLogin() {
 
     onSuccess: ({ message }) => {
       toast.success(message);
-      router.push("/");
+      router.push("/workspaces");
     },
 
     onError: (err: Error) => {

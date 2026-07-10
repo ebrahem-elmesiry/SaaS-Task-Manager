@@ -1,7 +1,7 @@
 import { Activity } from "lucide-react";
 import ActivityDialogModal from "@/features/shared/components/modals/ActivityDialogModal";
 import ActivityContent from "@/features/TaskDetailPanel/Activity/ActivityContent";
-import { DashboardError } from "./DashboardError";
+import { SectionError } from "./SectionError";
 
 import { ActivityType } from "@/types/kanban";
 
@@ -11,7 +11,8 @@ interface Props {
 }
 
 export function RecentActivity({ allActivity, isAllActivityField }: Props) {
-  if (!allActivity || isAllActivityField === "rejected") return <DashboardError />;
+  if (!allActivity || isAllActivityField === "rejected")
+    return <SectionError />;
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
       <div className="flex items-center justify-between mb-6">

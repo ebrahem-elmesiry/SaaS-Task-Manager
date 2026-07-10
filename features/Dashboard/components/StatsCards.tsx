@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { DashboardError } from "./DashboardError";
+import { SectionError } from "./SectionError";
 
 type StatItem = {
   icon: ReactNode;
@@ -18,7 +18,7 @@ export async function StatsCards({
   isTeamField,
 }: StatsCardsProps) {
   if (isTasksField === "rejected" || isTeamField === "rejected")
-    return <DashboardError />;
+    return <SectionError />;
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((item, index) => (

@@ -5,7 +5,7 @@ import { messages } from "@/messages";
 import { TaskForm } from "@/validation/task.schema";
 import { ColumnsType, Status } from "@/types/kanban";
 import { getQueryClient } from "@/lib/get-query-client";
-import { useMainContext } from "@/context/MainContext";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 import {
   updateTaskBase,
   getCurrentAssignees,
@@ -17,13 +17,15 @@ import { updateTaskInCache } from "../handlers/taskCacheHandlers";
 import { logTaskActivity } from "../handlers/taskActivityHandlers";
 import { addActivityToCache } from "@/features/TaskDetailPanel/handlers/cacheHandlers";
 
-export const useUpdateTask = () => {
-  const { currentUser } = useMainContext();
+export const useUpdateTask = ({ workspaceId }: { workspaceId: string }) => {
+  const currentUser = useCurrentUser();
+  if (!currentUser) throw new Error("User not found");
   const { id: user_id, name: user_name, avatar: avatar_url } = currentUser;
 
   const queryClient = getQueryClient();
   const supabase = createClient();
   const activityUUID = crypto.randomUUID();
+
   async function handleUpdateTask(data: TaskForm) {
     await updateTaskBase(supabase, data);
 
@@ -35,7 +37,7 @@ export const useUpdateTask = () => {
 
     await logTaskActivity(supabase, {
       activityUUID,
-      workspace_id: "7ad0401e-2da4-4336-a5ad-29e071eeaace",
+      workspace_id: workspaceId,
       user_id,
       entity_id: data.id,
       taskId: data.id,
