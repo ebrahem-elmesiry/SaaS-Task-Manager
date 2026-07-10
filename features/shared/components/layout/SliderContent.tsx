@@ -10,7 +10,6 @@ import Avatar from "../Avatar";
 
 export default function SliderContent() {
   const currentUser = useCurrentUser();
-
   const { workspaceId } = useParams();
   const { logout } = useLogout();
 
@@ -56,8 +55,11 @@ export default function SliderContent() {
   const getPathName = pathName
     .split("/")
     .filter((f) => f !== workspaceId && f !== currentUser?.id);
-  if (!currentUser) return null;
-  const [first_name, last_name] = currentUser?.name.split(" ");
+
+  const name = currentUser?.name.split(" ");
+  const first_name = name?.[0] || "Unknown";
+  const last_name = name?.[1] || "Unknown";
+
   const full_name =
     first_name[0].toUpperCase() +
     first_name.slice(1) +
@@ -130,30 +132,33 @@ export default function SliderContent() {
           <span className="font-medium">Settings</span>
         </Link>
 
-        <div className="pt-3">
-          <div className="flex items-center gap-3 px-3 py-2 mb-2">
-            <Avatar
-              avatar_url={currentUser?.avatar}
-              user_name={currentUser?.name}
-            />
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium text-slate-900 dark:text-white truncate">
-                {full_name}
-              </div>
-              <div className="text-xs text-slate-500 dark:text-slate-400 capitalize">
-                {currentUser?.role}
+        {currentUser && (
+          <div className="pt-3">
+            <div className="flex items-center gap-3 px-3 py-2 mb-2">
+              <Avatar
+                avatar_url={currentUser?.avatar}
+                user_name={currentUser?.name}
+              />
+
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium text-slate-900 dark:text-white truncate">
+                  {full_name}
+                </div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 capitalize">
+                  {currentUser?.role}
+                </div>
               </div>
             </div>
-          </div>
 
-          <button
-            onClick={() => logout()}
-            className="w-full flex items-center gap-3 px-3 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-          >
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Sign Out</span>
-          </button>
-        </div>
+            <button
+              onClick={() => logout()}
+              className="w-full flex items-center gap-3 px-3 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="font-medium">Sign Out</span>
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

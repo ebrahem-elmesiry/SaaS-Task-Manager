@@ -25,7 +25,7 @@ export default function WorkspaceCard() {
         <Link
           href={`/dashboard/${workspace.id}`}
           key={workspace.id}
-          className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-all cursor-pointer group"
+          className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-all cursor-pointer group overflow-hidden min-w-0"
         >
           <div className="flex items-start justify-between mb-4">
             <div className="w-full min-w-0">
@@ -36,35 +36,35 @@ export default function WorkspaceCard() {
           </div>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+              <div className="text-center p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg overflow-hidden min-w-0">
                 <FolderKanban className="w-5 h-5 text-indigo-500 mx-auto mb-1" />
                 <p className="text-lg font-semibold text-slate-900 dark:text-white">
                   {workspace.projectsCount}
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Projects
-                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                    Projects
+                  </p>
               </div>
 
-              <div className="text-center p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+              <div className="text-center p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg overflow-hidden min-w-0">
                 <ListTodo className="w-5 h-5 text-indigo-500 mx-auto mb-1" />
                 <p className="text-lg font-semibold text-slate-900 dark:text-white">
                   {workspace.tasksCount}
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Tasks
-                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                    Tasks
+                  </p>
               </div>
 
-              <div className="text-center p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+              <div className="text-center p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg overflow-hidden min-w-0">
                 <Users className="w-5 h-5 text-indigo-500 mx-auto mb-1" />
                 <p className="text-lg font-semibold text-slate-900 dark:text-white">
                   {workspace.members.length}
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Members
-                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                    Members
+                  </p>
               </div>
             </div>
 
