@@ -1,6 +1,5 @@
 import { getQueryClient } from "@/lib/get-query-client";
 import { createClient } from "@/lib/supabase/client";
-import { notifications } from "@/types/notification";
 import { useEffect } from "react";
 
 export function NotificationsRealtime({
@@ -22,19 +21,16 @@ export function NotificationsRealtime({
           table: "notifications",
           filter: `receiver_id=eq.${userId}`,
         },
-        (payload) => {
-          queryClient.setQueryData(
-            ["notifications"],
-            (old: notifications[]) => {
-              if (!old) return [payload.new];
-
-              return [payload.new, ...old];
-            },
-          );
+        async () => {
+          await queryClient.cancelQueries({
+            queryKey: ["notification", userId],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["notification", userId],
+          });
         },
       )
       .subscribe();
-
     return () => {
       supabase.removeChannel(channel);
     };

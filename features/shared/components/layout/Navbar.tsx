@@ -6,6 +6,7 @@ import { SearchComponent } from "./componentsNavbar/SearchComponent";
 import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 import { getAvatarName } from "@/lib/utils";
 import Notification from "./componentsNavbar/Notifications";
+import { NotificationsRealtime } from "./componentsNavbar/Notifications/hooks/useNotificationsRealtime";
 
 export function Header() {
   const currentUser = useCurrentUser();
@@ -24,11 +25,9 @@ export function Header() {
         <div className="flex items-center gap-2">
           {/* Toggle Mode */}
           <ModeToggle />
-
           {/* NOTIFICATIONS */}
-
+          <NotificationsRealtime userId={currentUser?.id} />
           <Notification />
-
           {/* USER */}
           {currentUser?.id && (
             <div className="hidden md:flex items-center ml-2 pl-2 border-l">

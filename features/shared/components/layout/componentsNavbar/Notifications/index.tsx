@@ -11,13 +11,10 @@ import NotificationLoading from "./components/NotificationLoading";
 import NotificationError from "./components/NotificationError";
 import NotificationEmpty from "./components/NotificationEmpty";
 import NotificationContent from "./components/NotificationContent";
-import { NotificationsRealtime } from "./hooks/useNotificationsRealtime";
-import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 
 export default function Notification() {
   const { notifications, isPending, error, unreadCount, refetch } =
     useNotifications();
-  const currentUser = useCurrentUser();
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -32,7 +29,6 @@ export default function Notification() {
         align="end"
         className="w-75 sm:w-96 p-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl"
       >
-        <NotificationsRealtime userId={currentUser?.id} />
         {isPending ? (
           <NotificationLoading />
         ) : error ? (
