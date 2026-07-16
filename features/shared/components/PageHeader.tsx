@@ -28,7 +28,7 @@ export function PageHeader({ title, description, action }: PageHeaderProps) {
           </p>
         )}
       </div>
-      {role === "admin" &&
+      {role !== "member" &&
         (action === "project" ? (
           <CreateProjectModal />
         ) : action === "task" ? (

@@ -3,9 +3,9 @@
 import { ModeToggle } from "@/features/shared/hooks/Theme/useTheme";
 import MobileSlideBar from "../Sheets/MobileSidebar";
 import { SearchComponent } from "./componentsNavbar/SearchComponent";
-import NotificationCenter from "./componentsNavbar/Notifications";
 import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 import { getAvatarName } from "@/lib/utils";
+import Notification from "./componentsNavbar/Notifications";
 
 export function Header() {
   const currentUser = useCurrentUser();
@@ -26,7 +26,8 @@ export function Header() {
           <ModeToggle />
 
           {/* NOTIFICATIONS */}
-          <NotificationCenter />
+
+          <Notification />
 
           {/* USER */}
           {currentUser?.id && (

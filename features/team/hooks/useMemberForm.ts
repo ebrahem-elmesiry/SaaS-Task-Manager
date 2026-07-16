@@ -1,43 +1,42 @@
+import { useMemberContext } from "@/context/TeamContext";
+import { useMemberActions } from "./useMemberActions";
+import { useMemberFormFields } from "./useMemberFormFields";
 import { Role } from "@/types/main";
-import { MemberForm } from "@/types/team";
-import { memberFormSchema } from "@/validation/team.schema";
-import { useState } from "react";
 
-export const useMemberForm = (initialState: MemberForm) => {
-  const [formData, setFormData] = useState<MemberForm>(initialState);
+export function useMemberForm() {
+  const { formData, setFormData, isEdit, setIsEdit, isOpen, setIsOpen } =
+    useMemberContext();
 
-  const handleChange = (key: keyof MemberForm, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const { sendInvite, updateMember, addUpdatePending } = useMemberActions();
+  const { handleChange, setRole, validate } = useMemberFormFields(setFormData);
+
+  const reset = () => {
+    setFormData({ id: "", email: "", role: undefined });
+    setIsEdit(false);
+    setIsOpen(false);
   };
 
-  const setRole = (value: Role) => {
-    setFormData((prev) => ({
-      ...prev,
-      role: value,
-    }));
-  };
+  const handleSubmit = async (email: string, role: Role, member_id: string) => {
+    const valid = validate(formData);
+    if (!valid) return;
 
-  const validate = (members: MemberForm) => {
-    const result = memberFormSchema.safeParse(members);
-    if (!result.success) {
-      return {
-        success: false,
-        message: result.error.issues[0].message,
-      };
+    if (isEdit) {
+      await updateMember({ role, member_id });
+    } else {
+      await sendInvite({ email, role });
     }
-    return {
-      success: true,
-    };
+    reset();
   };
 
   return {
     formData,
-    setFormData,
+    isOpen,
+    setIsOpen,
     handleChange,
     setRole,
-    validate,
+    handleSubmit,
+    reset,
+    addUpdatePending,
+    isEdit,
   };
-};
+}

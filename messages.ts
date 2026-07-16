@@ -99,6 +99,22 @@ export const messages = {
       error: "Failed to delete Member",
     },
   },
+  notification: {
+    invitation: {
+      success: "Invitation sent successfully",
+      error: "Failed to send invitation",
+    },
+
+    acceptInvitation: {
+      success: "Invitation accepted successfully",
+      error: "Failed to accept invitation. Please try again.",
+    },
+
+    declineInvitation: {
+      success: "Invitation declined successfully",
+      error: "Failed to decline invitation. Please try again.",
+    },
+  },
   taskMove: {
     success: (column: Status) => `Task moved to ${column}`,
     error: (column?: Status) =>

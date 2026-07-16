@@ -14,10 +14,6 @@ import { MoreVertical } from "lucide-react";
 export default function TeamActionsMenu({ member }: { member: Member }) {
   const { openDeleteDialog, openEditModal } = useMemberContext();
 
-  const handleViewWorkLoad = async () => {
-    console.log("View Work");
-  };
-
   return (
     <DropdownMenu>
       {/* Trigger */}
@@ -35,13 +31,6 @@ export default function TeamActionsMenu({ member }: { member: Member }) {
         >
           Change Role
         </DropdownMenuItem>
-
-        {/* <DropdownMenuItem
-          onClick={handleViewWorkLoad}
-          className="data-[highlighted]:bg-slate-200 dark:hover:bg-slate-700"
-        >
-          View Workload
-        </DropdownMenuItem> */}
 
         <DropdownMenuItem
           onClick={() => openDeleteDialog(member.id)}

@@ -14,8 +14,11 @@ import InputField from "../../controls/InputField";
 import { CustomSelect } from "../../controls/CustomSelect";
 import { Label } from "@/components/ui/label";
 import { ActionButtons } from "../../ActionButtons";
-import { useMemberContext } from "@/context/TeamContext";
+import { useMemberForm } from "@/features/team/hooks/useMemberForm";
 import { Role } from "@/types/main";
+
+import { SubmitEvent } from "react";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 import { toast } from "sonner";
 
 export function CreateMemberModal() {
@@ -27,9 +30,11 @@ export function CreateMemberModal() {
     setRole,
     handleSubmit,
     reset,
-    loading,
+    addUpdatePending,
     isEdit,
-  } = useMemberContext();
+  } = useMemberForm();
+
+  const currentUser = useCurrentUser();
 
   const roleOptions = [
     { label: "Member", value: "member" },
@@ -37,14 +42,15 @@ export function CreateMemberModal() {
     { label: "Admin", value: "admin" },
   ];
 
-  const submit = async (e: React.FormEvent) => {
+  if (!currentUser) return null;
+
+  const submit = (e: SubmitEvent) => {
     e.preventDefault();
-    const result = await handleSubmit(formData);
-    if (!result.success) {
-      toast.error(result.message);
+    if (!formData.role) {
+      toast.info("role is required");
       return;
     }
-    toast.success(result.message);
+    handleSubmit(formData.email, formData.role, formData.id);
   };
 
   return (
@@ -73,21 +79,13 @@ export function CreateMemberModal() {
 
         <form onSubmit={submit} className="space-y-5 mt-4">
           <InputField
-            label="Full Name"
-            name="name"
-            value={formData.name}
-            onChange={(e) => handleChange("name", e.target.value)}
-            type="text"
-            placeholder="Enter full name"
-          />
-
-          <InputField
             label="Email Address"
             name="email"
             value={formData.email}
             onChange={(e) => handleChange("email", e.target.value)}
             type="email"
             placeholder="name@company.com"
+            disabled={isEdit}
           />
 
           <div>
@@ -101,7 +99,7 @@ export function CreateMemberModal() {
           </div>
 
           <ActionButtons
-            Loading={loading}
+            Loading={addUpdatePending}
             primaryText={isEdit ? "Update Member" : "Create Member"}
             onCancel={reset}
           />

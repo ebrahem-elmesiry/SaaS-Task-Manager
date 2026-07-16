@@ -31,7 +31,7 @@ export function CustomSelect({
   isEdit,
 }: CustomSelectProps) {
   return (
-    <Select value={value} onValueChange={onChange} disabled={isEdit}>
+    <Select value={value ?? ""} onValueChange={onChange} disabled={isEdit}>
       <SelectTrigger
         className={`w-full px-4 py-4.5 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-indigo-500 ${className}`}
       >

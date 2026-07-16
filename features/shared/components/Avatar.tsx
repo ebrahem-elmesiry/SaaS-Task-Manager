@@ -4,8 +4,13 @@ import Image from "next/image";
 interface Props {
   avatar_url: string | null | undefined;
   user_name: string;
+  isTeamPage?: boolean;
 }
-export default function Avatar({ avatar_url, user_name }: Props) {
+export default function Avatar({
+  avatar_url,
+  user_name,
+  isTeamPage = false,
+}: Props) {
   return (
     <>
       {avatar_url ? (
@@ -13,7 +18,7 @@ export default function Avatar({ avatar_url, user_name }: Props) {
       ) : (
         <div
           title={user_name}
-          className="w-6 h-6 p-3 rounded-full bg-indigo-600 flex items-center justify-center text-xs text-white border border-white dark:border-slate-900"
+          className={`w-6 h-6 p-3 rounded-full bg-indigo-600 flex items-center justify-center ${isTeamPage ? "text-md" : "text-xs border border-white dark:border-slate-900"} text-white`}
         >
           {getAvatarName(user_name)}
         </div>

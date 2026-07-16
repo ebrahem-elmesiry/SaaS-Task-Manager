@@ -1,123 +1,115 @@
-import { Member, MemberForm } from "@/types/team";
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { createClient } from "@/lib/supabase/client";
+import { getQueryClient } from "@/lib/get-query-client";
+import { toast } from "sonner";
 import { messages } from "@/messages";
-import { formatDate } from "@/lib/utils";
+import { Member } from "@/types/team";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
+import { Role } from "@/types/main";
 
-export const useMemberActions = (initialMembers: Member[]) => {
-  const [members, setMembers] = useState<Member[]>(initialMembers);
-  const [loading, setLoading] = useState(false);
+export const useMemberActions = () => {
+  const supabase = createClient();
+  const queryClient = getQueryClient();
+  const currentUser = useCurrentUser();
 
-  const addMember = async (data: MemberForm) => {
-    const previous = members;
-
-    if (!data.role) return { success: false, message: "Role is required" };
-
-    try {
-      setLoading(true);
-
-      await new Promise((r) => setTimeout(r, 1000));
-
-      const memberId = crypto.randomUUID();
-
-      const newMember: Member = {
-        ...data,
-        id: memberId,
-        role: data.role,
-
-        avatar: data.name
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .toUpperCase(),
-
-        status: "offline",
-        tasksCompleted: 0,
-        activeProjects: 0,
-        joinedDate: formatDate(new Date()),
-      };
-
-      setMembers((prev) => [newMember, ...prev]);
-
-      return {
-        success: true,
-        message: messages.team.create.success,
-      };
-    } catch (err) {
-      console.log(err);
-      setMembers(previous);
-      return {
-        success: false,
-        message: messages.team.create.error,
-      };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateMember = async (data: MemberForm) => {
-    const previous = members;
-
-    if (!data.role) return { success: false, message: "Role is required" };
-
-    const role = data.role;
-
-    try {
-      setLoading(true);
-
-      await new Promise((r) => setTimeout(r, 1000));
-
-      setMembers((prev) =>
-        prev.map((m) => (m.id === data.id ? { ...m, ...data, role } : m)),
+  const { isPending: invitePending, mutateAsync: sendInvite } = useMutation({
+    mutationFn: async ({ email, role }: { email: string; role: string }) => {
+      const { error } = await supabase.rpc(
+        "create_notification_if_not_member",
+        {
+          target_role: role,
+          target_email: email,
+          target_status: "pending",
+          target_sender_id: currentUser?.id,
+          target_workspace_id: currentUser?.workspace,
+        },
       );
 
-      return {
-        success: true,
-        message: messages.team.update.success,
-      };
-    } catch (err) {
-      setMembers(previous);
-      console.log(err);
-      return {
-        success: false,
-        message: messages.team.update.error,
-      };
-    } finally {
-      setLoading(false);
-    }
-  };
+      if (error) throw error;
+    },
 
-  const deleteMember = async (id: string) => {
-    const previous = members;
+    onSuccess: () => {
+      toast.success(messages.notification.invitation.success);
+    },
 
-    try {
-      setLoading(true);
+    onError: (err) => {
+      toast.error(
+        (err as Error).message || messages.notification.invitation.error,
+      );
+    },
 
-      await new Promise((r) => setTimeout(r, 1000));
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["notification", currentUser?.id],
+      });
+    },
+  });
 
-      setMembers((prev) => prev.filter((m) => m.id !== id));
+  const { isPending: updatePending, mutateAsync: updateMember } = useMutation({
+    mutationFn: async ({
+      role,
+      member_id,
+    }: {
+      role: Role;
+      member_id: string;
+    }) => {
+      const { error } = await supabase
+        .from("workspace_members")
+        .update({
+          role,
+        })
+        .eq("user_id", member_id);
 
-      return {
-        success: true,
-        message: messages.team.delete.success,
-      };
-    } catch (err) {
-      setMembers(previous);
-      console.log(err);
-      return {
-        success: true,
-        message: messages.team.delete.error,
-      };
-    } finally {
-      setLoading(false);
-    }
-  };
+      if (error) throw error;
+
+      const { error: notificationErr } = await supabase
+        .from("notifications")
+        .insert({
+          sender_id: currentUser?.id,
+          receiver_id: member_id,
+          workspace_id: currentUser?.workspace,
+          type: "role",
+          title: "Role change",
+        });
+
+      if (notificationErr) throw notificationErr;
+    },
+
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: ["team", currentUser?.workspace],
+      });
+    },
+
+    onError: (_err, _variables, context) => {
+      queryClient.setQueryData(["team", currentUser?.workspace], context);
+      toast.error(messages.team.update.error);
+    },
+
+    onSuccess: (data, _variables) => {
+      queryClient.setQueryData(
+        ["team", currentUser?.workspace],
+        (old: Member[]) => {
+          if (!old) return old;
+          return old.map((m: Member) =>
+            m.id === _variables.member_id ? { ...m, role: _variables.role } : m,
+          );
+        },
+      );
+      toast.success(messages.team.update.success);
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["team", currentUser?.workspace],
+      });
+    },
+  });
 
   return {
-    members,
-    setMembers,
-    loading,
-    addMember,
+    addUpdatePending: updatePending,
     updateMember,
-    deleteMember,
+    sendInvite,
+    invitePending,
   };
 };

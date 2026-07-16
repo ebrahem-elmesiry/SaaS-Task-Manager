@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { currentUserType } from "@/types/main";
 
 export function useCurrentUser(): currentUserType | null {
-  const { workspaceId } = useParams();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const supabase = createClient();
 
   const { data: baseUser } = useQuery({
@@ -56,5 +56,6 @@ export function useCurrentUser(): currentUserType | null {
     avatar: baseUser.avatar,
     job_title: baseUser.job_title,
     role: member?.role,
+    workspace: workspaceId,
   };
 }

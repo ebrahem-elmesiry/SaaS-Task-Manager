@@ -1,8 +1,8 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { getAvatarName } from "@/lib/utils";
 import { Assignee } from "@/types/kanban";
 import { Users } from "lucide-react";
+import Avatar from "../../Avatar";
 
 type MultiSelectListProps = {
   label: string;
@@ -43,9 +43,10 @@ export default function MultiSelectList({
                 htmlFor={`member-${member.id}`}
                 className="flex items-center gap-3 cursor-pointer w-full"
               >
-                <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs">
-                  {member.avatar_url || getAvatarName(member.full_name)}
-                </div>
+                <Avatar
+                  avatar_url={member.avatar_url}
+                  user_name={member.full_name}
+                />
 
                 <span className="text-sm">{member.full_name}</span>
               </Label>

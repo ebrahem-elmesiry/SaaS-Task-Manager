@@ -65,7 +65,9 @@ export function formatTimeAgo(date: Date | string) {
     const yesterday = new Date(now);
     yesterday.setDate(yesterday.getDate() - 1);
     if (pastStr === yesterday.toDateString()) return "yesterday";
-    const dayDiff = Math.round((now.getTime() - past.getTime()) / (1000 * 60 * 60 * 24));
+    const dayDiff = Math.round(
+      (now.getTime() - past.getTime()) / (1000 * 60 * 60 * 24),
+    );
     return `${dayDiff} day${dayDiff === 1 ? "" : "s"} ago`;
   }
 
@@ -130,15 +132,10 @@ export const getPriorityColor = (priority: Priority) => {
   return colors[priority];
 };
 
-export const getRoleIcon = (role: string) => {
-  if (role === "Admin") return Crown;
-  if (role === "Manager") return Shield;
-  return User;
-};
 export const getRoleColor = (role: string) => {
-  if (role === "Admin")
+  if (role === "admin")
     return "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400";
-  if (role === "Manager")
+  if (role === "manager")
     return "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400";
   return "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300";
 };

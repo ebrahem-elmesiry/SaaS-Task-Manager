@@ -1,14 +1,14 @@
 "use client";
 
-import { TeamSkeleton } from "@/features/shared/components/loading/TeamSkeleton";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import fetchTeamWorkspaceData from "../services/fetchTeamWorkspaceData";
 
 interface Props {
-  TeamCount: { allMember: number; onlineMember: number; offlineMember: number };
-  isPending: boolean;
+  workspaceId: string;
 }
 
-export default function TeamFilter({ TeamCount, isPending }: Props) {
+export default function TeamFilter({ workspaceId }: Props) {
   const pathName = usePathname();
   const { push } = useRouter();
   const searchParams = useSearchParams();
@@ -23,7 +23,14 @@ export default function TeamFilter({ TeamCount, isPending }: Props) {
     }
     push(`${pathName}?${params.toString()}`);
   };
-  if (isPending) return <TeamSkeleton />;
+  const { data } = useQuery({
+    queryKey: ["team", workspaceId],
+    queryFn: () => fetchTeamWorkspaceData(workspaceId),
+  });
+
+  const onlineMembers = data?.filter((m) => m.status === "online").length;
+  const offlineMembers = data?.filter((m) => m.status === "offline").length;
+
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4">
       <div className="flex flex-wrap gap-2">
@@ -35,7 +42,7 @@ export default function TeamFilter({ TeamCount, isPending }: Props) {
               : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600"
           }`}
         >
-          All Members ({TeamCount.allMember})
+          All Members ({data?.length})
         </button>
         <button
           onClick={() => addFilterFn("online")}
@@ -45,7 +52,7 @@ export default function TeamFilter({ TeamCount, isPending }: Props) {
               : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600"
           }`}
         >
-          Online ({TeamCount.onlineMember})
+          Online ({onlineMembers})
         </button>
         <button
           onClick={() => addFilterFn("offline")}
@@ -55,7 +62,7 @@ export default function TeamFilter({ TeamCount, isPending }: Props) {
               : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600"
           }`}
         >
-          Offline ({TeamCount.offlineMember})
+          Offline ({offlineMembers})
         </button>
       </div>
     </div>

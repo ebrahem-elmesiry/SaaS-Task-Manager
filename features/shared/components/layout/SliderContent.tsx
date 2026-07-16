@@ -3,7 +3,12 @@
 import { LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { LayoutDashboard, FolderKanban, Users } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  LayoutDashboard,
+  FolderKanban,
+  Users,
+} from "lucide-react";
 import { useLogout } from "@/features/Auth/hooks/useLogout";
 import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 import Avatar from "../Avatar";
@@ -18,7 +23,7 @@ export default function SliderContent() {
       id: "workspaces",
       link: "/workspaces",
       name: "Workspace",
-      icon: LayoutDashboard,
+      icon: BriefcaseBusiness,
       enabled: true,
     },
     {

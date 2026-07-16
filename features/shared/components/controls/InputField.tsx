@@ -10,6 +10,7 @@ type Props = {
   placeholder?: string;
   labelClass?: string;
   labelRight?: React.ReactNode;
+  disabled?: boolean;
 };
 
 export default function InputField({
@@ -21,6 +22,7 @@ export default function InputField({
   placeholder,
   labelClass,
   labelRight,
+  disabled,
 }: Props) {
   return (
     <div>
@@ -40,6 +42,7 @@ export default function InputField({
         onChange={onChange}
         type={type}
         placeholder={placeholder}
+        disabled={disabled}
       />
     </div>
   );

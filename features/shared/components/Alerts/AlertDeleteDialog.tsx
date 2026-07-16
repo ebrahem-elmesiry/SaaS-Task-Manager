@@ -16,9 +16,9 @@ interface Props {
   setIsDeleteDialogOpen: Dispatch<SetStateAction<boolean>>;
   isDeleteDialogOpen: boolean;
   Loading: boolean;
-  title?: string;
-  description?: string;
-  buttonText?: string;
+  title: string;
+  description: string;
+  buttonText: string;
 }
 
 export default function AlertDeleteDialog({

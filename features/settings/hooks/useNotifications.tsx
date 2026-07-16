@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { messages } from "@/messages";
 import { NotificationState } from "@/types/profile";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
+import { getQueryClient } from "@/lib/get-query-client";
 
 export default function useNotifications({
   NotificationData,
@@ -30,7 +31,7 @@ export default function useNotifications({
     return data;
   }
 
-  const queryClient = useQueryClient();
+  const queryClient = getQueryClient();
 
   const { isPending, mutate } = useMutation({
     mutationFn: handleChangeNotifications,
