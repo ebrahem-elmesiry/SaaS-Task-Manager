@@ -8,14 +8,14 @@ import { Priority } from "@/types/kanban";
 import MultiSelectList from "../ProjectModal/MultiSelectListTeam";
 import { ActionButtons } from "../../ActionButtons";
 import { useTaskContext } from "@/context/TaskContext";
-import { teamMembers } from "@/constant/arrays";
-import { Activity, Flag, FolderOpen } from "lucide-react";
+import { Activity, Flag, FolderOpen, Loader2 } from "lucide-react";
 import { SubtaskManager } from "./SubtaskManager";
 import { SubmitEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
-import fetchProjects from "@/features/projects/services/fetchProjects";
 import { formatDate } from "@/lib/utils";
 import { useParams } from "next/navigation";
+import getProjectsAndMembers from "./hooks/getProjectsAndMembers";
+import { Button } from "@/components/ui/button";
 
 const statusOptions = [
   { label: "TODO", value: "todo" },
@@ -46,13 +46,11 @@ export function TaskForm() {
     e.preventDefault();
     handleSubmit(formData);
   };
-
-  const { data } = useQuery({
-    queryKey: ["projects"],
-    queryFn: () => fetchProjects(workspaceId),
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["projects-and-members", workspaceId],
+    queryFn: () => getProjectsAndMembers(workspaceId),
+    enabled: !!workspaceId,
   });
-  const projectSelectOptions =
-    data?.map((p) => ({ label: p.name, value: p.id })) ?? [];
 
   return (
     <form onSubmit={submit} className="p-6 space-y-5 overflow-y-auto">
@@ -118,12 +116,35 @@ export function TaskForm() {
             <FolderOpen className="w-4 h-4 inline mr-1" />
             Project
           </Label>
-          <CustomSelect
-            isEdit={isEdit}
-            value={formData.project_id}
-            onChange={(value) => handleChange("project_id", value)}
-            options={projectSelectOptions}
-          />
+          {isLoading ? (
+            <div className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
+              <span className="text-sm text-slate-400">
+                Loading projects...
+              </span>
+            </div>
+          ) : error ? (
+            <div className="w-full px-4 py-2 border border-red-200 dark:border-red-700 rounded-lg bg-red-50 dark:bg-red-900/20 flex items-center justify-between">
+              <span className="text-sm text-red-600 dark:text-red-400">
+                Failed to load projects
+              </span>
+              <Button
+                type="button"
+                onClick={() => refetch()}
+                variant={"link"}
+                className="text-sm p-0"
+              >
+                Retry
+              </Button>
+            </div>
+          ) : (
+            <CustomSelect
+              isEdit={isEdit}
+              value={formData.project_id}
+              onChange={(value) => handleChange("project_id", value)}
+              options={data?.projects ?? []}
+            />
+          )}
         </div>
       </div>
 
@@ -139,12 +160,45 @@ export function TaskForm() {
       </div>
 
       {/* Team Members */}
-      <MultiSelectList
-        label="Team Members"
-        items={teamMembers}
-        selected={formData.assignees}
-        toggle={toggleMember}
-      />
+      {isLoading ? (
+        <div className="border rounded-lg p-3">
+          <div className="flex items-center gap-2 mb-3">
+            <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
+            <span className="text-sm font-medium text-slate-400">
+              Loading team members...
+            </span>
+          </div>
+          <div className="space-y-2">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="h-10 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse"
+              />
+            ))}
+          </div>
+        </div>
+      ) : error ? (
+        <div className="border border-rd-200 dark:border-red-700 rounded-lg px-3 py-1 flex items-center justify-between">
+          <span className="text-sm text-red-600 dark:text-red-400">
+            Failed to load team members
+          </span>
+          <Button
+            type="button"
+            onClick={() => refetch()}
+            variant={"link"}
+            className="text-sm p-0"
+          >
+            Retry
+          </Button>
+        </div>
+      ) : (
+        <MultiSelectList
+          label="Team Members"
+          items={data?.workspace_members ?? []}
+          selected={formData.assignees}
+          toggle={toggleMember}
+        />
+      )}
 
       {/* Buttons */}
       <ActionButtons

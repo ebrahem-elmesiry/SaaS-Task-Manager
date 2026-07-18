@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 
 import {
   Dialog,
@@ -19,6 +19,8 @@ import MultiSelectList from "./MultiSelectListTeam";
 import { Button } from "@/components/ui/button";
 import { useProjectContext } from "@/context/ProjectContext";
 import { FormState } from "@/types/project";
+import { useParams } from "next/navigation";
+import useWorkspaceMembers from "./hooks/useWorkspaceMembers";
 
 export function CreateProjectModal() {
   const {
@@ -33,20 +35,8 @@ export function CreateProjectModal() {
     setIsOpen,
   } = useProjectContext();
 
-  const teamMembers = [
-    {
-      id: "60187dee-182d-454e-a5b9-d02f6562b436",
-      full_name: "mohamed ahmed2",
-      avatar_url: undefined,
-    },
-    {
-      id: "bc02c0f6-4224-4ac2-98f7-d211cfac6cdd",
-      full_name: "ahmed mohamed2",
-      avatar_url: undefined,
-    },
-  ];
-
-  console.log("formData", formData);
+  const { workspaceId } = useParams<{ workspaceId: string }>();
+  const { data, error, isPending } = useWorkspaceMembers(workspaceId);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -56,7 +46,6 @@ export function CreateProjectModal() {
           New Project
         </Button>
       </DialogTrigger>
-
       <DialogContent
         onCloseAutoFocus={(e) => {
           e.preventDefault();
@@ -82,7 +71,6 @@ export function CreateProjectModal() {
             </button>
           </div>
         </DialogHeader>
-
         {/* Form */}
         <form
           onSubmit={(e) => {
@@ -141,12 +129,37 @@ export function CreateProjectModal() {
           </div>
 
           {/* Team */}
-          <MultiSelectList
-            label="Team Members"
-            items={teamMembers}
-            selected={formData?.team || []}
-            toggle={toggleMember}
-          />
+          {isPending ? (
+            <div className="border rounded-lg p-3">
+              <div className="flex items-center gap-2 mb-3">
+                <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
+                <span className="text-sm font-medium text-slate-400">
+                  Loading team members...
+                </span>
+              </div>
+              <div className="space-y-2">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="h-10 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse"
+                  />
+                ))}
+              </div>
+            </div>
+          ) : error ? (
+            <div className="border border-red-200 dark:border-red-700 rounded-lg p-3">
+              <span className="text-sm text-red-600 dark:text-red-400">
+                Failed to load team members
+              </span>
+            </div>
+          ) : (
+            <MultiSelectList
+              label="Team Members"
+              items={data ?? []}
+              selected={formData?.team || []}
+              toggle={toggleMember}
+            />
+          )}
 
           {/* Buttons */}
           <ActionButtons
