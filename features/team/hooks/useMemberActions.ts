@@ -58,21 +58,10 @@ export const useMemberActions = () => {
         .update({
           role,
         })
-        .eq("user_id", member_id);
+        .eq("user_id", member_id)
+        .eq("workspace_id", currentUser?.workspace);
 
       if (error) throw error;
-
-      const { error: notificationErr } = await supabase
-        .from("notifications")
-        .insert({
-          sender_id: currentUser?.id,
-          receiver_id: member_id,
-          workspace_id: currentUser?.workspace,
-          type: "role",
-          title: "Role change",
-        });
-
-      if (notificationErr) throw notificationErr;
     },
 
     onMutate: async () => {

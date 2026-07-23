@@ -51,37 +51,12 @@ export function useDeleteCommentMutation(
       }
     },
 
-    onMutate: async (params) => {
+    onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["comments", taskId] });
       const previous = queryClient.getQueryData<Comment[]>([
         "comments",
         taskId,
       ]);
-
-      if (params.replyId) {
-        removeReplyFromCache(queryClient, taskId, {
-          commentId: params.commentId,
-          replyId: params.replyId,
-        });
-      } else {
-        if (!task) throw new Error("Task is required");
-        removeCommentFromCache(queryClient, taskId, params.commentId);
-        addActivityToCache(queryClient, taskId, {
-          activityUUID,
-          userId: user_id,
-          userName: user_name,
-          avatarUrl: avatar_url,
-          action: "COMMENT_DELETED",
-          entityId: params.commentId,
-          task: {
-            title: task.title,
-            status: task.status,
-            project_id: task.project_id,
-          },
-          metadata: { taskTitle: task?.title, deletedBy: user_name },
-        });
-      }
-
       return previous;
     },
 
@@ -92,7 +67,31 @@ export function useDeleteCommentMutation(
       );
     },
 
-    onSettled: () => {
+    onSuccess: (_data, params) => {
+      if (params.replyId) {
+        removeReplyFromCache(queryClient, taskId, {
+          commentId: params.commentId,
+          replyId: params.replyId,
+        });
+      } else {
+        removeCommentFromCache(queryClient, taskId, params.commentId);
+        if (task) {
+          addActivityToCache(queryClient, taskId, {
+            activityUUID,
+            userId: user_id,
+            userName: user_name,
+            avatarUrl: avatar_url,
+            action: "COMMENT_DELETED",
+            entityId: params.commentId,
+            task: {
+              title: task.title,
+              status: task.status,
+              project_id: task.project_id,
+            },
+            metadata: { taskTitle: task?.title, deletedBy: user_name },
+          });
+        }
+      }
       toast.success(messages.task.comments.delete.success);
       queryClient.invalidateQueries({ queryKey: ["comments", taskId] });
     },
@@ -124,13 +123,23 @@ export function useEditCommentMutation(taskId: string) {
       }
     },
 
-    onMutate: async (params) => {
+    onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["comments", taskId] });
       const previous = queryClient.getQueryData<Comment[]>([
         "comments",
         taskId,
       ]);
+      return previous;
+    },
 
+    onError: (err, _variables, context) => {
+      queryClient.setQueryData(["comments", taskId], context);
+      toast.error(
+        messages.task.comments.update.error || (err as Error).message,
+      );
+    },
+
+    onSuccess: (_data, params) => {
       queryClient.setQueryData<Comment[]>(["comments", taskId], (old) => {
         if (params.replyId) {
           return old?.map((c) =>
@@ -148,18 +157,6 @@ export function useEditCommentMutation(taskId: string) {
           c.id === params.commentId ? { ...c, text: params.text } : c,
         );
       });
-
-      return previous;
-    },
-
-    onError: (err, _variables, context) => {
-      queryClient.setQueryData(["comments", taskId], context);
-      toast.error(
-        messages.task.comments.update.error || (err as Error).message,
-      );
-    },
-
-    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", taskId] });
     },
   });
@@ -221,13 +218,21 @@ export function useAddCommentMutation(
       }
     },
 
-    onMutate: async (params) => {
+    onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["comments", taskId] });
       const previous = queryClient.getQueryData<Comment[]>([
         "comments",
         taskId,
       ]);
+      return previous;
+    },
 
+    onError: (err, _variables, context) => {
+      queryClient.setQueryData(["comments", taskId], context);
+      toast.error(messages.task.comments.add.error || (err as Error).message);
+    },
+
+    onSuccess: (_data, params) => {
       if (params.reply) {
         addReplyToCache(queryClient, taskId, {
           id: params.id,
@@ -244,32 +249,23 @@ export function useAddCommentMutation(
           userId: user_id,
           text: params.text,
         });
-        if (!task) throw new Error("Task is required");
-        addActivityToCache(queryClient, taskId, {
-          activityUUID,
-          userId: user_id,
-          userName: user_name,
-          avatarUrl: avatar_url,
-          action: "COMMENT_ADDED",
-          entityId: params.id,
-          task: {
-            title: task.title,
-            status: task.status,
-            project_id: task.project_id,
-          },
-          metadata: { taskTitle: task.title },
-        });
+        if (task) {
+          addActivityToCache(queryClient, taskId, {
+            activityUUID,
+            userId: user_id,
+            userName: user_name,
+            avatarUrl: avatar_url,
+            action: "COMMENT_ADDED",
+            entityId: params.id,
+            task: {
+              title: task.title,
+              status: task.status,
+              project_id: task.project_id,
+            },
+            metadata: { taskTitle: task.title },
+          });
+        }
       }
-
-      return previous;
-    },
-
-    onError: (err, _variables, context) => {
-      queryClient.setQueryData(["comments", taskId], context);
-      toast.error(messages.task.comments.add.error || (err as Error).message);
-    },
-
-    onSettled: async () => {
       queryClient.invalidateQueries({ queryKey: ["comments", taskId] });
     },
   });

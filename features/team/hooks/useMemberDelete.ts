@@ -19,21 +19,10 @@ export function useMemberDelete() {
       const { error } = await supabase
         .from("workspace_members")
         .delete()
-        .eq("user_id", id);
+        .eq("user_id", id)
+        .eq("workspace_id", currentUser?.workspace);
 
       if (error) throw error;
-
-      const { error: notificationErr } = await supabase
-        .from("notifications")
-        .insert({
-          sender_id: currentUser?.id,
-          receiver_id: id,
-          workspace_id: currentUser?.workspace,
-          type: "removed",
-          title: "Removed from workspace",
-        });
-
-      if (notificationErr) throw notificationErr;
     },
 
     onMutate: async () => {
