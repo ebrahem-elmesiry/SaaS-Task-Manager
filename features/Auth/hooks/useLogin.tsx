@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { loginAction } from "../actions/loginAction";
 import { messages } from "@/messages";
 import { loginSchema } from "@/validation/auth.schema";
+import { getQueryClient } from "@/lib/get-query-client";
 
 type LoginInput = {
   email: string;
@@ -14,6 +15,7 @@ type LoginInput = {
 
 export function useLogin() {
   const router = useRouter();
+  const queryClient = getQueryClient();
 
   const { isPending, mutateAsync: login } = useMutation({
     mutationFn: async (data: LoginInput) => {
@@ -31,6 +33,8 @@ export function useLogin() {
     },
 
     onSuccess: ({ message }) => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["workspaceMember"] });
       toast.success(message);
       router.push("/workspaces");
     },

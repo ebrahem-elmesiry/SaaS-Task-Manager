@@ -75,7 +75,7 @@ export function SearchComponent() {
       <DialogTrigger asChild>
         <button
           onClick={() => setOpen(true)}
-          className="w-full flex items-center gap-3 px-4 py-2 bg-slate-50 dark:bg-slate-900 border rounded-lg"
+          className="max-sm:hidden w-full flex items-center gap-3 px-4 py-2 bg-slate-50 dark:bg-slate-900 border rounded-lg"
         >
           <Search className="w-4 h-4 text-slate-400" />
           <span className="text-sm text-slate-500">Search...</span>

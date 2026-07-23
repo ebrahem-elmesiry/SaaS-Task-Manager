@@ -5,9 +5,11 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { logoutAction } from "../actions/logoutAction";
 import { messages } from "@/messages";
+import { getQueryClient } from "@/lib/get-query-client";
 
 export function useLogout() {
   const router = useRouter();
+  const queryClient = getQueryClient();
 
   const { mutateAsync: logout, isPending } = useMutation({
     mutationFn: async () => {
@@ -15,6 +17,8 @@ export function useLogout() {
     },
 
     onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ["currentUser"] });
+      queryClient.removeQueries({ queryKey: ["workspaceMember"] });
       toast.success(messages.auth.logout.success);
       router.push("/auth/Login");
     },

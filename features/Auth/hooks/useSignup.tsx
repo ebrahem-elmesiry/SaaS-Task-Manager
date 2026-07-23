@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { signupAction } from "../actions/signupAction";
 import { messages } from "@/messages";
 import { signupSchema } from "@/validation/auth.schema";
+import { getQueryClient } from "@/lib/get-query-client";
 
 type SignupInput = {
   email: string;
@@ -16,6 +17,7 @@ type SignupInput = {
 
 export function useSignup() {
   const router = useRouter();
+  const queryClient = getQueryClient();
 
   const { isPending, mutateAsync: signup } = useMutation({
     mutationFn: async (data: SignupInput) => {
@@ -32,6 +34,8 @@ export function useSignup() {
     },
 
     onSuccess: ({ message }) => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["workspaceMember"] });
       toast.success(message);
       router.push("/workspaces");
     },

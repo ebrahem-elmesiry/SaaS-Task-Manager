@@ -5,6 +5,7 @@ import Mention from "@tiptap/extension-mention";
 import Placeholder from "@tiptap/extension-placeholder";
 import DOMPurify from "dompurify";
 import { Assignee } from "@/types/kanban";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 
 type suggestionObject = {
   id: string;
@@ -29,14 +30,17 @@ export function useCommentEditor({
   setAddComment,
   handleSubmit,
 }: UseCommentEditorProps) {
+  const currentUser = useCurrentUser();
   const [suggestionProps, setSuggestionProps] = useState<SuggestionType | null>(
     null,
   );
 
-  const changeContent = assignees.map((a) => ({
-    id: a.id,
-    label: a.full_name,
-  }));
+  const changeContent = assignees
+    .map((a) => ({
+      id: a.id,
+      label: a.full_name,
+    }))
+    .filter((a) => a.id !== currentUser?.id);
 
   const editor = useEditor({
     extensions: [

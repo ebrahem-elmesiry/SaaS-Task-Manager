@@ -19,7 +19,10 @@ export async function deleteComment(
   supabase: SupabaseClient,
   params: { id: string },
 ) {
-  const { error } = await supabase.from("comments").delete().eq("id", params.id);
+  const { error } = await supabase
+    .from("comments")
+    .delete()
+    .eq("id", params.id);
   if (error) throw new Error(error.message);
 }
 
@@ -27,7 +30,10 @@ export async function deleteReply(
   supabase: SupabaseClient,
   params: { id: string },
 ) {
-  const { error } = await supabase.from("comment_replies").delete().eq("id", params.id);
+  const { error } = await supabase
+    .from("comment_replies")
+    .delete()
+    .eq("id", params.id);
   if (error) throw new Error(error.message);
 }
 

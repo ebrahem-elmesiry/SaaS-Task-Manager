@@ -2,12 +2,32 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
+import { useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { currentUserType } from "@/types/main";
+import { getQueryClient } from "@/lib/get-query-client";
 
 export function useCurrentUser(): currentUserType | null {
   const { workspaceId } = useParams<{ workspaceId: string }>();
   const supabase = createClient();
+  const queryClient = getQueryClient();
+
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") {
+        queryClient.removeQueries({ queryKey: ["currentUser"] });
+        queryClient.removeQueries({ queryKey: ["workspaceMember"] });
+      }
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+        queryClient.invalidateQueries({ queryKey: ["workspaceMember"] });
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [queryClient, supabase]);
 
   const { data: baseUser } = useQuery({
     queryKey: ["currentUser"],

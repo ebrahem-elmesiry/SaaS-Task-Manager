@@ -43,8 +43,8 @@ export default function WorkspaceCard() {
                   {workspace.projectsCount}
                 </p>
                 <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                    Projects
-                  </p>
+                  Projects
+                </p>
               </div>
 
               <div className="text-center p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg overflow-hidden min-w-0">
@@ -53,8 +53,8 @@ export default function WorkspaceCard() {
                   {workspace.tasksCount}
                 </p>
                 <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                    Tasks
-                  </p>
+                  Tasks
+                </p>
               </div>
 
               <div className="text-center p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg overflow-hidden min-w-0">
@@ -63,8 +63,8 @@ export default function WorkspaceCard() {
                   {workspace.members.length}
                 </p>
                 <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                    Members
-                  </p>
+                  Members
+                </p>
               </div>
             </div>
 
