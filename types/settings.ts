@@ -6,6 +6,19 @@ export type BaseProps = {
   icon?: LucideIcon;
 };
 
+export type Skill = { id: string; name: string };
+
+export interface SettingsData {
+  id: string;
+  full_name: string;
+  email: string;
+  job_title: string;
+  about: string;
+  location: string;
+  avatar_url: string;
+  skills: Skill[];
+}
+
 export type ToggleProps = BaseProps & {
   type: "toggle";
   checked: boolean;

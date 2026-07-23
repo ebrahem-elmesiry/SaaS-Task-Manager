@@ -33,13 +33,11 @@ export default function MemberCard({ member }: Props) {
     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-all">
       <div className="flex items-start justify-between mb-4">
         <div className="relative">
-          <div className="w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center text-white font-medium">
-            <Avatar
-              isTeamPage={true}
-              avatar_url={member.avatar}
-              user_name={member.full_name}
-            />
-          </div>
+          <Avatar
+            size={"md"}
+            avatar_url={member.avatar}
+            user_name={member.full_name}
+          />
           <div
             className={`absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border-2 border-white dark:border-slate-800 ${
               member.status === "online" ? "bg-green-500" : "bg-slate-400"

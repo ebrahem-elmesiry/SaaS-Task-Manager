@@ -1,6 +1,8 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Image from "next/image";
+import Avatar from "@/features/shared/components/Avatar";
+import useUploadAvatar from "@/features/settings/hooks/useUploadAvatar";
+import { Loader2 } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 
 interface Props {
@@ -11,24 +13,22 @@ interface Props {
 }
 
 export default function AvatarUpload({ avatar, name, photo, setPhoto }: Props) {
-  const [f, l] = name.split(" ");
-  const char = f[0] + l[0];
+  const { isPending, uploadAvatar } = useUploadAvatar();
+
   return (
     <div className="flex items-center gap-6">
-      {photo ? (
-        <Image
-          src={photo ? URL.createObjectURL(photo) : avatar}
-          alt="User Avatar"
-          width={80}
-          height={80}
-          className="w-20 h-20 rounded-full object-cover"
+      <div className="relative">
+        <Avatar
+          size="lg"
+          user_name={name}
+          avatar_url={photo ? URL.createObjectURL(photo) : avatar}
         />
-      ) : (
-        <div className="w-20 h-20 rounded-full bg-indigo-600 flex items-center justify-center text-white text-2xl font-medium">
-          {char}
-        </div>
-      )}
-
+        {isPending && (
+          <div className="absolute inset-0 rounded-full bg-black/60 flex items-center justify-center">
+            <Loader2 className="w-6 h-6 animate-spin text-white" />
+          </div>
+        )}
+      </div>
       <div className="flex-1">
         <Label
           htmlFor="avatar"
@@ -40,13 +40,15 @@ export default function AvatarUpload({ avatar, name, photo, setPhoto }: Props) {
           id="avatar"
           type="file"
           className="hidden"
-          onChange={(e) => {
+          accept="image/jpeg,image/png,image/gif"
+          onChange={async (e) => {
             if (e.target.files && e.target.files[0]) {
-              setPhoto(e.target.files[0]);
+              const file = e.target.files[0];
+              await uploadAvatar(file);
+              setPhoto(file);
             }
           }}
         />
-
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
           JPG, PNG or GIF. Max size 2MB.
         </p>

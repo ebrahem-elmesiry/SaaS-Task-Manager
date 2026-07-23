@@ -3,71 +3,52 @@ import { Mail, Bell } from "lucide-react";
 import { SettingsItem } from "./shared/SettingsItem";
 import { SettingSection } from "./shared/SettingsSection";
 import useNotifications from "../hooks/useNotifications";
-import { NotificationState } from "@/types/profile";
 import { ActionButtons } from "@/features/shared/components/ActionButtons";
 
+interface SettingsData {
+  notifications_enabled: boolean;
+  invitations_enabled: boolean;
+}
+
 export function NotificationSettings({
-  NotificationData,
+  notificationSettings,
 }: {
-  NotificationData: NotificationState;
+  notificationSettings: SettingsData;
 }) {
   const {
     notifications,
     toggle,
-    handleCheckbox,
     Loading,
     cancelChanges,
     handleChangeNotifications,
   } = useNotifications({
-    NotificationData,
+    NotificationData: notificationSettings,
   });
 
   return (
     <div className="space-y-6">
-      {/* Email Section */}
       <SettingSection
-        title="Email Notifications"
-        description="Choose what updates you want to receive via email"
+        title="Activity Notifications"
+        description="Get notified about activity in your workspaces"
       >
         <SettingsItem
-          title="Email Notifications"
-          description="Receive notifications via email"
+          title="Activity Notifications"
+          description="Receive notifications about activity in your workspaces."
           icon={Mail}
           type="toggle"
-          checked={notifications.emailNotifications}
-          onToggle={() => toggle("emailNotifications")}
+          checked={notifications.notifications_enabled}
+          onToggle={() => toggle("notifications_enabled")}
         />
 
         <SettingsItem
-          title="Push Notifications"
-          description="Receive push notifications in browser"
+          title="Workspace Invitations"
+          description="You won't receive new workspace invitations while this is turned off."
           icon={Bell}
           type="toggle"
-          checked={notifications.pushNotifications}
-          onToggle={() => toggle("pushNotifications")}
+          checked={notifications.invitations_enabled}
+          onToggle={() => toggle("invitations_enabled")}
         />
       </SettingSection>
-
-      {/* Activity Section */}
-      <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
-        <SettingSection title="Activity Notifications">
-          <SettingsItem
-            title="Task Updates"
-            description="Get notified when tasks are updated"
-            type="checkbox"
-            checked={notifications.taskUpdates}
-            onChange={(val) => handleCheckbox("taskUpdates", val)}
-          />
-
-          <SettingsItem
-            title="Weekly Digest"
-            description="Receive a weekly summary of your activity"
-            type="checkbox"
-            checked={notifications.weeklyDigest}
-            onChange={(val) => handleCheckbox("weeklyDigest", val)}
-          />
-        </SettingSection>
-      </div>
 
       <ActionButtons
         onCancel={cancelChanges}

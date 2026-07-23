@@ -68,7 +68,11 @@ export const messages = {
     },
     account: {
       success: "Account settings updated successfully",
-      error: "Failed to update notification settings",
+      emailConfirm:
+        "Account settings updated. Please check your email to confirm your new email address.",
+      error: "Failed to update account settings",
+      emailChangeError:
+        "Profile update failed, but your email change was initiated. Please check your email.",
     },
     avatar: {
       success: "Avatar uploaded successfully",

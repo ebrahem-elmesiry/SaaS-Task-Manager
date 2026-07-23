@@ -1,13 +1,30 @@
-import { UserStat } from "@/types/profile";
+import { CheckCircle2, Clock, TrendingUp } from "lucide-react";
 
 type Props = {
-  stats: UserStat[];
+  stats: {
+    completed_tasks: number;
+    in_progress_tasks: number;
+    projects_count: number;
+  };
 };
 
 export default function ProfileStats({ stats }: Props) {
+  const userStats = [
+    {
+      label: "Tasks Completed",
+      value: stats.completed_tasks,
+      icon: CheckCircle2,
+    },
+    { label: "In Progress", value: stats.in_progress_tasks, icon: Clock },
+    {
+      label: "Active Projects",
+      value: stats.projects_count,
+      icon: TrendingUp,
+    },
+  ];
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {stats.map((stat) => {
+      {userStats.map((stat) => {
         const Icon = stat.icon;
         const colorClasses = {
           "Tasks Completed":

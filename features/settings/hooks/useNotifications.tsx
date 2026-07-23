@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { messages } from "@/messages";
 import { NotificationState } from "@/types/profile";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
-import { getQueryClient } from "@/lib/get-query-client";
+import { SettingsData } from "@/types/settings";
 
 export default function useNotifications({
   NotificationData,
@@ -19,8 +19,11 @@ export default function useNotifications({
   async function handleChangeNotifications(notifications: NotificationState) {
     const supabase = createClient();
     const { data, error } = await supabase
-      .from("account")
-      .update(notifications)
+      .from("profiles")
+      .update({
+        invitations_enabled: notifications.invitations_enabled,
+        notifications_enabled: notifications.notifications_enabled,
+      })
       .eq("id", currentUser?.id)
       .select()
       .single();
@@ -31,27 +34,27 @@ export default function useNotifications({
     return data;
   }
 
-  const queryClient = getQueryClient();
+  const queryClient = useQueryClient();
 
   const { isPending, mutate } = useMutation({
     mutationFn: handleChangeNotifications,
 
     onMutate: async (newData) => {
-      await queryClient.cancelQueries({ queryKey: ["settings-notifications"] });
-      const previousData = queryClient.getQueryData(["settings-notifications"]);
-      queryClient.setQueryData(["settings-notifications"], newData);
+      await queryClient.cancelQueries({ queryKey: ["settings"] });
+      const previousData = queryClient.getQueryData(["settings"]);
+      queryClient.setQueryData(["settings"], (old: SettingsData) => ({
+        ...old,
+        ...newData,
+      }));
       return { previousData };
     },
 
-    onError: (err, context) => {
-      queryClient.setQueryData(["settings-notifications"], context);
+    onError: (err, _vars, context) => {
+      queryClient.setQueryData(["settings"], context?.previousData);
       toast.error(messages.settings.notifications.error || err.message);
     },
     onSuccess: () => {
       toast.success(messages.settings.notifications.success);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["settings-notifications"] });
     },
   });
 
@@ -66,17 +69,9 @@ export default function useNotifications({
     }));
   };
 
-  const handleCheckbox = (key: keyof NotificationState, value: boolean) => {
-    setNotifications((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
-
   return {
     notifications,
     toggle,
-    handleCheckbox,
     handleChangeNotifications: mutate,
     Loading: isPending,
     cancelChanges,

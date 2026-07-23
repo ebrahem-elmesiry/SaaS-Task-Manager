@@ -4,20 +4,23 @@ import {
 } from "@/validation/profile.schema";
 import React, { useState } from "react";
 import { messages } from "@/messages";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import { updateEmailAction } from "../actions/updateEmailAction";
 import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
+import { getQueryClient } from "@/lib/get-query-client";
+import { SettingsData } from "@/types/settings";
 
 export default function useChangeInput(initialValue: AccountDetailsType) {
   const currentUser = useCurrentUser();
 
   const [accountDetail, setAccountDetail] = useState<AccountDetailsType>({
-    fullName: initialValue.fullName,
     email: initialValue.email,
-    jobTitle: initialValue.jobTitle,
-    bio: initialValue.bio,
-    location: initialValue.location,
+    full_name: initialValue.full_name,
+    job_title: initialValue.job_title || "",
+    about: initialValue.about || "",
+    location: initialValue.location || "",
   });
   const [photo, setPhoto] = useState<File | null>(null);
 
@@ -31,85 +34,88 @@ export default function useChangeInput(initialValue: AccountDetailsType) {
     }));
   };
 
-  const queryClient = useQueryClient();
+  const queryClient = getQueryClient();
   const supabase = createClient();
+  const isEmailChange = initialValue.email !== accountDetail.email;
 
-  // async function fetchAccount() {
-  //   const { data, error } = await supabase
-  //     .from("account")
-  //     .select()
-  //     .eq("id", currentUser.id)
-  //     .single();
+  async function updateAccount({
+    accountDetail,
+    isEmailChange,
+  }: {
+    accountDetail: AccountDetailsType;
+    isEmailChange: boolean;
+  }) {
+    const email = accountDetail.email.trim();
+    if (isEmailChange) await updateEmailAction(email);
 
-  //   if (error) {
-  //     throw new Error(error.message);
-  //   }
-  //   setAccountDetail(data);
-  //   return data;
-  // }
-
-  // const { refetch } = useQuery({
-  //   queryKey: ["settings-account"],
-  //   queryFn: fetchAccount,
-  //   initialData: initialValue,
-  // });
-
-  async function updateAccount(accountDetail: AccountDetailsType) {
     const { data, error } = await supabase
-      .from("account")
+      .from("profiles")
       .update(accountDetail)
       .eq("id", currentUser?.id)
       .select()
       .single();
 
-    if (error) {
-      throw new Error(error.message);
-    }
+    if (error) throw new Error(error.message);
 
-    // refetch();
     return data;
-  }
-
-  async function submitAccountDetails() {
-    const result = accountDetailsSchema.safeParse(accountDetail);
-    if (!result.success) {
-      return {
-        success: false,
-        message: result.error.issues[0].message,
-      };
-    }
-    return { success: true, message: messages.settings.account.success };
   }
 
   const { isPending, mutate } = useMutation({
     mutationFn: updateAccount,
 
-    onMutate: async (newData) => {
-      await queryClient.cancelQueries({ queryKey: ["settings-account"] });
-      const previousData = queryClient.getQueryData(["settings-account"]);
-      queryClient.setQueryData(["settings-account"], newData);
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ["settings"] });
+      const previousData = queryClient.getQueryData(["settings"]);
       return { previousData };
     },
-    onError: (err, context) => {
-      queryClient.setQueryData(["settings-account"], context);
-      toast.error(messages.settings.account.error || err.message);
+    onError: (err, variables, context) => {
+      queryClient.setQueryData(["settings"], context?.previousData);
+      const errorMsg = variables.isEmailChange
+        ? messages.settings.account.emailChangeError
+        : messages.settings.account.error || err.message;
+      toast.error(errorMsg);
     },
-    onSuccess: (context) => {
-      toast.success(messages.settings.account.success);
-      setAccountDetail(context);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["settings-account"] });
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData(["settings"], (old: SettingsData) => ({
+        ...old,
+        ...data,
+      }));
+      if (variables.isEmailChange) {
+        toast.success(messages.settings.account.emailConfirm, {
+          action: {
+            label: "Open Email",
+            onClick: () =>
+              window.open(
+                `https://mail.google.com/mail/u/0/?authuser=${variables.accountDetail.email}`,
+                "_blank",
+              ),
+          },
+        });
+      } else {
+        toast.success(messages.settings.account.success);
+      }
+      if (data) setAccountDetail(data);
     },
   });
+
+  function handleSave() {
+    const result = accountDetailsSchema.safeParse(accountDetail);
+    if (!result.success) {
+      toast.error(result.error.issues[0].message);
+      return;
+    }
+    mutate({ accountDetail, isEmailChange });
+  }
+
+  const handleCancel = () => setAccountDetail(initialValue);
 
   return {
     accountDetail,
     handleChange,
-    submitAccountDetails,
-    mutate,
+    handleSave,
     Loading: isPending,
     photo,
     setPhoto,
+    handleCancel,
   };
 }

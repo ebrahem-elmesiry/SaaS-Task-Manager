@@ -1,14 +1,10 @@
-export type UserStat = {
-  label: string;
-  value: number;
-  icon: React.ComponentType<{ className?: string }>;
-};
+import { Status } from "./kanban";
 
 export type RecentTask = {
   id: number;
   title: string;
   project: string;
-  status: "completed" | "in-progress";
+  status: Status;
   completedDate?: string;
   dueDate?: string;
 };
@@ -17,13 +13,11 @@ export type Project = {
   id: number;
   name: string;
   progress: number;
-  tasks: number;
+  total_tasks: number;
 };
 
 // Account
 export type NotificationState = {
-  emailNotifications: boolean;
-  pushNotifications: boolean;
-  taskUpdates: boolean;
-  weeklyDigest: boolean;
+  invitations_enabled: boolean;
+  notifications_enabled: boolean;
 };

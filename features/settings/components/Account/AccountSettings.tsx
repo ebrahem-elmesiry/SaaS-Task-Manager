@@ -1,49 +1,36 @@
 import SkillsSettings from "./SkillsSettings";
 import AvatarUpload from "./AvatarUpload";
 import ProfileFormFields from "./ProfileFormFields";
-import { AccountDetailsType } from "@/validation/profile.schema";
-import { toast } from "sonner";
-import { useState } from "react";
 import useChangeInput from "@/features/settings/hooks/useChangeInput";
 import { ActionButtons } from "@/features/shared/components/ActionButtons";
+import { SettingsData } from "@/types/settings";
 
-export function AccountSettings({
-  accountData,
-  skillsProp,
-  avatar,
-}: {
-  accountData: AccountDetailsType;
-  skillsProp: string[];
-  avatar: string;
-}) {
-  // Get Data By Hook
+export function AccountSettings({ data }: { data: SettingsData }) {
+  const accountData = {
+    full_name: data.full_name,
+    email: data.email,
+    job_title: data.job_title,
+    about: data.about,
+    location: data.location,
+  };
+
   const {
     accountDetail,
     handleChange,
-    submitAccountDetails,
     Loading,
     photo,
     setPhoto,
-    mutate,
+    handleSave,
+    handleCancel,
   } = useChangeInput(accountData);
-  const [skills, setSkills] = useState<string[]>(skillsProp);
-  const handleSave = async () => {
-    const res = await submitAccountDetails();
-    if (!res.success) {
-      toast.error(res.message);
-      return;
-    }
-    mutate(accountDetail);
-  };
 
   return (
     <div className="space-y-6">
-      {/* Profile Header */}
       <AvatarUpload
-        name={accountData.fullName}
+        name={data.full_name}
         photo={photo}
         setPhoto={setPhoto}
-        avatar={avatar}
+        avatar={data.avatar_url}
       />
 
       <ProfileFormFields
@@ -51,10 +38,13 @@ export function AccountSettings({
         handleChange={handleChange}
       />
 
-      {/* Skills */}
-      <SkillsSettings skills={skills} setSkills={setSkills} />
+      <SkillsSettings skills={data.skills ?? []} />
 
-      <ActionButtons Loading={Loading} onSave={handleSave} />
+      <ActionButtons
+        Loading={Loading}
+        onSave={handleSave}
+        onCancel={handleCancel}
+      />
     </div>
   );
 }

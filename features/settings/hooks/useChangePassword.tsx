@@ -1,8 +1,10 @@
 import { PasswordState } from "@/types/settings";
 import React, { useState } from "react";
 import { messages } from "@/messages";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { changePasswordAction } from "../actions/changePasswordAction";
+import { changePasswordSchema } from "@/validation/auth.schema";
 
 export default function useChangePassword() {
   const [password, setPassword] = useState<PasswordState>({
@@ -11,32 +13,29 @@ export default function useChangePassword() {
     confirmPassword: "",
   });
 
-  async function handleSubmitPassword(password: PasswordState) {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    return password;
-  }
-  const queryClient = useQueryClient();
-  const { isPending, mutate } = useMutation({
-    mutationFn: handleSubmitPassword,
-
-    onMutate: async (newData) => {
-      await queryClient.cancelQueries({
-        queryKey: ["settings-password"],
+  const { isPending, mutateAsync } = useMutation({
+    mutationFn: async (data: PasswordState) => {
+      const result = changePasswordSchema.safeParse(data);
+      if (!result.success) {
+        throw new Error(result.error.issues[0].message);
+      }
+      await changePasswordAction({
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
       });
-      const previousData = queryClient.getQueryData(["settings-password"]);
-      queryClient.setQueryData(["settings-password"], newData);
-      return { previousData };
     },
 
-    onError: (err, context) => {
-      queryClient.setQueryData(["settings-password"], context);
-      toast.error(messages.settings.password.error || err.message);
-    },
     onSuccess: () => {
+      setPassword({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
       toast.success(messages.settings.password.success);
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["settings-password"] });
+
+    onError: (err: Error) => {
+      toast.error(err.message || messages.settings.password.error);
     },
   });
 
@@ -47,10 +46,11 @@ export default function useChangePassword() {
       [name]: value,
     }));
   };
+
   return {
     password,
     handleChange,
     Loading: isPending,
-    handleSubmitPassword: mutate,
+    handleSubmitPassword: mutateAsync,
   };
 }

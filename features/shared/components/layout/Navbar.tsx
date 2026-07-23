@@ -4,9 +4,9 @@ import { ModeToggle } from "@/features/shared/hooks/Theme/useTheme";
 import MobileSlideBar from "../Sheets/MobileSidebar";
 import { SearchComponent } from "./componentsNavbar/SearchComponent";
 import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
-import { getAvatarName } from "@/lib/utils";
 import Notification from "./componentsNavbar/Notifications";
 import { NotificationsRealtime } from "./componentsNavbar/Notifications/hooks/useNotificationsRealtime";
+import Avatar from "../Avatar";
 
 export function Header() {
   const currentUser = useCurrentUser();
@@ -30,11 +30,11 @@ export function Header() {
           <Notification />
           {/* USER */}
           {currentUser?.id && (
-            <div className="hidden md:flex items-center ml-2 pl-2 border-l">
-              <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs">
-                {currentUser?.avatar || getAvatarName(currentUser?.name)}
-              </div>
-            </div>
+            <Avatar
+              size="md"
+              user_name={currentUser.name}
+              avatar_url={currentUser.avatar}
+            />
           )}
         </div>
       </div>

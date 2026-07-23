@@ -1,19 +1,7 @@
 import { typeSearch } from "@/features/shared/components/layout/componentsNavbar/SearchComponent";
 import { statusType } from "@/types/project";
 import { Users, CheckSquare, Settings, File } from "lucide-react";
-
-export const teamMembers = [
-  {
-    id: "bc02c0f6-4224-4ac2-98f7-d211cfac6cdd",
-    full_name: "ahmed mohamed",
-    avatar_url: undefined,
-  },
-  {
-    id: "60187dee-182d-454e-a5b9-d02f6562b436",
-    full_name: "mohamed ahmed",
-    avatar_url: undefined,
-  },
-];
+import { User, Bell, Shield } from "lucide-react";
 
 export const recentSearches = [
   {
@@ -52,4 +40,11 @@ export const suggestions = [
     role: "Developer",
   },
   { icon: Settings, text: "Team Settings", type: "page" as typeSearch },
+];
+
+// tabs for settings page
+export const tabs = [
+  { id: "account", name: "Account", icon: User },
+  { id: "notifications", name: "Notifications", icon: Bell },
+  { id: "security", name: "Security", icon: Shield },
 ];

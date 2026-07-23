@@ -141,6 +141,7 @@ export default function SliderContent() {
           <div className="pt-3">
             <div className="flex items-center gap-3 px-3 py-2 mb-2">
               <Avatar
+                size="md"
                 avatar_url={currentUser?.avatar}
                 user_name={currentUser?.name}
               />

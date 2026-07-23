@@ -1,47 +1,83 @@
+"use client";
+
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Project } from "@/types/profile";
+import useActiveProjects from "../hooks/useActiveProjects";
+import ActiveProjectList from "./ActiveProjectList/ActiveProjectList";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
 
 type Props = {
   projects: Project[];
+  userId: string | undefined;
 };
 
-export default function ActiveProjects({ projects }: Props) {
+export default function ActiveProjects({ projects, userId }: Props) {
+  const [isOpen, setIsOpen] = useState(false);
+  const {
+    data: allProjects,
+    isLoading,
+    error,
+    refetch,
+  } = useActiveProjects(userId, isOpen);
+  const displayProjects = allProjects ?? projects;
+
   return (
-    <div className="space-y-6">
-      {/* Active Projects */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
           Active Projects
         </h2>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogTrigger asChild>
+            <button className="cursor-pointer text-sm text-indigo-400 hover:text-indigo-500">
+              View all
+            </button>
+          </DialogTrigger>
+          <DialogContent className="max-w-lg! dark:bg-slate-800 max-h-105 overflow-y-auto p-6">
+            <DialogHeader>
+              <DialogTitle>Active Projects</DialogTitle>
+            </DialogHeader>
 
-        <div
-          style={{ scrollbarWidth: "none" }}
-          className="space-y-3 max-h-55 overflow-y-auto"
-        >
-          {projects.map((project) => (
-            <div key={project.id}>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-slate-900 dark:text-white">
-                  {project.name}
+            {isLoading ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="h-20 bg-slate-100 dark:bg-slate-700 rounded-lg animate-pulse"
+                  />
+                ))}
+              </div>
+            ) : error ? (
+              <div className="flex flex-col text-center py-4 space-y-3">
+                <span className="text-sm text-red-600 dark:text-red-400">
+                  Failed to load projects
                 </span>
-                <span className="text-sm text-slate-500 dark:text-slate-400">
-                  {project.progress}%
-                </span>
+                <Button
+                  variant={"link"}
+                  size="xl"
+                  onClick={() => refetch()}
+                  className="no-underline! cursor-pointer"
+                >
+                  <RefreshCw />
+                  Retry
+                </Button>
               </div>
-
-              <div className="w-full h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden mb-2">
-                <div
-                  className="h-full bg-indigo-600 rounded-full transition-all"
-                  style={{ width: `${project.progress}%` }}
-                />
-              </div>
-
-              <div className="text-xs text-slate-500 dark:text-slate-400">
-                {project.tasks} tasks assigned
-              </div>
-            </div>
-          ))}
-        </div>
+            ) : (
+              <ActiveProjectList projects={displayProjects ?? []} />
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
+
+      <ActiveProjectList projects={projects} />
     </div>
   );
 }
