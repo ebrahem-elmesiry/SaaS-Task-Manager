@@ -88,7 +88,7 @@ export const useUpdateProject = () => {
       await deleteMembersToProjects(data.id, newTeam.getDeletedMembers);
   }
 
-  const { isPending, mutate } = useMutation({
+  const { isPending, mutateAsync } = useMutation({
     mutationFn: updateProject,
 
     onMutate: async (newData) => {
@@ -121,13 +121,16 @@ export const useUpdateProject = () => {
       toast.error(messages.project.update.error || err.message);
     },
 
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
       toast.success(messages.project.update.success);
+      queryClient.invalidateQueries({
+        queryKey: ["project_members", variables.id],
+      });
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
 
-  return { updateProjectPending: isPending, updateProject: mutate };
+  return { updateProjectPending: isPending, updateProject: mutateAsync };
 };

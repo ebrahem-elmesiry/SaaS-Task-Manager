@@ -33,7 +33,7 @@ export const useAddProject = () => {
     if (error) throw new Error(error.message);
   }
 
-  const { isPending, mutate } = useMutation({
+  const { isPending, mutateAsync } = useMutation({
     mutationFn: addProjects,
 
     onMutate: async (newData) => {
@@ -76,5 +76,5 @@ export const useAddProject = () => {
     },
   });
 
-  return { addProjectPending: isPending, addProject: mutate };
+  return { addProjectPending: isPending, addProject: mutateAsync };
 };

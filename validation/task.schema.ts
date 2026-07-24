@@ -33,8 +33,6 @@ export const taskFormSchema = z.object({
 
   priority: prioritySchema.optional(),
 
-  project_id: z.uuid("You must select a project"),
-
   subtasks: z.array(subtaskSchema).min(1, "At least one subtask is required"),
 
   assignees: z

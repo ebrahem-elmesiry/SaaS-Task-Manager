@@ -16,12 +16,13 @@ import {
 import { updateTaskInCache } from "../handlers/taskCacheHandlers";
 import { logTaskActivity } from "../handlers/taskActivityHandlers";
 import { addActivityToCache } from "@/features/TaskDetailPanel/handlers/cacheHandlers";
+import { useParams } from "next/navigation";
 
 export const useUpdateTask = ({ workspaceId }: { workspaceId: string }) => {
   const currentUser = useCurrentUser();
   if (!currentUser) throw new Error("User not found");
   const { id: user_id, name: user_name, avatar: avatar_url } = currentUser;
-
+  const { projectId } = useParams<{ projectId: string }>();
   const queryClient = getQueryClient();
   const supabase = createClient();
   const activityUUID = crypto.randomUUID();
@@ -51,13 +52,13 @@ export const useUpdateTask = ({ workspaceId }: { workspaceId: string }) => {
 
     onMutate: async (newData) => {
       await queryClient.cancelQueries({
-        queryKey: ["tasks", newData.project_id],
+        queryKey: ["tasks", projectId],
       });
       const previousData = queryClient.getQueryData<ColumnsType>([
         "tasks",
-        newData.project_id,
+        projectId,
       ]);
-      updateTaskInCache(queryClient, newData.project_id, newData);
+      updateTaskInCache(queryClient, projectId, newData);
       addActivityToCache(queryClient, newData.id, {
         activityUUID,
         userId: user_id,
@@ -68,7 +69,7 @@ export const useUpdateTask = ({ workspaceId }: { workspaceId: string }) => {
         task: {
           title: newData.title,
           status: newData.status as Status,
-          project_id: newData.project_id,
+          project_id: projectId,
         },
         metadata: { taskTitle: newData.title },
       });
@@ -76,16 +77,16 @@ export const useUpdateTask = ({ workspaceId }: { workspaceId: string }) => {
     },
 
     onError: (err, variables, context) => {
-      queryClient.setQueryData(["tasks", variables.project_id], context);
+      queryClient.setQueryData(["tasks", projectId], context);
       toast.error(messages.task.update.error || (err as Error).message);
     },
 
     onSuccess: () => {
       toast.success(messages.task.update.success);
     },
-    onSettled: (_data, _error, variables) => {
+    onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["tasks", variables.project_id],
+        queryKey: ["tasks", projectId],
       });
     },
   });

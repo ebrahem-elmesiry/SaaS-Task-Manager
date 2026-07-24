@@ -14,7 +14,6 @@ import { Assignee, Status, Subtask } from "@/types/kanban";
 import { useTaskActions } from "@/features/kanban/hooks/useTaskActions";
 import { useTaskForm } from "@/features/kanban/hooks/useTaskForm";
 import { TaskForm } from "@/validation/task.schema";
-import { useParams } from "next/navigation";
 
 type selectedTask = { taskId: string; status: Status } | null;
 
@@ -57,12 +56,9 @@ interface TaskContextType {
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
 
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
-  const params = useParams<{ projectId: string }>();
-  const { projectId } = params;
   const emptyTask: TaskForm = {
     id: "",
     title: "",
-    project_id: projectId || "",
     description: "",
     assignees: [],
     subtasks: [],

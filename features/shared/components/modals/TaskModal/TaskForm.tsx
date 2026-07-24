@@ -8,14 +8,14 @@ import { Priority } from "@/types/kanban";
 import MultiSelectList from "../ProjectModal/MultiSelectListTeam";
 import { ActionButtons } from "../../ActionButtons";
 import { useTaskContext } from "@/context/TaskContext";
-import { Activity, Flag, FolderOpen, Loader2 } from "lucide-react";
+import { Activity, Flag, Loader2 } from "lucide-react";
 import { SubtaskManager } from "./SubtaskManager";
 import { SubmitEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatDate } from "@/lib/utils";
 import { useParams } from "next/navigation";
-import getProjectsAndMembers from "./hooks/getProjectsAndMembers";
 import { Button } from "@/components/ui/button";
+import getProjectMembers from "./hooks/getProjectMembers";
 
 const statusOptions = [
   { label: "TODO", value: "todo" },
@@ -40,16 +40,21 @@ export function TaskForm() {
     isEdit,
     loading,
   } = useTaskContext();
-  const { workspaceId } = useParams<{ workspaceId: string }>();
+  const { projectId } = useParams<{ projectId: string }>();
 
   const submit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     handleSubmit(formData);
   };
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["projects-and-members", workspaceId],
-    queryFn: () => getProjectsAndMembers(workspaceId),
-    enabled: !!workspaceId,
+  const {
+    data: project_members,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["project_members", projectId],
+    queryFn: () => getProjectMembers(projectId),
+    enabled: !!projectId,
   });
 
   return (
@@ -111,7 +116,7 @@ export function TaskForm() {
             options={statusOptions}
           />
         </div>
-        <div>
+        {/* <div>
           <Label className="text-sm font-medium mb-2 block">
             <FolderOpen className="w-4 h-4 inline mr-1" />
             Project
@@ -145,7 +150,7 @@ export function TaskForm() {
               options={data?.projects ?? []}
             />
           )}
-        </div>
+        </div> */}
       </div>
 
       {/* Subtasks */}
@@ -194,7 +199,7 @@ export function TaskForm() {
       ) : (
         <MultiSelectList
           label="Team Members"
-          items={data?.workspace_members ?? []}
+          items={project_members ?? []}
           selected={formData.assignees}
           toggle={toggleMember}
         />

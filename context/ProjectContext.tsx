@@ -79,9 +79,9 @@ export const ProjectProvider = ({ children }: { children: ReactNode }) => {
     const valid = validate(formData);
     if (!valid) return;
     if (isEdit) {
-      updateProject(formData);
+      await updateProject(formData);
     } else {
-      addProject(formData);
+      await addProject(formData);
     }
     closeModal();
   };
