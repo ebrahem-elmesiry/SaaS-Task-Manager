@@ -44,7 +44,7 @@ export default function ProjectCard({ workspaceId }: { workspaceId: string }) {
           <div className="flex items-start justify-between mb-4">
             <Link
               className="w-full min-w-0"
-              href={`${pathName}/kanban/${project.id}`}
+              href={`${pathName}/${project.id}/kanban`}
             >
               <div>
                 <h3 className="truncate text-lg font-semibold text-slate-900 dark:text-white mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">

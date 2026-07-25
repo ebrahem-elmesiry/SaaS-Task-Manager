@@ -22,7 +22,7 @@ export default function ActivityLine({ activity, action }: Props) {
   let target;
   let target_id =
     activity.task &&
-    `/dashboard/${workspaceId}/projects/kanban/${activity.task.project_id}?taskId=${activity.task.id}&status=${activity.task.status ? activity.task.status : activity.metadata?.currentStatus}`;
+    `/dashboard/${workspaceId}/projects/${activity.task.project_id}/kanban?taskId=${activity.task.id}&status=${activity.task.status ? activity.task.status : activity.metadata?.currentStatus}`;
 
   const ifTask = activity.task
     ? activity.task.title
