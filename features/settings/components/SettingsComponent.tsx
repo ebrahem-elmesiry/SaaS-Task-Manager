@@ -31,13 +31,23 @@ export default function SettingsComponent() {
         <Tabs tabs={tabs} activeTab={activeTab} />
 
         <div className="p-6">
-          {activeTab === "account" && <AccountSettings data={data} />}
-
-          {activeTab === "notifications" && (
-            <NotificationSettings notificationSettings={notificationSettings} />
+          {activeTab === "account" && (
+            <div id="tabpanel-account" role="tabpanel" aria-labelledby="tab-account">
+              <AccountSettings data={data} />
+            </div>
           )}
 
-          {activeTab === "security" && <SecuritySettings />}
+          {activeTab === "notifications" && (
+            <div id="tabpanel-notifications" role="tabpanel" aria-labelledby="tab-notifications">
+              <NotificationSettings notificationSettings={notificationSettings} />
+            </div>
+          )}
+
+          {activeTab === "security" && (
+            <div id="tabpanel-security" role="tabpanel" aria-labelledby="tab-security">
+              <SecuritySettings />
+            </div>
+          )}
         </div>
       </div>
     </>

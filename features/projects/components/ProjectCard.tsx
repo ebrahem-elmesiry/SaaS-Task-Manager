@@ -10,7 +10,7 @@ import AlertDeleteDialog from "../../shared/components/Alerts/AlertDeleteDialog"
 import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 import { Assignee } from "@/types/kanban";
 import { ProjectGridSkeleton } from "@/features/shared/components/loading/ProjectGridSkeleton";
-import fetchProjects from "../services/fetchProjects";
+import getProjectsData from "../services/getProjectsData";
 import { useQuery } from "@tanstack/react-query";
 import EmptyProjects from "./EmptyProjects";
 import ErrorProjects from "./ErrorProjects";
@@ -23,7 +23,7 @@ export default function ProjectCard({ workspaceId }: { workspaceId: string }) {
 
   const { data, error, isPending, refetch } = useQuery({
     queryKey: ["projects"],
-    queryFn: () => fetchProjects(workspaceId),
+    queryFn: () => getProjectsData(workspaceId),
   });
 
   const pathName = usePathname();
@@ -75,7 +75,7 @@ export default function ProjectCard({ workspaceId }: { workspaceId: string }) {
                   Progress
                 </span>
                 <span className="font-medium text-slate-900 dark:text-white">
-                  {project.progress}%
+                  {Math.round(project.progress)}%
                 </span>
               </div>
 

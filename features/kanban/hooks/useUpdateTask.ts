@@ -28,7 +28,7 @@ export const useUpdateTask = ({ workspaceId }: { workspaceId: string }) => {
   const activityUUID = crypto.randomUUID();
 
   async function handleUpdateTask(data: TaskForm) {
-    await updateTaskBase(supabase, data);
+    await updateTaskBase(supabase, data, projectId);
 
     const currentSubtasks = await getCurrentSubtasks(supabase, data.id);
     await syncSubtasks(supabase, data.id, currentSubtasks, data.subtasks);

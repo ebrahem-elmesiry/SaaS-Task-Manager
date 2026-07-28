@@ -13,7 +13,7 @@ export default function ErrorState({
   onRetry,
 }: Props) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
+    <div role="alert" className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
       <div className="w-20 h-20 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
         <AlertCircle className="w-10 h-10 text-red-500 dark:text-red-400" />
       </div>

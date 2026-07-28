@@ -2,7 +2,7 @@ import { TaskProvider } from "@/context/TaskContext";
 import { PageHeader } from "@/features/shared/components/PageHeader";
 import Columns from "@/features/kanban/components/Columns";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import fetchTasks from "@/features/kanban/services/fetchTasks";
+import getTasksData from "@/features/kanban/services/getTasksData";
 import { getQueryClient } from "@/lib/get-query-client";
 
 export default async function Page({
@@ -14,7 +14,7 @@ export default async function Page({
   const queryClient = getQueryClient();
   await queryClient.prefetchQuery({
     queryKey: ["tasks", projectId],
-    queryFn: () => fetchTasks(undefined, projectId),
+    queryFn: () => getTasksData(projectId),
   });
 
   return (

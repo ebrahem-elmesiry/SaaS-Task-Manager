@@ -76,7 +76,12 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50"
         onClick={onClose}
       />
-      <div className="fixed top-0 left-0 right-0 flex justify-center pt-20 z-50 px-4">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Command palette"
+        className="fixed top-0 left-0 right-0 flex justify-center pt-20 z-50 px-4"
+      >
         <div className="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
           <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-200 dark:border-slate-700">
             <Search className="w-5 h-5 text-slate-400" />

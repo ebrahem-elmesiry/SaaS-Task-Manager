@@ -7,9 +7,16 @@ type Props = {
   job: string;
   email: string;
   avatar: string | undefined;
+  enableEmail: boolean;
 };
 
-export default function ProfileHeader({ name, job, email, avatar }: Props) {
+export default function ProfileHeader({
+  name,
+  job,
+  email,
+  avatar,
+  enableEmail,
+}: Props) {
   return (
     <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-16 mb-6">
       <div className="flex items-end gap-4 mb-4 md:mb-0">
@@ -25,10 +32,12 @@ export default function ProfileHeader({ name, job, email, avatar }: Props) {
                 {job}
               </span>
             )}
-            <span className="flex items-center gap-1">
-              <Mail className="w-4 h-4" />
-              {email}
-            </span>
+            {enableEmail && (
+              <span className="flex items-center gap-1">
+                <Mail className="w-4 h-4" />
+                {email}
+              </span>
+            )}
           </div>
         </div>
       </div>

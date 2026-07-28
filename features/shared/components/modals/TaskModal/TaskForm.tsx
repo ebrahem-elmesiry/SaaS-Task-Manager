@@ -61,19 +61,22 @@ export function TaskForm() {
     <form onSubmit={submit} className="p-6 space-y-5 overflow-y-auto">
       {/* Title */}
       <div>
-        <Label className="text-sm font-medium mb-2 block">Task Title *</Label>
+        <Label htmlFor="task-title" className="text-sm font-medium mb-2 block">Task Title *</Label>
         <Input
+          id="task-title"
           value={formData.title}
           onChange={(e) => handleChange("title", e.target.value)}
           placeholder="Enter task title"
           required
+          aria-required="true"
         />
       </div>
 
       {/* Description */}
       <div>
-        <Label className="text-sm font-medium mb-2 block">Description</Label>
+        <Label htmlFor="task-description" className="text-sm font-medium mb-2 block">Description</Label>
         <textarea
+          id="task-description"
           value={formData.description}
           onChange={(e) => handleChange("description", e.target.value)}
           className="w-full px-4 py-2.5 border rounded-lg bg-white dark:bg-slate-900 resize-none"

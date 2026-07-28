@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import fetchTeamWorkspaceData from "../services/fetchTeamWorkspaceData";
+import getTeamData from "../services/getTeamData";
 
 interface Props {
   workspaceId: string;
@@ -25,7 +25,7 @@ export default function TeamFilter({ workspaceId }: Props) {
   };
   const { data } = useQuery({
     queryKey: ["team", workspaceId],
-    queryFn: () => fetchTeamWorkspaceData(workspaceId),
+    queryFn: () => getTeamData(workspaceId),
   });
 
   const onlineMembers = data?.filter((m) => m.status === "online").length;

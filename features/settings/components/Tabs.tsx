@@ -28,13 +28,17 @@ export default function Tabs({ tabs, activeTab }: Props) {
 
   return (
     <div className="border-b border-slate-200 dark:border-slate-700">
-      <div className="flex overflow-x-auto">
+      <div role="tablist" className="flex overflow-x-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;
 
           return (
             <button
               key={tab.id}
+              id={`tab-${tab.id}`}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              aria-controls={`tabpanel-${tab.id}`}
               onClick={() => handleTabChange(tab.id)}
               className={`flex items-center gap-2 px-6 py-4 border-b-2 transition-colors whitespace-nowrap ${
                 activeTab === tab.id

@@ -5,7 +5,7 @@ import AlertDeleteDialog from "@/features/shared/components/Alerts/AlertDeleteDi
 import { memberStatus } from "@/types/team";
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import fetchTeamWorkspaceData from "../services/fetchTeamWorkspaceData";
+import getTeamData from "../services/getTeamData";
 import MemberCard from "./MemberCard";
 import EmptyTeam from "./EmptyTeam";
 import TeamLoading from "./TeamLoading";
@@ -19,7 +19,7 @@ interface Props {
 export default function TeamComponent({ workspaceId, filter }: Props) {
   const { data, isPending, error, refetch } = useQuery({
     queryKey: ["team", workspaceId],
-    queryFn: () => fetchTeamWorkspaceData(workspaceId),
+    queryFn: () => getTeamData(workspaceId),
   });
 
   const team = useMemo(() => {

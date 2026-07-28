@@ -5,6 +5,8 @@ type StatItem = {
   icon: ReactNode;
   value: number;
   label: string;
+  badge: string;
+  badgeColor: string;
 };
 interface StatsCardsProps {
   stats: StatItem[];
@@ -30,11 +32,19 @@ export async function StatsCards({
             <div className="w-10 h-10 bg-slate-100 dark:bg-slate-900/30 rounded-lg flex items-center justify-center">
               {item.icon}
             </div>
-            <div className="text-2xl font-semibold text-slate-900 dark:text-white mb-1">
-              {item.label === "Success Rate" ? item.value + "%" : item.value}
+            <div className="flex items-center gap-2">
+              <div className="text-2xl font-semibold text-slate-900 dark:text-white mb-1">
+                {item.label === "Success Rate"
+                  ? item.value + "%"
+                  : item.value}
+              </div>
+              <span
+                className={`text-xs px-2 py-0.5 rounded-full font-medium ${item.badgeColor}`}
+              >
+                {item.badge}
+              </span>
             </div>
           </div>
-
           <div className="text-sm text-slate-500 dark:text-slate-400">
             {item.label}
           </div>

@@ -5,7 +5,7 @@ import { AlertCircle, RefreshCw } from "lucide-react";
 
 export function SectionError() {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 py-12 text-red-500">
+    <div role="alert" className="flex flex-col items-center justify-center gap-3 py-12 text-red-500">
       <AlertCircle className="h-8 w-8" />
       <p className="text-sm font-medium">
         Something went wrong while loading this section.

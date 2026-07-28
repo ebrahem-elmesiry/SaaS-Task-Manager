@@ -81,6 +81,8 @@ export default function SliderContent() {
 
   const urlLink = getPathName[getPathName.length - 1];
 
+  console.log("pathName", pathName);
+
   return (
     <>
       <div className="flex items-center gap-2 p-6 border-b border-slate-200 dark:border-slate-700">
@@ -92,10 +94,9 @@ export default function SliderContent() {
         </span>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1">
+      <nav aria-label="Main navigation" className="flex-1 p-4 space-y-1">
         {navigation.map((item) => {
           const Icon = item.icon;
-
           const link = handleLink(item.link, item.id);
 
           return (
@@ -114,6 +115,7 @@ export default function SliderContent() {
                     ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
                     : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                 }
+                ${currentUser?.role === "member" && item.id === "dashboard" ? "hidden" : ""}
                 ${
                   item.enabled && !!item.enabled
                     ? ""
@@ -131,7 +133,11 @@ export default function SliderContent() {
       <div className="p-4 border-t border-slate-200 dark:border-slate-700 space-y-1">
         <Link
           href={`/settings`}
-          className="w-full flex items-center gap-3 px-3 py-2.5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-lg transition-colors"
+          className={`${
+            pathName === "/settings"
+              ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
+              : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+          } w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors`}
         >
           <Settings className="w-5 h-5" />
           <span className="font-medium">Settings</span>

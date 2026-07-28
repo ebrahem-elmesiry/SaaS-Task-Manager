@@ -109,6 +109,7 @@ export default function Page() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@gamil.com"
+              required
             />
 
             <InputField
@@ -118,8 +119,10 @@ export default function Page() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
+              required
+              ariaDescribedBy="password-hint"
               labelRight={
-                <p className="mt-1.5 text-xs text-slate-500">
+                <p id="password-hint" className="mt-1.5 text-xs text-slate-500">
                   Must be at least 8 characters
                 </p>
               }

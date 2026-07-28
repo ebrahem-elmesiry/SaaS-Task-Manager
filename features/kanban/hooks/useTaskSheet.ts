@@ -5,7 +5,7 @@ import { ColumnsType, Status, Task } from "@/types/kanban";
 import { Dispatch, MouseEvent, SetStateAction, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import fetchTasks from "../services/fetchTasks";
+import getTasksData from "../services/getTasksData";
 import { getQueryClient } from "@/lib/get-query-client";
 
 type ActiveCard = Task & {
@@ -42,7 +42,7 @@ export function useTaskSheet(projectId: string) {
     refetch,
   } = useQuery({
     queryKey: ["tasks", projectId],
-    queryFn: () => fetchTasks(undefined, projectId),
+    queryFn: () => getTasksData(projectId),
   });
 
   async function handleDelete(

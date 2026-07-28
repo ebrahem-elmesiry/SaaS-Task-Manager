@@ -15,7 +15,7 @@ export default function NotificationError({
         </div>
       </div>
 
-      <div className="flex flex-col items-center justify-center p-8 text-center">
+      <div role="alert" className="flex flex-col items-center justify-center p-8 text-center">
         <span className="text-sm text-red-500 dark:text-red-400">
           Failed to load notifications
         </span>

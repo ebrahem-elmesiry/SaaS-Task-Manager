@@ -55,11 +55,12 @@ export default function ProfileFormFields({
 
       {/* About */}
       <div className="mt-4">
-        <Label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+        <Label htmlFor="about" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
           About
         </Label>
 
         <textarea
+          id="about"
           name="about"
           value={accountDetail.about || ""}
           onChange={handleChange}

@@ -9,6 +9,7 @@ interface Props {
   onTaskClick: (taskId: string, status: Status) => void;
   openModal: (ID: string) => void;
   status: Status;
+  isNotMember: boolean;
 }
 
 export default function Column({
@@ -16,11 +17,12 @@ export default function Column({
   onTaskClick,
   openModal,
   status,
+  isNotMember,
 }: Props) {
   const { ref } = useDroppable({ id: status });
 
   return (
-    <div ref={ref} className="shrink-0 w-80">
+    <div ref={ref} className="shrink-0 w-80 overflow-y-auto h-146">
       <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -33,12 +35,15 @@ export default function Column({
               {tasks.length}
             </span>
           </div>
-          <button
-            onClick={() => openModal(status)}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-          >
-            <Plus className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-          </button>
+          {isNotMember && (
+            <button
+              onClick={() => openModal(status)}
+              aria-label={`Add task to ${columnTitles[status]}`}
+              className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+            >
+              <Plus className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+            </button>
+          )}
         </div>
         <div className="space-y-3 min-h-125">
           {tasks.map((task, index) => (

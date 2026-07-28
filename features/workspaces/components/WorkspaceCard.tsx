@@ -2,7 +2,7 @@
 
 import { FolderKanban, ListTodo, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import fetchWorkspaces from "../services/fetchWorkspaces";
+import getWorkspacesData from "../services/getWorkspacesData";
 import Avatar from "@/features/shared/components/Avatar";
 import { ProjectGridSkeleton } from "@/features/shared/components/loading/ProjectGridSkeleton";
 import EmptyWorkspaces from "./EmptyWorkspaces";
@@ -12,7 +12,7 @@ import Link from "next/link";
 export default function WorkspaceCard() {
   const { data, error, isPending, refetch } = useQuery({
     queryKey: ["workspaces"],
-    queryFn: fetchWorkspaces,
+    queryFn: getWorkspacesData,
   });
 
   if (error) return <ErrorWorkspaces refetch={refetch} />;
@@ -23,7 +23,11 @@ export default function WorkspaceCard() {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
       {data.map((workspace) => (
         <Link
-          href={`/dashboard/${workspace.id}`}
+          href={
+            workspace.role === "member"
+              ? `/dashboard/${workspace.id}/projects`
+              : `/dashboard/${workspace.id}`
+          }
           key={workspace.id}
           className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-all cursor-pointer group overflow-hidden min-w-0"
         >

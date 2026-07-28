@@ -72,6 +72,7 @@ export default function Page() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@gamil.com"
+              required
             />
 
             <InputField
@@ -81,6 +82,7 @@ export default function Page() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
+              required
               labelRight={
                 <Button
                   type="button"

@@ -20,6 +20,7 @@ import EmptyKanban from "./EmptyKanban";
 import { useTaskContext } from "@/context/TaskContext";
 import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 import { useParams } from "next/navigation";
+import { KanbanRealtime } from "../hooks/useKanbanRealTime";
 
 export default function Columns({ projectId }: { projectId: string }) {
   const { openModal, loading, isDeleteDialogOpen, setIsDeleteDialogOpen } =
@@ -83,6 +84,7 @@ export default function Columns({ projectId }: { projectId: string }) {
         })
       }
     >
+      <KanbanRealtime userId={currentUser?.id} projectId={projectId} />
       <div ref={parentRef} className="flex gap-4 overflow-x-auto pb-4">
         {(Object.entries(data) as [Status, Task[]][]).map(
           ([status, columnTasks]) => (
@@ -92,6 +94,7 @@ export default function Columns({ projectId }: { projectId: string }) {
               tasks={columnTasks}
               onTaskClick={handleTaskClick}
               openModal={() => openModal(status)}
+              isNotMember={currentUser?.role !== 'member'}
             />
           ),
         )}

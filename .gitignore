@@ -36,6 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# unlighthouse
+.unlighthouse/
+.unlighthouse-session/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

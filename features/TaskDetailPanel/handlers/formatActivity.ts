@@ -6,15 +6,15 @@ type activityDB = {
   created_at: string;
   entity_id: string;
   id: string;
-  metadata?: Metadata;
+  metadata: Metadata | null;
   profiles: {
     id: string;
     full_name: string;
     avatar_url: string;
-  };
+  } | null;
   tasks:
     | { id: string; title: string; status: Status; project_id: string }
-    | undefined;
+    | null;
   user_id: string;
   workspace_id: string;
 };
@@ -22,11 +22,13 @@ type activityDB = {
 export function formatActivity(data: activityDB[]): ActivityType[] {
   return data.map((a) => ({
     id: a.id,
-    user: {
-      id: a.profiles.id,
-      full_name: a.profiles.full_name,
-      avatar_url: a.profiles.avatar_url,
-    },
+    user: a.profiles
+      ? {
+          id: a.profiles.id,
+          full_name: a.profiles.full_name,
+          avatar_url: a.profiles.avatar_url,
+        }
+      : { id: "", full_name: "Deleted User", avatar_url: undefined },
     action: a.action,
     target: a.entity_id,
     time: formatTimeAgo(a.created_at),

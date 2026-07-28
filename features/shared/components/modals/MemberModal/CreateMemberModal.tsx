@@ -71,6 +71,7 @@ export function CreateMemberModal() {
 
           <button
             onClick={reset}
+            aria-label="Close dialog"
             className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
           >
             <X className="w-5 h-5" />

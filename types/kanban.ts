@@ -37,11 +37,15 @@ export type Metadata = {
 
 export type ActivityType = {
   id: string;
-  user: { id: string; full_name: string; avatar_url: string | undefined };
+  user: {
+    id: string;
+    full_name: string;
+    avatar_url: string | undefined;
+  };
   action: string;
   target: string;
   time: string;
-  metadata?: Metadata;
+  metadata?: Metadata | null;
   task:
     | { id: string; title: string; status: Status; project_id: string }
     | undefined;

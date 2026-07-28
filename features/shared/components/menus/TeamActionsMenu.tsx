@@ -18,7 +18,10 @@ export default function TeamActionsMenu({ member }: { member: Member }) {
     <DropdownMenu>
       {/* Trigger */}
       <DropdownMenuTrigger asChild>
-        <button className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-opacity">
+        <button
+          aria-label="Team member actions"
+          className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-opacity"
+        >
           <MoreVertical className="w-4 h-4 text-slate-400" />
         </button>
       </DropdownMenuTrigger>

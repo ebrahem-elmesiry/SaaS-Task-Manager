@@ -52,7 +52,7 @@ export default function ActivityLine({ activity, action }: Props) {
     case "TASK_ASSIGNED":
       done = "assigned task to ";
       target = activity.user.full_name;
-      target_id = `/profile/${activity.user.id}`;
+      target_id = activity.user.id ? `/profile/${activity.user.id}` : "";
       break;
     case "TASK_MOVED":
       done = `move ${ifTask} from `;
@@ -63,9 +63,13 @@ export default function ActivityLine({ activity, action }: Props) {
   return (
     <div>
       <p className="text-sm text-slate-900 dark:text-white">
-        <Link href={`/profile/${activity.user.id}`} className="font-medium">
-          {activity.user.full_name}
-        </Link>{" "}
+        {activity.user.id ? (
+          <Link href={`/profile/${activity.user.id}`} className="font-medium">
+            {activity.user.full_name}
+          </Link>
+        ) : (
+          <span>{activity.user.full_name}</span>
+        )}{" "}
         <span className="text-slate-500">{done}</span>
         {target_id ? (
           <Link href={target_id} className="font-medium">

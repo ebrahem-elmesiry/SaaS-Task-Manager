@@ -10,6 +10,8 @@ import { ProfileSkeleton } from "@/features/shared/components/loading/ProfileSke
 import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import ProfileError from "./ProfileError";
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
+import { useParams } from "next/navigation";
 
 export default function ProfileContent({ userId }: { userId: string }) {
   const supabase = createClient();
@@ -24,6 +26,12 @@ export default function ProfileContent({ userId }: { userId: string }) {
     },
   });
 
+  const { id } = useParams<{ id: string }>();
+  const currentUser = useCurrentUser();
+  const ifNotMember = currentUser?.role !== "member";
+  const isOwnProfile = currentUser?.id === id;
+  const enableEmail = isOwnProfile ? true : ifNotMember;
+
   if (error) {
     return (
       <ProfileError
@@ -32,6 +40,7 @@ export default function ProfileContent({ userId }: { userId: string }) {
       />
     );
   }
+
   if (isPending) return <ProfileSkeleton />;
 
   return (
@@ -44,6 +53,7 @@ export default function ProfileContent({ userId }: { userId: string }) {
             job={data?.job_title}
             email={data?.email}
             avatar={data?.avatar_url}
+            enableEmail={enableEmail}
           />
 
           <ProfileStats stats={data.stats} />

@@ -4,7 +4,7 @@ import React from "react";
 
 export default function TaskError({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 gap-4">
+    <div role="alert" className="flex flex-col items-center justify-center py-20 gap-4">
       <p className="text-red-500">Failed to load tasks.</p>
       <button
         onClick={onRetry}

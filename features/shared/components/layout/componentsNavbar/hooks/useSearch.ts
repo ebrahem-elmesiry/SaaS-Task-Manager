@@ -64,8 +64,6 @@ export function useSearch(setOpen: (open: boolean) => void) {
     setSelectedIndex(-1);
   }
 
-  console.log("results", results);
-
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {

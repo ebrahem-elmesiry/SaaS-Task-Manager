@@ -8,6 +8,7 @@ export async function insertTask(
   supabase: SupabaseClient,
   data: TaskForm,
   taskId: string,
+  projectId: string,
 ) {
   const { data: taskData, error } = await supabase
     .from("tasks")
@@ -18,7 +19,7 @@ export async function insertTask(
       priority: data.priority,
       due_date: data.dueDate,
       status: data.status,
-      project_id: data.project_id,
+      project_id: projectId,
     })
     .select()
     .single();
@@ -57,14 +58,18 @@ export async function insertAssignees(
   if (error) throw new Error(error.message);
 }
 
-export async function updateTaskBase(supabase: SupabaseClient, data: TaskForm) {
+export async function updateTaskBase(
+  supabase: SupabaseClient,
+  data: TaskForm,
+  projectId: string,
+) {
   const { error } = await supabase
     .from("tasks")
     .update({
       title: data.title,
       description: data.description,
       priority: data.priority,
-      project_id: data.project_id,
+      project_id: projectId,
       due_date: data.dueDate,
       status: data.status,
     })

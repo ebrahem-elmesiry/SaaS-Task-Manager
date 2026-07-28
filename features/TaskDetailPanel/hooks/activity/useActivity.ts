@@ -24,7 +24,7 @@ async function getActivityFromDB(taskId: string) {
   const formatData = formatActivity(data);
   const queryClient = getQueryClient();
   queryClient.setQueryData<ActivityType[]>(["activity", taskId], formatData);
-  return formatData || [];
+  return formatData;
 }
 
 export function useActivity() {

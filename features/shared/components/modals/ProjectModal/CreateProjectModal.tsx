@@ -65,6 +65,7 @@ export function CreateProjectModal() {
                 setIsOpen(false);
                 e.stopPropagation();
               }}
+              aria-label="Close dialog"
               className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
             >
               <X className="w-5 h-5" />
@@ -94,11 +95,12 @@ export function CreateProjectModal() {
 
           {/* Description */}
           <div>
-            <Label className="text-sm font-medium mb-2 block">
+            <Label htmlFor="project-description" className="text-sm font-medium mb-2 block">
               Description
             </Label>
 
             <textarea
+              id="project-description"
               value={formData?.description}
               onChange={(e) =>
                 handleChange(e.target.name as keyof FormState, e.target.value)

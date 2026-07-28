@@ -1,6 +1,6 @@
 import { ProjectProvider } from "@/context/ProjectContext";
 import ProjectCard from "@/features/projects/components/ProjectCard";
-import fetchProjects from "@/features/projects/services/fetchProjects";
+import getProjectsData from "@/features/projects/services/getProjectsData";
 import { PageHeader } from "@/features/shared/components/PageHeader";
 import { getQueryClient } from "@/lib/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
@@ -14,7 +14,7 @@ export default async function Page({
   const { workspaceId } = await params;
   await queryClient.prefetchQuery({
     queryKey: ["projects"],
-    queryFn: () => fetchProjects(workspaceId),
+    queryFn: () => getProjectsData(workspaceId),
   });
 
   return (

@@ -21,13 +21,23 @@ export const useAddWorkspace = () => {
       .select()
       .single();
 
-    if (workspaceError) throw new Error(workspaceError.message);
+    if (workspaceError) {
+      console.log("workspaceError", workspaceError);
+      throw new Error(workspaceError.message);
+    }
 
     const { error: memberError } = await supabase
       .from("workspace_members")
-      .insert({ workspace_id: workspaceData.id, user_id: user.id });
+      .insert({
+        workspace_id: workspaceData.id,
+        user_id: user.id,
+        role: "admin",
+      });
 
-    if (memberError) throw new Error(memberError.message);
+    if (memberError) {
+      console.log("memberError", memberError);
+      throw new Error(memberError.message);
+    }
   }
 
   const { isPending, mutate } = useMutation({
@@ -41,6 +51,7 @@ export const useAddWorkspace = () => {
         id: crypto.randomUUID(),
         name,
         slug,
+        role: "admin",
         projectsCount: 0,
         tasksCount: 0,
         members: [],

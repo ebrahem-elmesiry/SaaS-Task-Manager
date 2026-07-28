@@ -26,7 +26,10 @@ export default function ActionsMenu({ actions, className }: Props) {
     <DropdownMenu>
       {/* Trigger */}
       <DropdownMenuTrigger asChild>
-        <button className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-opacity">
+        <button
+          aria-label="More actions"
+          className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-opacity"
+        >
           <MoreVertical className="w-4 h-4 text-slate-400" />
         </button>
       </DropdownMenuTrigger>

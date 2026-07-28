@@ -29,7 +29,7 @@ export const useAddTask = ({ workspaceId }: { workspaceId: string }) => {
 
   const { isPending, mutate } = useMutation({
     mutationFn: async (data: TaskForm) => {
-      await insertTask(supabase, data, taskId);
+      await insertTask(supabase, data, taskId, projectId);
       await insertSubtasks(supabase, taskId, data.subtasks);
       await insertAssignees(supabase, taskId, data.assignees);
       await logTaskActivity(supabase, {

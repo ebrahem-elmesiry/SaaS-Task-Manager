@@ -10,7 +10,7 @@ export default function ActivityError({ onRetry }: ActivityErrorProps) {
       <h4 className="text-sm font-medium text-slate-900 dark:text-white mb-3">
         Activity Log
       </h4>
-      <div className="flex flex-col items-center justify-center gap-3 py-6 text-sm">
+      <div role="alert" className="flex flex-col items-center justify-center gap-3 py-6 text-sm">
         <p className="text-red-500 dark:text-red-400">
           Failed to load activity
         </p>
