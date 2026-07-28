@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getQueryClient } from "@/lib/get-query-client";
 import { dehydrate } from "@tanstack/react-query";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -66,6 +67,7 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} h-full antialiased`}
     >
       <body>
+        <Analytics />
         <SpeedInsights />
         <Providers dehydratedState={dehydrate(queryClient)}>
           {children}
