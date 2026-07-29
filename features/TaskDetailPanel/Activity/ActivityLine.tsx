@@ -30,32 +30,32 @@ export default function ActivityLine({ activity, action }: Props) {
 
   switch (action) {
     case "COMMENT_ADDED":
-      done = "add comment on ";
+      done = "Add comment on ";
       target = ifTask;
       break;
     case "COMMENT_DELETED":
-      done = "delete comment on ";
+      done = "Delete comment on ";
       target = ifTask;
       break;
     case "TASK_CREATED":
-      done = "create task ";
+      done = "Create task ";
       target = ifTask;
       break;
     case "TASK_UPDATED":
-      done = "update task ";
+      done = "Update task ";
       target = ifTask;
       break;
     case "TASK_DELETED":
-      done = "delete task ";
+      done = "Delete task ";
       target = ifTask;
       break;
     case "TASK_ASSIGNED":
-      done = "assigned task to ";
+      done = "Assigned task to ";
       target = activity.user.full_name;
       target_id = activity.user.id ? `/profile/${activity.user.id}` : "";
       break;
     case "TASK_MOVED":
-      done = `move ${ifTask} from `;
+      done = `Move ${ifTask} from `;
       target = `${activity.metadata?.initialStatus} to ${activity.metadata?.currentStatus}`;
       break;
   }
@@ -70,7 +70,7 @@ export default function ActivityLine({ activity, action }: Props) {
         ) : (
           <span>{activity.user.full_name}</span>
         )}{" "}
-        <span className="text-slate-500">{done}</span>
+        <span className="text-slate-600 dark:text-slate-400">{done}</span>
         {target_id ? (
           <Link href={target_id} className="font-medium">
             {target}
@@ -91,7 +91,9 @@ export default function ActivityLine({ activity, action }: Props) {
         )}
       </p>
 
-      <p className="text-xs text-slate-500 mt-1">{activity.time}</p>
+      <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+        {activity.time}
+      </p>
     </div>
   );
 }

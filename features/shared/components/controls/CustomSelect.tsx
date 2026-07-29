@@ -20,6 +20,7 @@ type CustomSelectProps = {
   placeholder?: string;
   className?: string;
   isEdit?: boolean;
+  label?: string;
 };
 
 export function CustomSelect({
@@ -29,10 +30,12 @@ export function CustomSelect({
   placeholder = "Select option",
   className = "",
   isEdit,
+  label,
 }: CustomSelectProps) {
   return (
     <Select value={value ?? ""} onValueChange={onChange} disabled={isEdit}>
       <SelectTrigger
+        aria-label={label}
         className={`w-full px-4 py-4.5 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:ring-2 focus:ring-indigo-500 ${className}`}
       >
         <SelectValue placeholder={placeholder} />

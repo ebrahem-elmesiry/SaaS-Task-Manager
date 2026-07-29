@@ -29,7 +29,7 @@ export default function Page() {
             <h1 className="text-2xl font-semibold text-slate-900 dark:text-white mb-2">
               Welcome back
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm">
+            <p className="text-slate-600 dark:text-slate-400 text-sm">
               Sign in to your account to continue
             </p>
           </div>
@@ -58,7 +58,7 @@ export default function Page() {
               <div className="w-full border-t border-slate-200 dark:border-slate-700" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white dark:bg-slate-800 text-slate-500">
+              <span className="px-2 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300">
                 Or continue with email
               </span>
             </div>
@@ -87,7 +87,7 @@ export default function Page() {
                 <Button
                   type="button"
                   variant={"link"}
-                  className="text-indigo-600 dark:text-indigo-400"
+                  className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 underline underline-offset-2"
                 >
                   Forgot?
                 </Button>
@@ -111,11 +111,11 @@ export default function Page() {
             </Button>
           </form>
 
-          <p className="text-center mt-6 text-sm text-slate-500">
-            Don&apost have an account?{" "}
+          <p className="text-center mt-6 text-sm text-slate-600 dark:text-slate-300">
+            Don&apos;t have an account?{" "}
             <Link
               href="/auth/Signup"
-              className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 underline underline-offset-2"
+              className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 underline underline-offset-2"
             >
               Sign up
             </Link>

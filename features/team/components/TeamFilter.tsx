@@ -38,8 +38,8 @@ export default function TeamFilter({ workspaceId }: Props) {
           onClick={() => addFilterFn()}
           className={`px-4 py-2 rounded-lg text-sm transition-colors ${
             !getFilter
-              ? "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400"
-              : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600"
+              ? "bg-indigo-600 text-white dark:bg-indigo-600 dark:text-white"
+              : "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
           }`}
         >
           All Members ({data?.length})
@@ -48,8 +48,8 @@ export default function TeamFilter({ workspaceId }: Props) {
           onClick={() => addFilterFn("online")}
           className={`px-4 py-2 rounded-lg text-sm transition-colors ${
             getFilter === "online"
-              ? "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400"
-              : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600"
+              ? "bg-indigo-600 text-white dark:bg-indigo-600 dark:text-white"
+              : "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
           }`}
         >
           Online ({onlineMembers})
@@ -58,8 +58,8 @@ export default function TeamFilter({ workspaceId }: Props) {
           onClick={() => addFilterFn("offline")}
           className={`px-4 py-2 rounded-lg text-sm transition-colors ${
             getFilter === "offline"
-              ? "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400"
-              : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600"
+              ? "bg-indigo-600 text-white dark:bg-indigo-600 dark:text-white"
+              : "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
           }`}
         >
           Offline ({offlineMembers})

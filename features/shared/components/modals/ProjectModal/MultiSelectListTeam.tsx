@@ -44,6 +44,7 @@ export default function MultiSelectList({
                 className="flex items-center gap-3 cursor-pointer w-full"
               >
                 <Avatar
+                  size="sm"
                   avatar_url={member.avatar_url}
                   user_name={member.full_name}
                 />

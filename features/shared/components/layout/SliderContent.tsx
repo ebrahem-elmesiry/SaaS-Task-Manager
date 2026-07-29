@@ -108,6 +108,7 @@ export default function SliderContent() {
               key={item.id}
               className={`
                 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors
+                ${!currentUser?.id ? "pointer-events-none opacity-50 cursor-not-allowed" : ""}
                 ${
                   urlLink === item.id
                     ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
@@ -131,7 +132,7 @@ export default function SliderContent() {
       <div className="p-4 border-t border-slate-200 dark:border-slate-700 space-y-1">
         <Link
           href={`/settings`}
-          className={`${
+          className={`${!currentUser?.id ? "pointer-events-none opacity-50 cursor-not-allowed" : ""}${
             pathName === "/settings"
               ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
               : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
@@ -154,7 +155,7 @@ export default function SliderContent() {
                 <div className="text-sm font-medium text-slate-900 dark:text-white truncate">
                   {full_name}
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 capitalize">
+                <div className="text-xs text-slate-600 dark:text-slate-400 capitalize">
                   {currentUser?.role}
                 </div>
               </div>

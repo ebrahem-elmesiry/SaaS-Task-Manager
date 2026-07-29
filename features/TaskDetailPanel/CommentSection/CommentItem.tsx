@@ -103,7 +103,7 @@ export function CommentItem({
   return (
     <div className={`flex gap-3 ${isReply ? "gap-2" : ""}`}>
       {/* Avatar */}
-      <Avatar avatar_url={avatar} user_name={user_name} />
+      <Avatar size="sm" avatar_url={avatar} user_name={user_name} />
 
       {/* Content */}
       <div className="flex-1 min-w-0">

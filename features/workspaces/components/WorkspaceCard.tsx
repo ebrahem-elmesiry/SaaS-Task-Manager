@@ -46,7 +46,7 @@ export default function WorkspaceCard() {
                 <p className="text-lg font-semibold text-slate-900 dark:text-white">
                   {workspace.projectsCount}
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                <p className="text-xs text-slate-600 dark:text-slate-400 truncate">
                   Projects
                 </p>
               </div>
@@ -56,7 +56,7 @@ export default function WorkspaceCard() {
                 <p className="text-lg font-semibold text-slate-900 dark:text-white">
                   {workspace.tasksCount}
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                <p className="text-xs text-slate-600 dark:text-slate-400 truncate">
                   Tasks
                 </p>
               </div>
@@ -66,7 +66,7 @@ export default function WorkspaceCard() {
                 <p className="text-lg font-semibold text-slate-900 dark:text-white">
                   {workspace.members.length}
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                <p className="text-xs text-slate-600 dark:text-slate-400 truncate">
                   Members
                 </p>
               </div>
@@ -77,6 +77,7 @@ export default function WorkspaceCard() {
                 {workspace.members.slice(0, 4).map((member) => (
                   <Avatar
                     key={member.id}
+                    size="sm"
                     avatar_url={member.avatar_url}
                     user_name={member.full_name}
                   />
@@ -88,7 +89,7 @@ export default function WorkspaceCard() {
                 )}
               </div>
 
-              <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
                 <Users className="w-3.5 h-3.5" />
                 {workspace.members.length}
               </div>

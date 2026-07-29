@@ -45,7 +45,7 @@ export async function StatsCards({
               </span>
             </div>
           </div>
-          <div className="text-sm text-slate-500 dark:text-slate-400">
+          <div className="text-sm text-slate-600 dark:text-slate-400">
             {item.label}
           </div>
         </div>

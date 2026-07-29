@@ -36,7 +36,7 @@ export default function Page() {
             <h1 className="text-2xl font-semibold text-slate-900 dark:text-white mb-2">
               Create your account
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm">
+            <p className="text-slate-600 dark:text-slate-400 text-sm">
               Get started with your free account
             </p>
           </div>
@@ -65,7 +65,7 @@ export default function Page() {
               <div className="w-full border-t border-slate-200 dark:border-slate-700" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white dark:bg-slate-800 text-slate-500">
+              <span className="px-2 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300">
                 Or continue with email
               </span>
             </div>
@@ -122,7 +122,10 @@ export default function Page() {
               required
               ariaDescribedBy="password-hint"
               labelRight={
-                <p id="password-hint" className="mt-1.5 text-xs text-slate-500">
+                <p
+                  id="password-hint"
+                  className="mt-1.5 text-xs text-slate-600 dark:text-slate-300"
+                >
                   Must be at least 8 characters
                 </p>
               }
@@ -145,11 +148,11 @@ export default function Page() {
             </Button>
           </form>
 
-          <p className="text-center mt-6 text-sm text-slate-500">
+          <p className="text-center mt-6 text-sm text-slate-600 dark:text-slate-300">
             Already have an account?{" "}
             <Link
               href={"/auth/Login"}
-              className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
+              className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 underline underline-offset-2"
             >
               Log in
             </Link>

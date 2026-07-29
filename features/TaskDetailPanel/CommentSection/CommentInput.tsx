@@ -59,7 +59,7 @@ export default function CommentInput({
         <MentionDropdown suggestionProps={suggestionProps} />
 
         <div className="flex items-center justify-between mt-2">
-          <Button type="button" variant={"outline"} onClick={triggerMention}>
+          <Button type="button" variant={"outline"} onClick={triggerMention} aria-label="Insert mention">
             <Paperclip className="w-4 h-4 text-slate-400" />
           </Button>
 

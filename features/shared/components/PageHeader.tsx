@@ -23,7 +23,7 @@ export function PageHeader({ title, description, action }: PageHeaderProps) {
         </h1>
 
         {description && (
-          <p className="text-slate-500 dark:text-slate-400 text-sm">
+          <p className="text-slate-600 dark:text-slate-400 text-sm">
             {description}
           </p>
         )}

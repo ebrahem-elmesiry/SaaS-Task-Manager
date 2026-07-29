@@ -18,7 +18,7 @@ export function SettingSection({
       </h3>
 
       {description && (
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
           {description}
         </p>
       )}

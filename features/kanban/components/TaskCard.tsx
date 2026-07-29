@@ -92,6 +92,7 @@ export default function TaskCard({
           {task.assignees.map((assignee) => (
             <Avatar
               key={assignee.id}
+              size="sm"
               avatar_url={assignee.avatar_url}
               user_name={assignee.full_name}
             />

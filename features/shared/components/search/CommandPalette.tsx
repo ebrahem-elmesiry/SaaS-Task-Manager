@@ -93,7 +93,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
               className="flex-1 bg-transparent text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none"
               autoFocus
             />
-            <kbd className="px-2 py-1 text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 rounded border border-slate-200 dark:border-slate-600">
+            <kbd className="px-2 py-1 text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded border border-slate-200 dark:border-slate-600">
               ESC
             </kbd>
           </div>

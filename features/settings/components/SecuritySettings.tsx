@@ -13,7 +13,7 @@ export function SecuritySettings() {
         <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">
           Change Password
         </h3>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
           Update your password to keep your account secure
         </p>
 

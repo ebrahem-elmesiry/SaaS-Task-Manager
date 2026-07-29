@@ -64,6 +64,7 @@ export function ChartsSection({
           </h2>
 
           <CustomSelect
+            label="Time range"
             value={range}
             onChange={handleAddDate}
             options={timeOptions}

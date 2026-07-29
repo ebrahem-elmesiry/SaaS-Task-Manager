@@ -49,7 +49,7 @@ export default function AvatarUpload({ avatar, name, photo, setPhoto }: Props) {
             }
           }}
         />
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+        <p className="text-xs text-slate-600 dark:text-slate-400 mt-2">
           JPG, PNG or GIF. Max size 2MB.
         </p>
       </div>

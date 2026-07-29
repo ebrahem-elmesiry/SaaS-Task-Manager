@@ -30,9 +30,13 @@ export default function SkillsSettings({ skills }: Props) {
       <div className="flex flex-wrap gap-2">
         {skills.map((skill) => (
           <div
-            className="flex gap-2 px-3 py-1.5 cursor-pointer bg-indigo-100 hover:bg-indigo-200 dark:bg-indigo-900/30 hover:dark:bg-indigo-600/30 text-indigo-700 dark:text-indigo-400 rounded-lg text-sm"
+            className="flex gap-2 px-3 py-1.5 cursor-pointer bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400 text-white rounded-lg text-sm"
             key={skill.id}
             onClick={() => deleteSkill(skill.id)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === "Enter" && deleteSkill(skill.id)}
+            aria-label={`Remove skill ${skill.name}`}
           >
             <span>{skill.name}</span>
             <X size={15} />

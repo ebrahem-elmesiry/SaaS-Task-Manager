@@ -47,10 +47,10 @@ export default function ProjectCard({ workspaceId }: { workspaceId: string }) {
               href={`${pathName}/${project.id}/kanban`}
             >
               <div>
-                <h3 className="truncate text-lg font-semibold text-slate-900 dark:text-white mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                <h2 className="truncate text-lg font-semibold text-slate-900 dark:text-white mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                   {project.name}
-                </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 truncate">
+                </h2>
+                <p className="text-sm text-slate-600 dark:text-slate-400 truncate">
                   {project.description}
                 </p>
               </div>
@@ -93,6 +93,7 @@ export default function ProjectCard({ workspaceId }: { workspaceId: string }) {
                 {project.team.slice(0, 4).map((member: Assignee) => (
                   <Avatar
                     key={member.id}
+                    size="sm"
                     avatar_url={member.avatar_url}
                     user_name={member.full_name}
                   />
@@ -105,7 +106,7 @@ export default function ProjectCard({ workspaceId }: { workspaceId: string }) {
                 )}
               </div>
 
-              <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
                 <Users className="w-3.5 h-3.5" />
                 {project.team.length}
               </div>
@@ -121,10 +122,10 @@ export default function ProjectCard({ workspaceId }: { workspaceId: string }) {
                 {project.status}
               </span>
 
-              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
                 <span>{project.endDate}</span>
-                <span className="text-slate-500 dark:text-slate-400">•</span>
-                <span className="text-xs text-slate-500 dark:text-slate-400">
+                <span className="text-slate-600 dark:text-slate-400">•</span>
+                <span className="text-xs text-slate-600 dark:text-slate-400">
                   {project.tasks.completed}/{project.tasks.total} tasks
                 </span>
               </div>

@@ -20,9 +20,10 @@ export function TaskHeader({ onClose, task }: TaskHeaderProps) {
       <div className="flex items-center gap-3">
         <button
           onClick={onClose}
+          aria-label="Close task details"
           className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
         >
-          <X className="w-5 h-5 text-slate-500" />
+          <X className="w-5 h-5 text-slate-600" />
         </button>
         <SheetTitle className="text-lg font-semibold text-slate-900 dark:text-white">
           Task Details

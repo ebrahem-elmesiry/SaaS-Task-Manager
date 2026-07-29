@@ -42,7 +42,7 @@ export function TaskInfo({
       </div>
 
       <div>
-        <Label className="text-xs text-slate-500 dark:text-slate-400 mb-3 block">
+        <Label className="text-xs text-slate-600 dark:text-slate-400 mb-3 block">
           Assignees ({assignees.length})
         </Label>
 
@@ -51,6 +51,7 @@ export function TaskInfo({
             <div key={user.id} className="flex items-center gap-1">
               <Avatar
                 key={user.id}
+                size="sm"
                 avatar_url={user.avatar_url}
                 user_name={user.full_name}
               />

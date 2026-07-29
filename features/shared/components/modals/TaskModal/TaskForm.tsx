@@ -92,6 +92,7 @@ export function TaskForm() {
             <Flag className="w-4 h-4 inline mr-1" /> Priority
           </Label>
           <CustomSelect
+            label="Priority"
             value={formData.priority}
             onChange={(value) => handleChange("priority", value as Priority)}
             options={priorityOptions}
@@ -113,6 +114,7 @@ export function TaskForm() {
             <Activity className="w-4 h-4 inline mr-1" /> Status
           </Label>
           <CustomSelect
+            label="Status"
             isEdit={isEdit}
             value={formData.status}
             onChange={(value) => handleChange("status", value)}

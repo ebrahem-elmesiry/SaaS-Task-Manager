@@ -60,7 +60,7 @@ export default function NotificationContent({
           </h2>
 
           {unreadCount > 0 && (
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-600 dark:text-slate-400">
               {unreadCount} unread
             </p>
           )}
@@ -158,7 +158,7 @@ export default function NotificationContent({
                     </div>
                   )}
 
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                   {formatTimeAgo(n.created_at)}
                 </p>
               </div>

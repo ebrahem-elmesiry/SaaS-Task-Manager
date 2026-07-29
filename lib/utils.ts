@@ -100,12 +100,12 @@ export function formatDate(date: string | Date) {
 export const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
     "Just Started":
-      "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400",
+      "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300",
     "In Progress":
-      "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400",
-    "At Risk": "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400",
+      "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300",
+    "At Risk": "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300",
     Completed:
-      "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400",
+      "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300",
   };
   return colors[status] || colors["In Progress"];
 };
@@ -114,28 +114,28 @@ export const getColorClasses = (color: Status) => {
   const colors: Record<string, string> = {
     todo: "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300",
     "in-progress":
-      "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400",
+      "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300",
     review:
-      "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400",
-    done: "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400",
+      "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300",
+    done: "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300",
   };
   return colors[color];
 };
 
 export const getPriorityColor = (priority: Priority) => {
   const colors: Record<string, string> = {
-    high: "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800",
+    high: "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800",
     medium:
-      "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800",
-    low: "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800",
+      "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800",
+    low: "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800",
   };
   return colors[priority];
 };
 
 export const getRoleColor = (role: string) => {
   if (role === "admin")
-    return "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400";
+    return "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300";
   if (role === "manager")
-    return "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400";
+    return "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300";
   return "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300";
 };

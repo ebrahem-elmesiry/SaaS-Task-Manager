@@ -93,6 +93,7 @@ export function CreateMemberModal() {
             <Label className="text-sm font-medium mb-2 block">Role</Label>
 
             <CustomSelect
+              label="Role"
               value={formData.role}
               onChange={(val) => setRole(val as Role)}
               options={roleOptions}

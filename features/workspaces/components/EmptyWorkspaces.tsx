@@ -10,7 +10,7 @@ export default function EmptyWorkspaces() {
         <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-3">
           No workspaces yet
         </h2>
-        <p className="text-slate-500 dark:text-slate-400 mb-8">
+        <p className="text-slate-600 dark:text-slate-400 mb-8">
           Create your first workspace to organize your projects and collaborate
           with your team.
         </p>

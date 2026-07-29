@@ -25,6 +25,7 @@ export default function ReplyPreview({
 
         <button
           type="button"
+          aria-label="Close reply"
           className="cursor-pointer p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-opacity"
           onClick={handleCloseReply}
         >

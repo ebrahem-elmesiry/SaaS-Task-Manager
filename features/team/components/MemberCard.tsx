@@ -51,7 +51,7 @@ export default function MemberCard({ member }: Props) {
         <h3 className="font-semibold text-slate-900 dark:text-white mb-1">
           {fullName}
         </h3>
-        <div className="grid grid-cols-[auto_1fr] items-center gap-1 text-sm text-slate-500 dark:text-slate-400 mb-2">
+        <div className="grid grid-cols-[auto_1fr] items-center gap-1 text-sm text-slate-600 dark:text-slate-400 mb-2">
           <Mail className="w-3.5 h-3.5" />
           <span className="truncate">{member.email}</span>
         </div>
@@ -66,7 +66,7 @@ export default function MemberCard({ member }: Props) {
             className={`px-2.5 py-1 rounded-lg text-xs ${
               member.status === "online"
                 ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
-                : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400"
+                : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
             }`}
           >
             {member.status}
@@ -76,7 +76,7 @@ export default function MemberCard({ member }: Props) {
 
       <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
         <div>
-          <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">
+          <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">
             Tasks Done
           </div>
           <div className="text-lg font-semibold text-slate-900 dark:text-white">
@@ -84,7 +84,7 @@ export default function MemberCard({ member }: Props) {
           </div>
         </div>
         <div>
-          <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">
+          <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">
             Projects
           </div>
           <div className="text-lg font-semibold text-slate-900 dark:text-white">
@@ -93,7 +93,7 @@ export default function MemberCard({ member }: Props) {
         </div>
       </div>
 
-      <div className="mt-4 text-xs text-slate-500 dark:text-slate-400">
+      <div className="mt-4 text-xs text-slate-600 dark:text-slate-400">
         Joined {member.joinedDate}
       </div>
     </div>

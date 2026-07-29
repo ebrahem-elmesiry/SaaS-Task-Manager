@@ -17,7 +17,7 @@ export function SettingsItem(props: SettingsItemProps) {
           <div className="text-sm font-medium text-slate-900 dark:text-white">
             {title}
           </div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">
+          <div className="text-xs text-slate-600 dark:text-slate-400">
             {description}
           </div>
         </div>

@@ -23,6 +23,7 @@ export default function ActivityContent({ activity, isRefetching }: Props) {
           className="flex items-start gap-3 pb-3 border-b border-slate-100 dark:border-slate-700 last:border-0"
         >
           <Avatar
+            size="sm"
             user_id={activity.user.id}
             avatar_url={activity.user.avatar_url}
             user_name={activity.user.full_name}

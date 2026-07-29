@@ -37,7 +37,7 @@ export default function RecentTasks({ tasks, userId }: Props) {
         </h2>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <button className="cursor-pointer text-sm text-indigo-400 hover:text-indigo-500 font-semibold inline-flex items-center gap-1">
+            <button className="cursor-pointer text-sm text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-500 font-semibold inline-flex items-center gap-1">
               View all
               <ArrowRight className="w-3.5 h-3.5" />
             </button>

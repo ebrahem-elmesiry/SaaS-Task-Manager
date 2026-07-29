@@ -25,7 +25,7 @@ export default function ProfileHeader({
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-white mb-1">
             {name}
           </h1>
-          <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+          <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
             {job && (
               <span className="flex items-center gap-1">
                 <User className="w-4 h-4" />
