@@ -12,8 +12,7 @@ import {
   Line,
 } from "recharts";
 import { CustomSelect } from "../../shared/components/controls/CustomSelect";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SectionError } from "./SectionError";
 
 type ChartsSectionProps = {
@@ -36,24 +35,22 @@ export function ChartsSection({
   isTaskWeeklyField,
 }: ChartsSectionProps) {
   const searchParams = useSearchParams();
-  const { workspaceId } = useParams();
-  const params = new URLSearchParams(searchParams.toString());
-  const range = searchParams.get("range") || undefined;
   const { replace } = useRouter();
-
-  useEffect(() => {
-    if (!range) {
-      replace(`/dashboard/${workspaceId}/?range=7d`, {
-        scroll: false,
-      });
-    }
-  }, [range, replace, workspaceId]);
+  const range = searchParams.get("range") ?? "7d";
 
   function handleAddDate(val: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (val === "7d") {
+      params.delete("range");
+      if (!params.toString()) {
+        replace(`?`, { scroll: false });
+        return;
+      }
+      replace(`?${params.toString()}`, { scroll: false });
+      return;
+    }
     params.set("range", val);
-    replace(`?${params.toString()}`, {
-      scroll: false,
-    });
+    replace(`?${params.toString()}`, { scroll: false });
   }
   const isTaskWeeklyEmpty = taskWeekly?.every((t) => t.completed === 0);
   const isTaskDailyEmpty = statsData?.every((t) => t.tasks === 0);

@@ -81,8 +81,6 @@ export default function SliderContent() {
 
   const urlLink = getPathName[getPathName.length - 1];
 
-  console.log("pathName", pathName);
-
   return (
     <>
       <div className="flex items-center gap-2 p-6 border-b border-slate-200 dark:border-slate-700">

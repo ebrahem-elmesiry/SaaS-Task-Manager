@@ -115,7 +115,7 @@ export default function Page() {
             Don&apost have an account?{" "}
             <Link
               href="/auth/Signup"
-              className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
+              className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 underline underline-offset-2"
             >
               Sign up
             </Link>

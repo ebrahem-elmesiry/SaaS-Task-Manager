@@ -12,7 +12,7 @@ import { Project } from "@/types/profile";
 import useActiveProjects from "../hooks/useActiveProjects";
 import ActiveProjectList from "./ActiveProjectList/ActiveProjectList";
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { ArrowRight, RefreshCw } from "lucide-react";
 
 type Props = {
   projects: Project[];
@@ -37,8 +37,9 @@ export default function ActiveProjects({ projects, userId }: Props) {
         </h2>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <button className="cursor-pointer text-sm text-indigo-400 hover:text-indigo-500">
+            <button className="cursor-pointer text-sm text-indigo-400 hover:text-indigo-500 font-semibold inline-flex items-center gap-1">
               View all
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </DialogTrigger>
           <DialogContent className="max-w-lg! dark:bg-slate-800 max-h-105 overflow-y-auto p-6">

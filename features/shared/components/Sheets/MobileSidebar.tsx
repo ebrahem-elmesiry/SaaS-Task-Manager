@@ -13,7 +13,7 @@ export default function MobileSlideBar() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" className="md:hidden">
+        <Button variant="outline" className="md:hidden" aria-label="Open navigation menu">
           <span>
             <Menu className="w-5 h-5" />
           </span>

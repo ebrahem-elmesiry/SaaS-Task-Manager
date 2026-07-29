@@ -24,9 +24,35 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TaskFlow - Task Management",
+  title: {
+    default: "TaskFlow - Task Management",
+    template: "%s | TaskFlow",
+  },
   description:
     "TaskFlow is a collaborative task management platform for teams.",
+  keywords: [
+    "task management",
+    "project management",
+    "team collaboration",
+    "productivity",
+  ],
+  openGraph: {
+    title: "TaskFlow - Task Management",
+    description: "Collaborative task management platform for teams.",
+    type: "website",
+    siteName: "TaskFlow",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/favicon.ico",
+  },
 };
 
 export default async function RootLayout({

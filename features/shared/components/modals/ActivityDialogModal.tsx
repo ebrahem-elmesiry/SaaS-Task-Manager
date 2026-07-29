@@ -12,7 +12,7 @@ import ActivityContent from "@/features/TaskDetailPanel/Activity/ActivityContent
 import ActivityError from "@/features/Dashboard/components/ActivityError";
 import { ActivityType } from "@/types/kanban";
 import { useGetMoreActivities } from "@/features/Dashboard/hooks/useGetMoreActivities";
-import { Loader2 } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 
@@ -38,8 +38,9 @@ export default function ActivityDialogModal({ activity }: Props) {
     <Dialog open={open} onOpenChange={setOpen}>
       {/* Trigger */}
       <DialogTrigger asChild>
-        <button className="cursor-pointer text-sm text-indigo-400 hover:text-indigo-500">
+        <button className="cursor-pointer text-sm text-indigo-400 hover:text-indigo-500 font-semibold inline-flex items-center gap-1">
           View all
+          <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </DialogTrigger>
 

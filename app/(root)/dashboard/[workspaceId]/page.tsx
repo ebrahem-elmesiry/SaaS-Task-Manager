@@ -10,21 +10,18 @@ export default async function Page({
   params: Promise<{ workspaceId: string }>;
   searchParams: Promise<{ range: string }>;
 }) {
-  const { range } = await searchParams;
+  const range = (await searchParams).range ?? "7d";
   const { workspaceId } = await params;
 
   return (
-    <>
-      <h2 className="text-xl font-bold mb-4 dark:text-white">Overview</h2>
-      <div className="space-y-6">
-        <PageHeader
-          title="Dashboard"
-          description="Welcome back! Here's what's happening today."
-        />
-        <Suspense fallback={<DashboardSkeleton />}>
-          <Dashboard range={range} workspace_id={workspaceId} />
-        </Suspense>
-      </div>
-    </>
+    <div className="space-y-6">
+      <PageHeader
+        title="Dashboard"
+        description="Welcome back! Here's what's happening today."
+      />
+      <Suspense fallback={<DashboardSkeleton />}>
+        <Dashboard range={range} workspace_id={workspaceId} />
+      </Suspense>
+    </div>
   );
 }
