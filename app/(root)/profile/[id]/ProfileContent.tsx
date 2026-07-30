@@ -54,6 +54,7 @@ export default function ProfileContent({ userId }: { userId: string }) {
             email={data?.email}
             avatar={data?.avatar_url}
             enableEmail={enableEmail}
+            isOwnProfile={currentUser?.id === "id"}
           />
 
           <ProfileStats stats={data.stats} />

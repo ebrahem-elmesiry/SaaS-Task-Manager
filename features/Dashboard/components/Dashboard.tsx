@@ -1,10 +1,15 @@
 import { StatsCards } from "./StatsCards";
-import { ChartsSection } from "./ChartsSection";
 import { RecentActivity } from "./RecentActivity";
 import getDashboardData from "../services/getDashboardData";
 import DashboardError from "./DashboardError";
 import { formatActivity } from "@/features/TaskDetailPanel/handlers/formatActivity";
 import { TrendingUp, Users, CheckCircle2, Clock } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const ChartsSection = dynamic(
+  () => import("./ChartsSection").then((m) => ({ default: m.ChartsSection })),
+  { ssr: true }
+);
 
 export default async function Dashboard({
   range,

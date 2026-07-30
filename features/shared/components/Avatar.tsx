@@ -31,6 +31,7 @@ export default function Avatar({
       src={avatar_url}
       alt={user_name}
       fill
+      priority
       sizes={currentSize.sizes}
       className="rounded-full object-cover"
     />

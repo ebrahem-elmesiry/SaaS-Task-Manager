@@ -8,6 +8,7 @@ type Props = {
   email: string;
   avatar: string | undefined;
   enableEmail: boolean;
+  isOwnProfile: boolean;
 };
 
 export default function ProfileHeader({
@@ -16,6 +17,7 @@ export default function ProfileHeader({
   email,
   avatar,
   enableEmail,
+  isOwnProfile,
 }: Props) {
   return (
     <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-16 mb-6">
@@ -41,12 +43,14 @@ export default function ProfileHeader({
           </div>
         </div>
       </div>
-      <Link
-        href={`/settings`}
-        className="text-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-      >
-        Edit Profile
-      </Link>
+      {isOwnProfile && (
+        <Link
+          href={`/settings`}
+          className="text-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+        >
+          Edit Profile
+        </Link>
+      )}
     </div>
   );
 }
