@@ -1,8 +1,8 @@
 "use client";
 
+import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 import { CreateProjectModal } from "./modals/ProjectModal/CreateProjectModal";
 import CreateTaskModal from "./modals/TaskModal/CreateTaskModal";
-import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 import { CreateMemberModal } from "./modals/MemberModal/CreateMemberModal";
 import { CreateWorkspaceModal } from "./modals/WorkspaceModal/CreateWorkspaceModal";
 

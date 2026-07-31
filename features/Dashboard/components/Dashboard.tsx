@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 
 const ChartsSection = dynamic(
   () => import("./ChartsSection").then((m) => ({ default: m.ChartsSection })),
-  { ssr: true }
+  { ssr: true },
 );
 
 export default async function Dashboard({

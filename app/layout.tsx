@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import Providers from "./providers/Providers";
-import { createClient } from "@/lib/supabase/server";
-import { getQueryClient } from "@/lib/get-query-client";
 import { dehydrate } from "@tanstack/react-query";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
+import { getQueryClient } from "@/lib/get-query-client";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -50,32 +49,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const queryClient = getQueryClient();
-
-  if (user) {
-    await queryClient.prefetchQuery({
-      queryKey: ["currentUser"],
-      queryFn: async () => {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("full_name, avatar_url, job_title")
-          .eq("id", user.id)
-          .single();
-        return {
-          id: user.id,
-          name: profile?.full_name ?? "",
-          avatar: profile?.avatar_url || undefined,
-          job_title: profile?.job_title ?? undefined,
-        };
-      },
-    });
-  }
-
   return (
     <html
       lang="en"
@@ -85,7 +58,7 @@ export default async function RootLayout({
       <body>
         <Analytics />
         <SpeedInsights />
-        <Providers dehydratedState={dehydrate(queryClient)}>
+        <Providers dehydratedState={dehydrate(getQueryClient())}>
           {children}
         </Providers>
       </body>

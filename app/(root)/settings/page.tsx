@@ -3,6 +3,8 @@ import { PageHeader } from "@/features/shared/components/PageHeader";
 import fetchSettings from "@/features/settings/services/fetchSettings";
 import { getQueryClient } from "@/lib/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { SettingsSkeleton } from "@/features/shared/components/loading/SettingsSkeleton";
+import { Suspense } from "react";
 
 export default async function Page() {
   const queryClient = getQueryClient();
@@ -18,7 +20,9 @@ export default async function Page() {
           title="Settings"
           description="Manage your account preferences and settings"
         />
-        <SettingsComponent />
+        <Suspense fallback={<SettingsSkeleton />}>
+          <SettingsComponent />
+        </Suspense>
       </div>
     </HydrationBoundary>
   );
