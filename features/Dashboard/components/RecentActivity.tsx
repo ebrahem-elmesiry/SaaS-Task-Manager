@@ -1,6 +1,7 @@
+"use client";
+
 import { Activity } from "lucide-react";
-import ActivityDialogModal from "@/features/shared/components/modals/ActivityDialogModal";
-import ActivityContent from "@/features/TaskDetailPanel/Activity/ActivityContent";
+// import ActivityDialogModal from "@/features/shared/components/modals/ActivityDialogModal";
 import { SectionError } from "./SectionError";
 
 import { ActivityType } from "@/types/kanban";
@@ -9,6 +10,31 @@ interface Props {
   allActivity: ActivityType[] | null;
   isAllActivityField: "rejected" | "fulfilled";
 }
+
+import dynamic from "next/dynamic";
+
+const ActivityContent = dynamic(
+  () =>
+    import("@/features/TaskDetailPanel/Activity/ActivityContent").then(
+      (mod) => mod.default,
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-40 rounded-lg bg-slate-100 dark:bg-slate-800" />
+    ),
+  },
+);
+
+const ActivityDialogModal = dynamic(
+  () =>
+    import("@/features/shared/components/modals/ActivityDialogModal").then(
+      (mod) => mod.default,
+    ),
+  {
+    ssr: false,
+  },
+);
 
 export function RecentActivity({ allActivity, isAllActivityField }: Props) {
   if (!allActivity || isAllActivityField === "rejected")

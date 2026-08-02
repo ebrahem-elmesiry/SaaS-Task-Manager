@@ -65,6 +65,9 @@ export function useMarkNotificationRead() {
       queryClient.invalidateQueries({
         queryKey: ["notification", currentUser.id],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["notification-unread", currentUser.id],
+      });
     },
   });
 }

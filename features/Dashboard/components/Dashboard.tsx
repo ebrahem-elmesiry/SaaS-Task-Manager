@@ -1,15 +1,10 @@
 import { StatsCards } from "./StatsCards";
 import { RecentActivity } from "./RecentActivity";
+import { ChartsSection } from "./ChartsSection";
 import getDashboardData from "../services/getDashboardData";
 import DashboardError from "./DashboardError";
 import { formatActivity } from "@/features/TaskDetailPanel/handlers/formatActivity";
 import { TrendingUp, Users, CheckCircle2, Clock } from "lucide-react";
-import dynamic from "next/dynamic";
-
-const ChartsSection = dynamic(
-  () => import("./ChartsSection").then((m) => ({ default: m.ChartsSection })),
-  { ssr: true },
-);
 
 export default async function Dashboard({
   range,
@@ -76,7 +71,7 @@ export default async function Dashboard({
   ];
 
   return (
-    <>
+    <div className="space-y-10">
       <StatsCards
         stats={stats}
         isTeamField="fulfilled"
@@ -92,6 +87,6 @@ export default async function Dashboard({
         isAllActivityField={errors.activity ? "rejected" : "fulfilled"}
         allActivity={formatActivity(activity)}
       />
-    </>
+    </div>
   );
 }

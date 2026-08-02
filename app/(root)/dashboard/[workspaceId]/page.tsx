@@ -10,7 +10,7 @@ export default async function Page({
   params: Promise<{ workspaceId: string }>;
   searchParams: Promise<{ range: string }>;
 }) {
-  const range = (await searchParams).range ?? "7d";
+  const { range } = (await searchParams) ?? "7d";
   const { workspaceId } = await params;
 
   return (

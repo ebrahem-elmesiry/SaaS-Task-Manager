@@ -20,10 +20,14 @@ export async function insertTask(
       due_date: data.dueDate,
       status: data.status,
       project_id: projectId,
+      completed_at: data.status === "done" ? new Date().toISOString() : null,
     })
     .select()
     .single();
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.log("error", error);
+    throw new Error(error.message);
+  }
   return taskData;
 }
 
@@ -72,6 +76,7 @@ export async function updateTaskBase(
       project_id: projectId,
       due_date: data.dueDate,
       status: data.status,
+      completed_at: data.status === "done" ? new Date().toISOString() : null,
     })
     .eq("id", data.id);
   if (error) throw new Error(error.message);
@@ -177,7 +182,10 @@ export async function updateTaskStatusDB({
   const supabase = createClient();
   const { error } = await supabase
     .from("tasks")
-    .update({ status: newStatus })
+    .update({
+      status: newStatus,
+      completed_at: newStatus === "done" ? new Date().toISOString() : null,
+    })
     .eq("id", taskId);
 
   if (error) throw new Error(error.message);

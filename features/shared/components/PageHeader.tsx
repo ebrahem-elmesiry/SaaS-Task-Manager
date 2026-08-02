@@ -1,10 +1,26 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
-import { CreateProjectModal } from "./modals/ProjectModal/CreateProjectModal";
-import CreateTaskModal from "./modals/TaskModal/CreateTaskModal";
-import { CreateMemberModal } from "./modals/MemberModal/CreateMemberModal";
-import { CreateWorkspaceModal } from "./modals/WorkspaceModal/CreateWorkspaceModal";
+
+const CreateProjectModal = dynamic(() =>
+  import("./modals/ProjectModal/CreateProjectModal").then(
+    (m) => m.CreateProjectModal,
+  ),
+);
+const CreateTaskModal = dynamic(() =>
+  import("./modals/TaskModal/CreateTaskModal").then((m) => m.default),
+);
+const CreateMemberModal = dynamic(() =>
+  import("./modals/MemberModal/CreateMemberModal").then(
+    (m) => m.CreateMemberModal,
+  ),
+);
+const CreateWorkspaceModal = dynamic(() =>
+  import("./modals/WorkspaceModal/CreateWorkspaceModal").then(
+    (m) => m.CreateWorkspaceModal,
+  ),
+);
 
 type PageHeaderProps = {
   title: string;

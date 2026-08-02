@@ -91,6 +91,7 @@ export type TaskBase = {
 
 export type Task = TaskBase & {
   status: Status;
+  completed_at?: string | null;
   subtasks: Subtask[];
   commentsCount: number;
   attachments: number;

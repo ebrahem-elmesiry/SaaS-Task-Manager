@@ -45,7 +45,10 @@ export default function Providers({
               <Sidebar />
               <div className="md:ml-64 flex flex-col min-h-screen">
                 <Header />
-                <main id="main-content" className="flex-1 p-4 md:p-8 bg-slate-50 dark:bg-slate-900">
+                <main
+                  id="main-content"
+                  className="flex-1 p-4 md:p-8 bg-slate-50 dark:bg-slate-900"
+                >
                   {children}
                   <Toaster position="bottom-left" expand richColors />
                 </main>

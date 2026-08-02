@@ -34,9 +34,7 @@ export async function StatsCards({
             </div>
             <div className="flex items-center gap-2">
               <div className="text-2xl font-semibold text-slate-900 dark:text-white mb-1">
-                {item.label === "Success Rate"
-                  ? item.value + "%"
-                  : item.value}
+                {item.label === "Success Rate" ? item.value + "%" : item.value}
               </div>
               <span
                 className={`text-xs px-2 py-0.5 rounded-full font-medium ${item.badgeColor}`}

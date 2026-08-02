@@ -28,6 +28,9 @@ export function NotificationsRealtime({
           queryClient.invalidateQueries({
             queryKey: ["notification", userId],
           });
+          queryClient.invalidateQueries({
+            queryKey: ["notification-unread", userId],
+          });
         },
       )
       .subscribe();

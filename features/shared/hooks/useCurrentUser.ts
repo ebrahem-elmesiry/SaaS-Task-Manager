@@ -7,9 +7,15 @@ import { createClient } from "@/lib/supabase/client";
 import { currentUserType } from "@/types/main";
 import { getQueryClient } from "@/lib/get-query-client";
 
+let cachedClient: ReturnType<typeof createClient> | undefined;
+function getClient() {
+  if (!cachedClient) cachedClient = createClient();
+  return cachedClient;
+}
+
 export function useCurrentUser(): currentUserType | null {
   const { workspaceId } = useParams<{ workspaceId: string }>();
-  const supabase = createClient();
+  const supabase = getClient();
   const queryClient = getQueryClient();
 
   useEffect(() => {
@@ -31,6 +37,7 @@ export function useCurrentUser(): currentUserType | null {
 
   const { data: baseUser } = useQuery({
     queryKey: ["currentUser"],
+    staleTime: 5 * 60_000,
     queryFn: async () => {
       const {
         data: { user },
@@ -52,6 +59,7 @@ export function useCurrentUser(): currentUserType | null {
 
   const { data: member } = useQuery({
     queryKey: ["workspaceMember", workspaceId],
+    staleTime: 5 * 60_000,
     queryFn: async () => {
       const {
         data: { user },

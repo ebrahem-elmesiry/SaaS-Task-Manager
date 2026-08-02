@@ -1,16 +1,6 @@
 "use client";
 
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-} from "recharts";
+import { SimpleBarChart, SimpleLineChart } from "./SimpleCharts";
 import { CustomSelect } from "../../shared/components/controls/CustomSelect";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SectionError } from "./SectionError";
@@ -37,6 +27,7 @@ export function ChartsSection({
   const searchParams = useSearchParams();
   const { replace } = useRouter();
   const range = searchParams.get("range") ?? "7d";
+  const labelCount = range === "3m" ? 3 : range === "30d" ? 6 : 7;
 
   function handleAddDate(val: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -79,18 +70,11 @@ export function ChartsSection({
             No completed tasks in this period
           </div>
         ) : (
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={statsData}>
-              <CartesianGrid
-                strokeDasharray="3 3"
-                className="dark:stroke-slate-700"
-              />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="tasks" fill="#6366f1" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <SimpleBarChart
+            data={statsData.map((d) => ({ name: d.name, value: d.tasks }))}
+            color="#6366f1"
+            maxLabels={labelCount}
+          />
         )}
       </div>
 
@@ -107,23 +91,11 @@ export function ChartsSection({
             No completion data available
           </div>
         ) : (
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={taskWeekly}>
-              <CartesianGrid
-                strokeDasharray="3 3"
-                className="dark:stroke-slate-700"
-              />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="completed"
-                stroke="#10b981"
-                strokeWidth={2}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          <SimpleLineChart
+            data={taskWeekly.map((d) => ({ name: d.name, value: d.completed }))}
+            color="#10b981"
+            maxLabels={labelCount}
+          />
         )}
       </div>
     </div>
