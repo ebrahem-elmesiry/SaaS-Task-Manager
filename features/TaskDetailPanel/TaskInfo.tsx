@@ -46,7 +46,7 @@ export function TaskInfo({
           Assignees ({assignees.length})
         </Label>
 
-        <div className="flex flex-col gap-3 max-h-50 overflow-y-auto">
+        <div className="flex flex-col gap-3">
           {assignees.map((user) => (
             <div key={user.id} className="flex items-center gap-1">
               <Avatar

@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { messages } from "@/messages";
 import { createClient } from "@/lib/supabase/client";
 import { getQueryClient } from "@/lib/get-query-client";
-import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
+import { useCurrentUserQuery } from "@/features/shared/hooks/useCurrentUser";
 import { Comment, Task } from "@/types/kanban";
 import {
   addComment,
@@ -26,9 +26,8 @@ export function useDeleteCommentMutation(
   task: Task | undefined,
   workspaceId: string,
 ) {
-  const currentUser = useCurrentUser();
-  if (!currentUser?.id) throw new Error("User not found");
-  const { id: user_id, name: user_name, avatar: avatar_url } = currentUser;
+  const { user: currentUser, isPending } = useCurrentUserQuery();
+  if (!currentUser?.id && !isPending) throw new Error("User not found");
 
   const queryClient = getQueryClient();
   const supabase = createClient();
@@ -42,11 +41,11 @@ export function useDeleteCommentMutation(
         await logTaskActivity(supabase, {
           activityUUID,
           workspace_id: workspaceId,
-          user_id,
+          user_id: currentUser!.id,
           entity_id: params.commentId,
           taskId,
           action: "COMMENT_DELETED",
-          metadata: { taskTitle: task?.title, deletedBy: user_name },
+          metadata: { taskTitle: task?.title, deletedBy: currentUser!.name },
         });
       }
     },
@@ -78,9 +77,9 @@ export function useDeleteCommentMutation(
         if (task) {
           addActivityToCache(queryClient, taskId, {
             activityUUID,
-            userId: user_id,
-            userName: user_name,
-            avatarUrl: avatar_url,
+            userId: currentUser!.id,
+            userName: currentUser!.name,
+            avatarUrl: currentUser!.avatar,
             action: "COMMENT_DELETED",
             entityId: params.commentId,
             task: {
@@ -88,7 +87,7 @@ export function useDeleteCommentMutation(
               status: task.status,
               project_id: task.project_id,
             },
-            metadata: { taskTitle: task?.title, deletedBy: user_name },
+            metadata: { taskTitle: task?.title, deletedBy: currentUser!.name },
           });
         }
       }
@@ -167,9 +166,8 @@ export function useAddCommentMutation(
   task: Task | undefined,
   workspaceId: string,
 ) {
-  const currentUser = useCurrentUser();
-  if (!currentUser?.id) throw new Error("User not found");
-  const { id: user_id, name: user_name, avatar: avatar_url } = currentUser;
+  const { user: currentUser, isPending } = useCurrentUserQuery();
+  if (!currentUser?.id && !isPending) throw new Error("User not found");
 
   const queryClient = getQueryClient();
   const supabase = createClient();
@@ -186,7 +184,7 @@ export function useAddCommentMutation(
         await addReply(supabase, {
           id: params.id,
           comment_id: params.reply.commentId,
-          user_id,
+          user_id: currentUser!.id,
           content: params.text,
         });
         await insertMentions(supabase, {
@@ -198,7 +196,7 @@ export function useAddCommentMutation(
         await addComment(supabase, {
           id: params.id,
           task_id: taskId,
-          user_id,
+          user_id: currentUser!.id,
           content: params.text,
         });
         await insertMentions(supabase, {
@@ -209,7 +207,7 @@ export function useAddCommentMutation(
         await logTaskActivity(supabase, {
           activityUUID,
           workspace_id: workspaceId,
-          user_id,
+          user_id: currentUser!.id,
           entity_id: params.id,
           taskId,
           action: "COMMENT_ADDED",
@@ -237,24 +235,24 @@ export function useAddCommentMutation(
         addReplyToCache(queryClient, taskId, {
           id: params.id,
           commentId: params.reply.commentId,
-          currentUser,
-          userId: user_id,
+          currentUser: currentUser!,
+          userId: currentUser!.id,
           text: params.text,
           replyUserId: params.reply.user_id,
         });
       } else {
         addCommentToCache(queryClient, taskId, {
           id: params.id,
-          currentUser,
-          userId: user_id,
+          currentUser: currentUser!,
+          userId: currentUser!.id,
           text: params.text,
         });
         if (task) {
           addActivityToCache(queryClient, taskId, {
             activityUUID,
-            userId: user_id,
-            userName: user_name,
-            avatarUrl: avatar_url,
+            userId: currentUser!.id,
+            userName: currentUser!.name,
+            avatarUrl: currentUser!.avatar,
             action: "COMMENT_ADDED",
             entityId: params.id,
             task: {

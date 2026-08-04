@@ -1,10 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Loader2, Mail } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { FiGithub } from "react-icons/fi";
 import { useLogin } from "../../../../features/Auth/hooks/useLogin";
 import InputField from "@/features/shared/components/controls/InputField";
 
@@ -20,48 +19,18 @@ export default function Page() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 px-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-8">
-          <div className="text-center mb-8">
-            <div className="w-12 h-12 bg-indigo-600 rounded-xl mx-auto mb-4 flex items-center justify-center">
-              <div className="w-6 h-6 border-2 border-white rounded" />
+      <div className="w-full max-w-sm">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+          <div className="text-center mb-6">
+            <div className="w-10 h-10 bg-indigo-600 rounded-xl mx-auto mb-3 flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-white rounded" />
             </div>
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white mb-2">
+            <h1 className="text-xl font-semibold text-slate-900 dark:text-white mb-1">
               Welcome back
             </h1>
             <p className="text-slate-600 dark:text-slate-400 text-sm">
               Sign in to your account to continue
             </p>
-          </div>
-
-          <div className="space-y-3 mb-6">
-            <Button
-              variant={"outline"}
-              size={"submit"}
-              className="w-full text-md"
-            >
-              <FiGithub className="w-5! h-5!" />
-              <span>Continue with GitHub</span>
-            </Button>
-            <Button
-              variant={"outline"}
-              size={"submit"}
-              className="w-full text-md"
-            >
-              <Mail className="w-5! h-5!" />
-              <span>Continue with Google</span>
-            </Button>
-          </div>
-
-          <div className="relative mb-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-200 dark:border-slate-700" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                Or continue with email
-              </span>
-            </div>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">

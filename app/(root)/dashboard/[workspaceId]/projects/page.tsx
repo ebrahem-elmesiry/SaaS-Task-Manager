@@ -12,10 +12,14 @@ export default async function Page({
 }) {
   const queryClient = getQueryClient();
   const { workspaceId } = await params;
-  await queryClient.prefetchQuery({
-    queryKey: ["projects"],
-    queryFn: () => getProjectsData(workspaceId),
-  });
+  try {
+    await queryClient.prefetchQuery({
+      queryKey: ["projects"],
+      queryFn: () => getProjectsData(workspaceId),
+    });
+  } catch (e) {
+    console.error("Prefetch failed:", e);
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

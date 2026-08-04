@@ -40,15 +40,15 @@ export function CommentsSection({
     isDeleting,
     isEditingLoading,
     isAdding,
-    isPending,
+    isPendingComments,
   } = useCommentActions(taskId, status);
 
   const { expanded, isExpandedReply, toggleExpand, toggleExpandReply } =
     useCommentUI();
 
-  const isDisabled = isDeleting || isEditingLoading || isAdding;
+  const isPending = isDeleting || isEditingLoading || isAdding;
 
-  if (isPending) return <CommentSectionLoader commentsCount={commentsCount} />;
+  if (isPendingComments) return <CommentSectionLoader commentsCount={commentsCount} />;
   if (comments?.length === 0 || !comments)
     return (
       <EmptyCommentsState
@@ -59,7 +59,7 @@ export function CommentsSection({
         isEditing={!!editingId?.commentId}
         reply={reply}
         handleCloseReply={handleCloseReply}
-        isDisabled={isDisabled}
+        isPending={isPending}
       />
     );
   return (
@@ -76,7 +76,7 @@ export function CommentsSection({
             {...c}
             replies={c.replies}
             expanded={expanded}
-            isDisabled={isDisabled}
+            isPending={isPending}
             toggleExpand={toggleExpand}
             onEdit={handleEditComment}
             toggleExpandReply={toggleExpandReply}
@@ -97,7 +97,7 @@ export function CommentsSection({
           reply={reply}
           handleCloseReply={handleCloseReply}
           assignees={assignees}
-          isDisabled={isDisabled}
+          isPending={isPending}
         />
       </div>
 

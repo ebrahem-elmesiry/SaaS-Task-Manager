@@ -10,11 +10,11 @@ import {
   Users,
 } from "lucide-react";
 import { useLogout } from "@/features/Auth/hooks/useLogout";
-import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
+import { useCurrentUserQuery } from "@/features/shared/hooks/useCurrentUser";
 import Avatar from "../Avatar";
 
 export default function SliderContent() {
-  const currentUser = useCurrentUser();
+  const { user: currentUser, isPending } = useCurrentUserQuery();
   const { workspaceId } = useParams();
   const { logout } = useLogout();
 
@@ -31,7 +31,7 @@ export default function SliderContent() {
       link: "/dashboard",
       name: "Dashboard",
       icon: LayoutDashboard,
-      enabled: !!workspaceId,
+      enabled: !!workspaceId && currentUser?.role !== "member",
     },
     {
       id: "projects",
@@ -108,13 +108,12 @@ export default function SliderContent() {
               key={item.id}
               className={`
                 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors
-                ${!currentUser?.id ? "pointer-events-none opacity-50 cursor-not-allowed" : ""}
                 ${
                   urlLink === item.id
                     ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
                     : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                 }
-                ${currentUser?.role === "member" && item.id === "dashboard" ? "hidden" : ""}
+                ${currentUser?.role === "member" && item.id === "dashboard" ? "opacity-50 cursor-not-allowed" : ""}
                 ${
                   item.enabled && !!item.enabled
                     ? ""
@@ -132,7 +131,7 @@ export default function SliderContent() {
       <div className="p-4 border-t border-slate-200 dark:border-slate-700 space-y-1">
         <Link
           href={`/settings`}
-          className={`${!currentUser?.id ? "pointer-events-none opacity-50 cursor-not-allowed" : ""}${
+          className={`${
             pathName === "/settings"
               ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
               : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
@@ -141,35 +140,42 @@ export default function SliderContent() {
           <Settings className="w-5 h-5" />
           <span className="font-medium">Settings</span>
         </Link>
-
-        {currentUser && (
+        {isPending ? (
           <div className="pt-3">
-            <div className="flex items-center gap-3 px-3 py-2 mb-2">
-              <Avatar
-                size="md"
-                avatar_url={currentUser?.avatar}
-                user_name={currentUser?.name}
-              />
-
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-slate-900 dark:text-white truncate">
-                  {full_name}
-                </div>
-                <div className="text-xs text-slate-600 dark:text-slate-400 capitalize">
-                  {currentUser?.role}
-                </div>
+            <div className="flex items-center gap-3 px-3 py-2 mb-2 animate-pulse">
+              <div className="w-10 h-10 bg-slate-200 dark:bg-slate-700 rounded-full" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-24" />
+                <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-16" />
               </div>
             </div>
-
-            <button
-              onClick={() => logout()}
-              className="w-full flex items-center gap-3 px-3 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-            >
-              <LogOut className="w-5 h-5" />
-              <span className="font-medium">Sign Out</span>
-            </button>
           </div>
-        )}
+        ) : currentUser && (
+              <div className="pt-3">
+                <div className="flex items-center gap-3 px-3 py-2 mb-2">
+                  <Avatar
+                    size="md"
+                    avatar_url={currentUser?.avatar}
+                    user_name={currentUser?.name}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-slate-900 dark:text-white truncate">
+                      {full_name}
+                    </div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400 capitalize">
+                      {workspaceId ? currentUser?.role : "No workspace selected"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+        <button
+          onClick={() => logout()}
+          className="w-full flex items-center gap-3 px-3 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+        >
+          <LogOut className="w-5 h-5" />
+          <span className="font-medium">Sign Out</span>
+        </button>
       </div>
     </>
   );

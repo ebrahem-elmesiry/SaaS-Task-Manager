@@ -8,6 +8,11 @@ export default async function getTasksData(
 ): Promise<ColumnsType | null> {
   const supabase = await createClient();
 
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) return null;
+
   const { data, error } = await supabase.rpc("get_tasks_data", {
     p_project_id: projectId,
   });

@@ -5,7 +5,7 @@ import { messages } from "@/messages";
 import { TaskForm } from "@/validation/task.schema";
 import { ColumnsType, Status } from "@/types/kanban";
 import { getQueryClient } from "@/lib/get-query-client";
-import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
+import { useCurrentUserQuery } from "@/features/shared/hooks/useCurrentUser";
 import {
   updateTaskBase,
   getCurrentAssignees,
@@ -19,9 +19,8 @@ import { addActivityToCache } from "@/features/TaskDetailPanel/handlers/cacheHan
 import { useParams } from "next/navigation";
 
 export const useUpdateTask = ({ workspaceId }: { workspaceId: string }) => {
-  const currentUser = useCurrentUser();
-  if (!currentUser) throw new Error("User not found");
-  const { id: user_id, name: user_name, avatar: avatar_url } = currentUser;
+  const { user: currentUser, isPending } = useCurrentUserQuery();
+  if (!currentUser && !isPending) throw new Error("User not found");
   const { projectId } = useParams<{ projectId: string }>();
   const queryClient = getQueryClient();
   const supabase = createClient();
@@ -39,7 +38,7 @@ export const useUpdateTask = ({ workspaceId }: { workspaceId: string }) => {
     await logTaskActivity(supabase, {
       activityUUID,
       workspace_id: workspaceId,
-      user_id,
+      user_id: currentUser!.id,
       entity_id: data.id,
       taskId: data.id,
       action: "TASK_UPDATED",
@@ -47,7 +46,7 @@ export const useUpdateTask = ({ workspaceId }: { workspaceId: string }) => {
     });
   }
 
-  const { isPending, mutate } = useMutation({
+  const { isPending: mutationPending, mutate } = useMutation({
     mutationFn: handleUpdateTask,
 
     onMutate: async (newData) => {
@@ -61,9 +60,9 @@ export const useUpdateTask = ({ workspaceId }: { workspaceId: string }) => {
       updateTaskInCache(queryClient, projectId, newData);
       addActivityToCache(queryClient, newData.id, {
         activityUUID,
-        userId: user_id,
-        userName: user_name,
-        avatarUrl: avatar_url,
+        userId: currentUser!.id,
+        userName: currentUser!.name,
+        avatarUrl: currentUser!.avatar,
         action: "TASK_UPDATED",
         entityId: newData.id,
         task: {
@@ -91,5 +90,5 @@ export const useUpdateTask = ({ workspaceId }: { workspaceId: string }) => {
     },
   });
 
-  return { updateTaskPending: isPending, handleUpdateTask: mutate };
+  return { updateTaskPending: mutationPending, handleUpdateTask: mutate };
 };

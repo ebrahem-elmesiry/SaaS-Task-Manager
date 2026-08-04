@@ -32,8 +32,14 @@ export default function Providers({
           enableSystem
           disableTransitionOnChange
         >
+          <Toaster position="bottom-left" expand richColors />
           {isAuthPage ? (
-            children
+            <main
+              id="main-content"
+              className="flex-1 p-4 md:p-8 bg-slate-50 dark:bg-slate-900"
+            >
+              {children}
+            </main>
           ) : (
             <>
               <a
@@ -50,7 +56,6 @@ export default function Providers({
                   className="flex-1 p-4 md:p-8 bg-slate-50 dark:bg-slate-900"
                 >
                   {children}
-                  <Toaster position="bottom-left" expand richColors />
                 </main>
               </div>
             </>

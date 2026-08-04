@@ -11,7 +11,7 @@ type EmptyCommentsStateProps = {
   isEditing: boolean;
   reply: ReplyState;
   handleCloseReply: () => void;
-  isDisabled: boolean;
+  isPending: boolean;
 };
 
 export default function EmptyCommentsState({
@@ -22,7 +22,7 @@ export default function EmptyCommentsState({
   isEditing,
   reply,
   handleCloseReply,
-  isDisabled,
+  isPending,
 }: EmptyCommentsStateProps) {
   return (
     <div>
@@ -51,7 +51,7 @@ export default function EmptyCommentsState({
         reply={reply}
         handleCloseReply={handleCloseReply}
         assignees={assignees}
-        isDisabled={isDisabled}
+        isPending={isPending}
       />
     </div>
   );

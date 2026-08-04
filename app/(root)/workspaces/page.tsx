@@ -7,10 +7,14 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 export default async function Page() {
   const queryClient = getQueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ["workspaces"],
-    queryFn: getWorkspacesData,
-  });
+  try {
+    await queryClient.prefetchQuery({
+      queryKey: ["workspaces"],
+      queryFn: getWorkspacesData,
+    });
+  } catch (e) {
+    console.error("Prefetch failed:", e);
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

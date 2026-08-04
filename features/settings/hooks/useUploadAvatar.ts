@@ -3,7 +3,6 @@ import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
 import { messages } from "@/messages";
-import { currentUserType } from "@/types/main";
 
 export default function useUploadAvatar() {
   const currentUser = useCurrentUser();
@@ -47,11 +46,8 @@ export default function useUploadAvatar() {
 
       return avatar_url;
     },
-    onSuccess: (avatar_url) => {
-      queryClient.setQueryData(["currentUser"], (old: currentUserType) => {
-        if (!old) return old;
-        return { ...old, avatar: avatar_url };
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentWorkspaceUser"] });
       toast.success(messages.settings.avatar.success);
     },
     onError: (err: Error) => {

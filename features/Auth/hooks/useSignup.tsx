@@ -34,7 +34,7 @@ export function useSignup() {
     },
 
     onSuccess: ({ message }) => {
-      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["currentWorkspaceUser"] });
       queryClient.invalidateQueries({ queryKey: ["workspaceMember"] });
       toast.success(message);
       router.push("/workspaces");

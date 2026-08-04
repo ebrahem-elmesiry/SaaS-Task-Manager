@@ -13,7 +13,10 @@ function getClient() {
   return cachedClient;
 }
 
-export function useCurrentUser(): currentUserType | null {
+export function useCurrentUserQuery(): {
+  user: currentUserType | null;
+  isPending: boolean;
+} {
   const { workspaceId } = useParams<{ workspaceId: string }>();
   const supabase = getClient();
   const queryClient = getQueryClient();
@@ -23,11 +26,11 @@ export function useCurrentUser(): currentUserType | null {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_OUT") {
-        queryClient.removeQueries({ queryKey: ["currentUser"] });
+        queryClient.removeQueries({ queryKey: ["currentWorkspaceUser"] });
         queryClient.removeQueries({ queryKey: ["workspaceMember"] });
       }
       if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-        queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+        queryClient.invalidateQueries({ queryKey: ["currentWorkspaceUser"] });
         queryClient.invalidateQueries({ queryKey: ["workspaceMember"] });
       }
     });
@@ -35,55 +38,35 @@ export function useCurrentUser(): currentUserType | null {
     return () => subscription.unsubscribe();
   }, [queryClient, supabase]);
 
-  const { data: baseUser } = useQuery({
-    queryKey: ["currentUser"],
+  const { data: userData, isPending } = useQuery({
+    queryKey: ["currentWorkspaceUser", workspaceId],
     staleTime: 5 * 60_000,
     queryFn: async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return null;
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("full_name, avatar_url, job_title")
-        .eq("id", user.id)
-        .single();
-      return {
-        id: user.id,
-        name: profile?.full_name || "Unknown",
-        avatar: profile?.avatar_url || undefined,
-        job_title: profile?.job_title ?? undefined,
-      };
+      const { data, error } = await supabase.rpc("get_current_workspace_user", {
+        p_workspace_id: workspaceId ?? null,
+      });
+
+      if (error) throw error;
+
+      return data?.[0] ?? null;
     },
   });
 
-  const { data: member } = useQuery({
-    queryKey: ["workspaceMember", workspaceId],
-    staleTime: 5 * 60_000,
-    queryFn: async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user || !workspaceId) return null;
-      const { data } = await supabase
-        .from("workspace_members")
-        .select("role")
-        .eq("user_id", user.id)
-        .eq("workspace_id", workspaceId)
-        .single();
-      return data;
-    },
-    enabled: !!workspaceId,
-  });
-
-  if (!baseUser) return null;
+  if (!userData) return { user: null, isPending };
 
   return {
-    id: baseUser.id,
-    name: baseUser.name,
-    avatar: baseUser.avatar,
-    job_title: baseUser.job_title,
-    role: member?.role,
-    workspace: workspaceId,
+    user: {
+      id: userData.id,
+      name: userData.name ?? "Unknown",
+      avatar: userData.avatar ?? undefined,
+      job_title: userData.job_title ?? undefined,
+      role: userData.role,
+      workspace: workspaceId,
+    },
+    isPending,
   };
+}
+
+export function useCurrentUser(): currentUserType | null {
+  return useCurrentUserQuery().user;
 }

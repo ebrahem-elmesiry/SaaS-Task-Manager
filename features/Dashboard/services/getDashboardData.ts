@@ -13,6 +13,11 @@ export default async function getDashboardData(
 ): Promise<DashboardData | null> {
   const supabase = await createClient();
 
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) return null;
+
   const { data, error } = await supabase.rpc("get_dashboard_data", {
     p_workspace_id: workspaceId,
     p_filter_days: DAYS_MAP[filterDays] ?? 7,

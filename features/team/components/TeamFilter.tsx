@@ -28,8 +28,8 @@ export default function TeamFilter({ workspaceId }: Props) {
     queryFn: () => getTeamData(workspaceId),
   });
 
-  const onlineMembers = data?.filter((m) => m.status === "online").length;
-  const offlineMembers = data?.filter((m) => m.status === "offline").length;
+  // const onlineMembers = data?.filter((m) => m.status === "online").length;
+  // const offlineMembers = data?.filter((m) => m.status === "offline").length;
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4">
@@ -44,7 +44,7 @@ export default function TeamFilter({ workspaceId }: Props) {
         >
           All Members ({data?.length})
         </button>
-        <button
+        {/* <button
           onClick={() => addFilterFn("online")}
           className={`px-4 py-2 rounded-lg text-sm transition-colors ${
             getFilter === "online"
@@ -63,7 +63,7 @@ export default function TeamFilter({ workspaceId }: Props) {
           }`}
         >
           Offline ({offlineMembers})
-        </button>
+        </button> */}
       </div>
     </div>
   );

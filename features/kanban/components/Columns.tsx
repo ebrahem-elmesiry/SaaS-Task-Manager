@@ -94,7 +94,7 @@ export default function Columns({ projectId }: { projectId: string }) {
               tasks={columnTasks}
               onTaskClick={handleTaskClick}
               openModal={() => openModal(status)}
-              isNotMember={currentUser?.role !== 'member'}
+              isNotMember={currentUser?.role !== "member"}
             />
           ),
         )}

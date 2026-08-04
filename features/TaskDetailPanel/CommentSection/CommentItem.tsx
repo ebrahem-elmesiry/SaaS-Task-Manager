@@ -24,7 +24,7 @@ type CommentItemProps = {
   isExpandedReply?: Record<string, boolean>;
   toggleExpand: (id: string) => void;
   MAX_LENGTH?: number;
-  isDisabled: boolean;
+  isPending: boolean;
   onEdit: (id: string, replyId?: string) => void;
   onDelete: (id: string, replyId?: string) => void;
   onReply: (id: string, text: string, name: string, user_id?: string) => void;
@@ -49,7 +49,7 @@ export function CommentItem({
   onReply,
   isExpandedReply,
   toggleExpandReply,
-  isDisabled,
+  isPending,
   editingId,
 }: CommentItemProps) {
   const currentUser = useCurrentUser();
@@ -109,7 +109,7 @@ export function CommentItem({
       <div className="flex-1 min-w-0">
         <div
           className={`rounded-lg relative
-            ${editingId?.commentId === id && isDisabled ? "opacity-50 pointer-events-none" : ""}
+            ${editingId?.commentId === id && isPending ? "opacity-50 pointer-events-none" : ""}
           ${
             isReply
               ? "bg-slate-100 dark:bg-slate-700/40 p-2"
@@ -168,7 +168,7 @@ export function CommentItem({
                 key={r.id}
                 {...r}
                 isReply
-                isDisabled={isDisabled}
+                isPending={isPending}
                 editingId={editingId}
                 commentId={r.parent_id}
                 expanded={expanded}

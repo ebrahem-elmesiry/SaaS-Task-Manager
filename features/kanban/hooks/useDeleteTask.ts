@@ -6,15 +6,14 @@ import { Status, ColumnsType } from "@/types/kanban";
 import { getQueryClient } from "@/lib/get-query-client";
 import { logTaskActivity } from "../handlers/taskActivityHandlers";
 import { addActivityToCache } from "@/features/TaskDetailPanel/handlers/cacheHandlers";
-import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
+import { useCurrentUserQuery } from "@/features/shared/hooks/useCurrentUser";
 
 export const useDeleteTask = ({ workspaceId }: { workspaceId: string }) => {
   const queryClient = getQueryClient();
   const supabase = createClient();
-  const currentUser = useCurrentUser();
-  if (!currentUser) throw new Error("User not found");
+  const { user: currentUser, isPending } = useCurrentUserQuery();
+  if (!currentUser && !isPending) throw new Error("User not found");
 
-  const { id: user_id, name: user_name, avatar: avatar_url } = currentUser;
   const activityUUID = crypto.randomUUID();
   async function deleteTask(data: {
     id: string;
@@ -25,11 +24,11 @@ export const useDeleteTask = ({ workspaceId }: { workspaceId: string }) => {
     await logTaskActivity(supabase, {
       activityUUID,
       workspace_id: workspaceId,
-      user_id,
+      user_id: currentUser!.id,
       action: "TASK_DELETED",
       entity_id: data?.id,
       taskId: data?.id,
-      metadata: { taskTitle: data.title, deletedBy: user_name },
+      metadata: { taskTitle: data.title, deletedBy: currentUser!.name },
     });
 
     const { error } = await supabase.from("tasks").delete().eq("id", data.id);
@@ -37,7 +36,7 @@ export const useDeleteTask = ({ workspaceId }: { workspaceId: string }) => {
     if (error) throw new Error(error.message);
   }
 
-  const { isPending, mutateAsync } = useMutation({
+  const { isPending: mutationPending, mutateAsync } = useMutation({
     mutationFn: deleteTask,
 
     onMutate: async (data) => {
@@ -48,12 +47,12 @@ export const useDeleteTask = ({ workspaceId }: { workspaceId: string }) => {
       ]);
       addActivityToCache(queryClient, data.id, {
         activityUUID,
-        userId: user_id,
-        userName: user_name,
-        avatarUrl: avatar_url,
+        userId: currentUser!.id,
+        userName: currentUser!.name,
+        avatarUrl: currentUser!.avatar,
         action: "TASK_DELETED",
         entityId: data.id,
-        metadata: { taskTitle: data.title, deletedBy: user_name },
+        metadata: { taskTitle: data.title, deletedBy: currentUser!.name },
       });
 
       queryClient.setQueryData<ColumnsType>(
@@ -85,5 +84,5 @@ export const useDeleteTask = ({ workspaceId }: { workspaceId: string }) => {
     },
   });
 
-  return { deleteTaskPending: isPending, deleteTask: mutateAsync };
+  return { deleteTaskPending: mutationPending, deleteTask: mutateAsync };
 };

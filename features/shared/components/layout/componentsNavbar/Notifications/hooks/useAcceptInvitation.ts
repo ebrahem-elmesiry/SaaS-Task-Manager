@@ -1,4 +1,4 @@
-import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
+import { useCurrentUserQuery } from "@/features/shared/hooks/useCurrentUser";
 import { getQueryClient } from "@/lib/get-query-client";
 import { createClient } from "@/lib/supabase/client";
 import { messages } from "@/messages";
@@ -9,8 +9,8 @@ import { toast } from "sonner";
 export default function useAcceptInvitation() {
   const supabase = createClient();
   const queryClient = getQueryClient();
-  const currentUser = useCurrentUser();
-  if (!currentUser) {
+  const { user, isPending } = useCurrentUserQuery();
+  if (!user && !isPending) {
     throw new Error("user not found");
   }
 
@@ -30,10 +30,10 @@ export default function useAcceptInvitation() {
 
     onMutate: async () => {
       await queryClient.cancelQueries({
-        queryKey: ["team", currentUser?.workspace],
+        queryKey: ["team", user?.workspace],
       });
       await queryClient.cancelQueries({
-        queryKey: ["notification", currentUser.id],
+        queryKey: ["notification", user?.id],
       });
       await queryClient.cancelQueries({
         queryKey: ["workspaces"],
@@ -42,7 +42,7 @@ export default function useAcceptInvitation() {
 
     onSuccess: (data, _variables) => {
       queryClient.setQueryData<notifications[]>(
-        ["notification", currentUser.id],
+        ["notification", user?.id],
         (old) => {
           return old?.map((n) =>
             n.id === _variables.notificationId
@@ -55,7 +55,7 @@ export default function useAcceptInvitation() {
     },
 
     onError: (err, _variables, context) => {
-      queryClient.setQueryData(["team", currentUser.workspace], context);
+      queryClient.setQueryData(["team", user?.workspace], context);
       toast.error(
         (err as Error).message || messages.notification.acceptInvitation.error,
       );
@@ -63,10 +63,10 @@ export default function useAcceptInvitation() {
 
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["team", currentUser.workspace],
+        queryKey: ["team", user?.workspace],
       });
       queryClient.invalidateQueries({
-        queryKey: ["notification", currentUser.id],
+        queryKey: ["notification", user?.id],
       });
       queryClient.invalidateQueries({
         queryKey: ["workspaces"],
@@ -90,13 +90,13 @@ export default function useAcceptInvitation() {
 
     onMutate: async () => {
       await queryClient.cancelQueries({
-        queryKey: ["notification", currentUser.id],
+        queryKey: ["notification", user?.id],
       });
     },
 
     onSuccess: (data, _variables) => {
       queryClient.setQueryData<notifications[]>(
-        ["notification", currentUser.id],
+        ["notification", user?.id],
         (old) => {
           return old?.map((n) =>
             n.id === _variables.notificationId
@@ -109,7 +109,7 @@ export default function useAcceptInvitation() {
     },
 
     onError: (err, _variables, context) => {
-      queryClient.setQueryData(["notification", currentUser.id], context);
+      queryClient.setQueryData(["notification", user?.id], context);
       toast.error(
         (err as Error).message || messages.notification.declineInvitation.error,
       );
@@ -117,7 +117,7 @@ export default function useAcceptInvitation() {
 
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["notification", currentUser.id],
+        queryKey: ["notification", user?.id],
       });
     },
   });

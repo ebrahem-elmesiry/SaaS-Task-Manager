@@ -16,10 +16,14 @@ export default async function Page({ searchParams, params }: TeamPageProps) {
   const { filter } = await searchParams;
   const queryClient = getQueryClient();
   const { workspaceId } = await params;
-  await queryClient.prefetchQuery({
-    queryKey: ["team", workspaceId],
-    queryFn: () => getTeamData(workspaceId),
-  });
+  try {
+    await queryClient.prefetchQuery({
+      queryKey: ["team", workspaceId],
+      queryFn: () => getTeamData(workspaceId),
+    });
+  } catch (e) {
+    console.error("Prefetch failed:", e);
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

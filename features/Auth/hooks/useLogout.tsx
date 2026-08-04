@@ -17,7 +17,7 @@ export function useLogout() {
     },
 
     onSuccess: () => {
-      queryClient.removeQueries({ queryKey: ["currentUser"] });
+      queryClient.removeQueries({ queryKey: ["currentWorkspaceUser"] });
       queryClient.removeQueries({ queryKey: ["workspaceMember"] });
       toast.success(messages.auth.logout.success);
       router.push("/auth/Login");

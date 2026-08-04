@@ -165,6 +165,6 @@ export function useCommentActions(taskId: string, status: Status) {
     isDeleting: deleteMutation.isPending,
     isEditingLoading: editMutation.isPending,
     isAdding: addMutation.isPending,
-    isPending,
+    isPendingComments: isPending,
   };
 }

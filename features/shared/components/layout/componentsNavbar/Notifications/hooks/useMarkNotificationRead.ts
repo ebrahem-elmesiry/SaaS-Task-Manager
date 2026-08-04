@@ -1,15 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { notifications } from "@/types/notification";
-import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
+import { useCurrentUserQuery } from "@/features/shared/hooks/useCurrentUser";
 
 const supabase = createClient();
 
 export function useMarkNotificationRead() {
   const queryClient = useQueryClient();
-  const currentUser = useCurrentUser();
+  const { user: currentUser, isPending } = useCurrentUserQuery();
 
-  if (!currentUser) throw new Error("User not found");
+  if (!currentUser && !isPending) throw new Error("User not found");
+  const user = currentUser!;
   return useMutation({
     mutationFn: async ({
       notificationId,
@@ -36,14 +37,14 @@ export function useMarkNotificationRead() {
     },
     onMutate: async ({ notificationId }) => {
       await queryClient.cancelQueries({
-        queryKey: ["notification", currentUser.id],
+        queryKey: ["notification", user.id],
       });
       const previous = queryClient.getQueryData([
         "notification",
-        currentUser.id,
+        user.id,
       ]);
       queryClient.setQueryData(
-        ["notification", currentUser.id],
+        ["notification", user.id],
         (old: notifications[]) =>
           notificationId
             ? old?.map((n) =>
@@ -56,17 +57,17 @@ export function useMarkNotificationRead() {
     onError: (_err, _id, context) => {
       if (context?.previous) {
         queryClient.setQueryData(
-          ["notification", currentUser.id],
+          ["notification", user.id],
           context.previous,
         );
       }
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["notification", currentUser.id],
+        queryKey: ["notification", user.id],
       });
       queryClient.invalidateQueries({
-        queryKey: ["notification-unread", currentUser.id],
+        queryKey: ["notification-unread", user.id],
       });
     },
   });

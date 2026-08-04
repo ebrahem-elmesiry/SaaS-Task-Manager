@@ -8,6 +8,11 @@ export default async function getProjectsData(
 ): Promise<projectCard[]> {
   const supabase = await createClient();
 
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) return [];
+
   const { data, error } = await supabase.rpc("get_projects_data", {
     p_workspace_id: workspaceId,
   });

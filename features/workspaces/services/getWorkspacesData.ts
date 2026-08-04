@@ -8,6 +8,11 @@ export default async function getWorkspacesData(): Promise<
 > {
   const supabase = await createClient();
 
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) return [];
+
   const { data, error } = await supabase.rpc("get_workspaces_data");
 
   if (error) {

@@ -5,7 +5,7 @@ import { messages } from "@/messages";
 import { TaskForm } from "@/validation/task.schema";
 import { ColumnsType, Status } from "@/types/kanban";
 import { getQueryClient } from "@/lib/get-query-client";
-import { useCurrentUser } from "@/features/shared/hooks/useCurrentUser";
+import { useCurrentUserQuery } from "@/features/shared/hooks/useCurrentUser";
 import {
   insertTask,
   insertSubtasks,
@@ -17,7 +17,7 @@ import { addActivityToCache } from "../../TaskDetailPanel/handlers/cacheHandlers
 import { useParams } from "next/navigation";
 
 export const useAddTask = ({ workspaceId }: { workspaceId: string }) => {
-  const currentUser = useCurrentUser();
+  const { user: currentUser, isPending } = useCurrentUserQuery();
 
   const queryClient = getQueryClient();
   const supabase = createClient();
@@ -25,9 +25,9 @@ export const useAddTask = ({ workspaceId }: { workspaceId: string }) => {
   const activityUUID = crypto.randomUUID();
   const taskId = crypto.randomUUID();
 
-  if (!currentUser) throw new Error("User not found");
+  if (!currentUser && !isPending) throw new Error("User not found");
 
-  const { isPending, mutate } = useMutation({
+  const { isPending: mutationPending, mutate } = useMutation({
     mutationFn: async (data: TaskForm) => {
       await insertTask(supabase, data, taskId, projectId);
       await insertSubtasks(supabase, taskId, data.subtasks);
@@ -35,7 +35,7 @@ export const useAddTask = ({ workspaceId }: { workspaceId: string }) => {
       await logTaskActivity(supabase, {
         activityUUID,
         workspace_id: workspaceId,
-        user_id: currentUser.id,
+        user_id: currentUser!.id,
         entity_id: taskId,
         taskId: taskId,
         action: "TASK_CREATED",
@@ -55,9 +55,9 @@ export const useAddTask = ({ workspaceId }: { workspaceId: string }) => {
       addTaskToCache(queryClient, projectId, taskId, newData);
       addActivityToCache(queryClient, taskId, {
         activityUUID,
-        userId: currentUser.id,
-        userName: currentUser.name,
-        avatarUrl: currentUser.avatar,
+        userId: currentUser!.id,
+        userName: currentUser!.name,
+        avatarUrl: currentUser!.avatar,
         action: "TASK_CREATED",
         entityId: taskId,
         task: {
@@ -85,5 +85,5 @@ export const useAddTask = ({ workspaceId }: { workspaceId: string }) => {
     },
   });
 
-  return { addTaskPending: isPending, addTask: mutate };
+  return { addTaskPending: mutationPending, addTask: mutate };
 };

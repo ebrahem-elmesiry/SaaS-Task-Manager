@@ -19,7 +19,7 @@ interface Props {
   reply: ReplyState;
   handleCloseReply: () => void;
   assignees: Assignee[];
-  isDisabled: boolean;
+  isPending: boolean;
 }
 
 export default function CommentInput({
@@ -27,7 +27,7 @@ export default function CommentInput({
   assignees,
   isEditing,
   addComment,
-  isDisabled,
+  isPending,
   handleSubmit,
   setAddComment,
   handleCloseReply,
@@ -59,17 +59,28 @@ export default function CommentInput({
         <MentionDropdown suggestionProps={suggestionProps} />
 
         <div className="flex items-center justify-between mt-2">
-          <Button type="button" variant={"outline"} onClick={triggerMention} aria-label="Insert mention">
+          <Button
+            type="button"
+            variant={"outline"}
+            onClick={triggerMention}
+            aria-label="Insert mention"
+          >
             <Paperclip className="w-4 h-4 text-slate-400" />
           </Button>
 
           <Button
-            disabled={isDisabled}
+            disabled={isPending}
             variant="purple"
             className="px-3"
             size={"lg"}
           >
-            {isEditing ? "Edit" : "Post"}
+            {isEditing
+              ? isPending
+                ? "Editing..."
+                : "Edit"
+              : isPending
+                ? "Posting..."
+                : "Post"}
           </Button>
         </div>
       </div>
